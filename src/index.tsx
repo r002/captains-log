@@ -1,8 +1,8 @@
 import { useState, StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { LoginButton, LogoutButton, NormalButton } from './components'
+import { Navbar } from './widgets/Navbar'
 import { ThemeManager, themeManager } from './providers/ThemeContext'
-import TicTacToe from './TicTacToe/App'
+import './style.css'
 
 const App = () => {
   const [theme, setTheme] = useState(themeManager)
@@ -15,15 +15,7 @@ const App = () => {
 
   return (
     <ThemeManager.Provider value={theme}>
-      <br /><br />
-      <LoginButton label='Login' />
-      <br /><br />
-      <LogoutButton label='Logout' />
-      <br /><br />
-      <NormalButton label='Toggle Theme' changeTheme={togTheme} />
-      <br /><br />
-      <hr />
-      <TicTacToe />
+      <Navbar changeTheme={togTheme} />
     </ThemeManager.Provider>
   )
 }

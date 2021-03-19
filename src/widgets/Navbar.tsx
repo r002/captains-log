@@ -1,11 +1,12 @@
 import styled, { css } from 'styled-components'
-import { ThemeManager } from './providers/ThemeContext'
-import { AuthContext } from './providers/AuthContext'
+import { ThemeManager } from '../providers/ThemeContext'
+import { AuthContext } from '../providers/AuthContext'
 import { useContext } from 'react'
 
 interface ButtonProps {
   readonly primary?: boolean,
   readonly theme?: boolean
+  margin? : string
 }
 
 const Button = styled.button<ButtonProps>`
@@ -13,7 +14,7 @@ const Button = styled.button<ButtonProps>`
   border-radius: 3px;
   border: 2px solid palevioletred;
   color: palevioletred;
-  margin: 0;
+  margin: ${props => props.margin};
   padding: 0.25em 1em;
 
   ${props => props.primary && css`
@@ -27,22 +28,23 @@ const Button = styled.button<ButtonProps>`
   `}
 `
 
-export const NormalButton = (props: any) => {
+const NormalButton = ({ handleClick, margin, label }: any) => {
   const tm = useContext(ThemeManager)
 
   return (
     <>
       <Button
-        onClick={props.changeTheme}
+        onClick={handleClick}
         theme={tm.currentTheme}
+        margin={margin}
         >
-        {props.label}
+        {label}
       </Button>
     </>
   )
 }
 
-export const LoginButton = (props: any) => {
+const LoginButton = (props: any) => {
   const authContext = useContext(AuthContext)
   const tm = useContext(ThemeManager)
   const login = () => {
@@ -62,7 +64,7 @@ export const LoginButton = (props: any) => {
   )
 }
 
-export const LogoutButton = (props: any) => {
+const LogoutButton = (props: any) => {
   const authContext = useContext(AuthContext)
   function logout () {
     console.log('>> User logged out:', authContext.auth().currentUser)
@@ -75,5 +77,29 @@ export const LogoutButton = (props: any) => {
       {props.label}
       </Button>
     </>
+  )
+}
+
+const NavWrapper = styled.div`
+  padding: 10px;
+  width: 100%;
+  background: lightslategray;
+  box-sizing: border-box;
+  text-align: right;
+  border-bottom: solid darkgray 1px;
+`
+
+// Show user's name & the LogoutButton if they're logged in.
+// Else, display the LoginButton.
+
+export const Navbar = ({ changeTheme }: any) => {
+  return (
+    <NavWrapper>
+      <NormalButton label='☀️'
+                    handleClick={changeTheme}
+                    margin='0 25px 0 0' />
+      <LoginButton label='Login' />
+      <LogoutButton label='Logout' />
+    </NavWrapper>
   )
 }
