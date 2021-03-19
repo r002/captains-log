@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
-import { LogEntry, LogRecord } from './widgets/LogEntry'
+import { LogEntry } from './widgets/LogEntry'
 import { ThemeManager, themes } from './providers/ThemeContext'
 import './style.css'
 import firebase from 'firebase/app'
@@ -39,10 +39,10 @@ const Body = styled.div`
   /* border: solid darkgray 1px; */
 `
 
-export const App = () => {
+const App = () => {
   const [theme, setTheme] = useState(themes.light)
-  const { initializing, user } = useAuth()
-  console.log('>> initializing', initializing)
+  const { user } = useAuth()
+  // console.log('>> initializing', initializing)
 
   function togTheme () {
     setTheme(currentTheme => {
@@ -52,7 +52,7 @@ export const App = () => {
     })
   }
 
-  console.log('>> user:', user)
+  // console.log('>> user:', user)
 
   return (
     <ThemeManager.Provider value={theme}>
@@ -60,12 +60,10 @@ export const App = () => {
         <Navbar changeTheme={togTheme} />
         <Body>
           <LogEntry />
-          <br /><br />
-          <hr />
-          <br /><br />
-          <LogRecord />
         </Body>
       </UserContext.Provider>
     </ThemeManager.Provider>
   )
 }
+
+export default App

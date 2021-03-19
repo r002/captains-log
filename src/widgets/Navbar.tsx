@@ -82,7 +82,7 @@ const LogoutButton = (props: any) => {
 }
 
 const NavWrapper = styled.div`
-  padding: 10px;
+  padding: 10px 20px;
   width: 100%;
   background: lightslategray;
   box-sizing: border-box;
