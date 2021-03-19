@@ -1,21 +1,60 @@
-import { useState, StrictMode } from 'react'
+import { useState, StrictMode, useContext, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { Navbar } from './widgets/Navbar'
-import { ThemeManager, themeManager } from './providers/ThemeContext'
+import { ThemeManager, themes } from './providers/ThemeContext'
 import './style.css'
+import firebase from 'firebase/app'
+import { UserContext } from './providers/AuthContext'
+
+export const useSession = () => {
+  const { user } = useContext(UserContext)
+  return user
+}
+
+export const useAuth = () => {
+  const [state, setState] = useState(() => {
+    const user = firebase.auth().currentUser
+
+    return {
+      initializing: !user,
+      user
+    }
+  })
+
+  function onChange (user: any) {
+    setState(() => { return ({ initializing: false, user }) })
+  }
+
+  useEffect(() => {
+    // listen for auth state changes
+    const unsubscribe = firebase.auth().onAuthStateChanged(onChange)
+    // unsubscribe to the listener when unmounting
+    return () => unsubscribe()
+  }, [])
+
+  return state
+}
 
 const App = () => {
-  const [theme, setTheme] = useState(themeManager)
+  const [theme, setTheme] = useState(themes.light)
+  const { initializing, user } = useAuth()
+  console.log('>> initializing', initializing)
 
   function togTheme () {
-    setTheme(currThemePack => {
-      return (themeManager.toggleTheme(currThemePack.currentTheme))
+    setTheme(currentTheme => {
+      return currentTheme === themes.dark
+        ? themes.light
+        : themes.dark
     })
   }
 
+  console.log('>> user:', user)
+
   return (
     <ThemeManager.Provider value={theme}>
-      <Navbar changeTheme={togTheme} />
+      <UserContext.Provider value={{ user }}>
+        <Navbar changeTheme={togTheme} />
+      </UserContext.Provider>
     </ThemeManager.Provider>
   )
 }

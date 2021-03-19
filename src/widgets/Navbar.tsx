@@ -1,7 +1,8 @@
 import styled, { css } from 'styled-components'
 import { ThemeManager } from '../providers/ThemeContext'
-import { AuthContext } from '../providers/AuthContext'
+import { UserContext } from '../providers/AuthContext'
 import { useContext } from 'react'
+import firebase from 'firebase/app'
 
 interface ButtonProps {
   readonly primary?: boolean,
@@ -35,7 +36,7 @@ const NormalButton = ({ handleClick, margin, label }: any) => {
     <>
       <Button
         onClick={handleClick}
-        theme={tm.currentTheme}
+        theme={tm}
         margin={margin}
         >
         {label}
@@ -45,18 +46,18 @@ const NormalButton = ({ handleClick, margin, label }: any) => {
 }
 
 const LoginButton = (props: any) => {
-  const authContext = useContext(AuthContext)
+  // const authContext = useContext(AuthContext)
   const tm = useContext(ThemeManager)
   const login = () => {
-    const provider = new authContext.auth.GoogleAuthProvider()
-    authContext.auth().signInWithPopup(provider)
+    const provider = new firebase.auth.GoogleAuthProvider()
+    firebase.auth().signInWithPopup(provider)
   }
 
   return (
     <>
       <Button
         onClick={login}
-        theme={tm.currentTheme}
+        theme={tm}
         >
         {props.label}
       </Button>
@@ -65,10 +66,10 @@ const LoginButton = (props: any) => {
 }
 
 const LogoutButton = (props: any) => {
-  const authContext = useContext(AuthContext)
+  // const authContext = useContext(AuthContext)
   function logout () {
-    console.log('>> User logged out:', authContext.auth().currentUser)
-    authContext.auth().signOut()
+    console.log('>> User logged out:', firebase.auth().currentUser)
+    firebase.auth().signOut()
   }
 
   return (
@@ -93,11 +94,14 @@ const NavWrapper = styled.div`
 // Else, display the LoginButton.
 
 export const Navbar = ({ changeTheme }: any) => {
+  const { user } = useContext(UserContext)
+  const welcomeMsg = user ? user.displayName : 'Guest'
   return (
     <NavWrapper>
       <NormalButton label='☀️'
                     handleClick={changeTheme}
                     margin='0 25px 0 0' />
+      Welcome: {welcomeMsg}
       <LoginButton label='Login' />
       <LogoutButton label='Logout' />
     </NavWrapper>

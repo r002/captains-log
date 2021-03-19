@@ -24,23 +24,8 @@ if (firebase.apps.length === 0) {
     db.useEmulator('localhost', 8080)
     auth.useEmulator('http://localhost:9099')
   }
-
-  async function authStateObserver (user: any) : Promise<void> {
-    if (user) {
-      db.collection('articles').orderBy('created').limit(10).get().then(qs => {
-        const articles = qs.docs.map((doc: any) => doc.data())
-        console.log('>> results:', articles)
-      })
-    }
-  }
-
-  function bootstrapFirebase () {
-    firebase.auth().onAuthStateChanged(authStateObserver)
-  }
-
-  // Run all side effects to initialize Firebase.
-  bootstrapFirebase()
-  console.log('>> Firebase boostrapped! Should only happen once!')
 }
 
-export const AuthContext = createContext(firebase)
+export const UserContext = createContext({
+  user: null as any
+})
