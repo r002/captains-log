@@ -1,4 +1,4 @@
-import { useState, StrictMode, useContext, useEffect } from 'react'
+import { useState, StrictMode, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { Navbar } from './widgets/Navbar'
 import { ThemeManager, themes } from './providers/ThemeContext'
@@ -6,10 +6,10 @@ import './style.css'
 import firebase from 'firebase/app'
 import { UserContext } from './providers/AuthContext'
 
-export const useSession = () => {
-  const { user } = useContext(UserContext)
-  return user
-}
+// export const useSession = () => {
+//   const { user } = useContext(UserContext)
+//   return user
+// }
 
 export const useAuth = () => {
   const [state, setState] = useState(() => {
@@ -54,6 +54,8 @@ const App = () => {
     <ThemeManager.Provider value={theme}>
       <UserContext.Provider value={{ user }}>
         <Navbar changeTheme={togTheme} />
+        <br /><br />
+        3/19, Fri - 01:30a ET: Body goes here.
       </UserContext.Provider>
     </ThemeManager.Provider>
   )

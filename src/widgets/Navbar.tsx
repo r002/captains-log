@@ -90,20 +90,19 @@ const NavWrapper = styled.div`
   border-bottom: solid darkgray 1px;
 `
 
-// Show user's name & the LogoutButton if they're logged in.
-// Else, display the LoginButton.
-
 export const Navbar = ({ changeTheme }: any) => {
   const { user } = useContext(UserContext)
-  const welcomeMsg = user ? user.displayName : 'Guest'
+  const welcomeMsg = user
+    ? <>
+        {user.displayName} <LogoutButton label='Logout' />
+      </>
+    : <LoginButton label='Login' />
   return (
     <NavWrapper>
       <NormalButton label='☀️'
                     handleClick={changeTheme}
-                    margin='0 25px 0 0' />
-      Welcome: {welcomeMsg}
-      <LoginButton label='Login' />
-      <LogoutButton label='Logout' />
+                    margin='0 15px 0 0' />
+      {welcomeMsg}
     </NavWrapper>
   )
 }
