@@ -1,32 +1,6 @@
-import { useState, StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { LoginButton, LogoutButton, NormalButton } from './components'
-import { ThemeManager, themeManager } from './providers/ThemeContext'
-import TicTacToe from './TicTacToe/App'
-
-const App = () => {
-  const [theme, setTheme] = useState(themeManager)
-
-  function togTheme () {
-    setTheme(currThemePack => {
-      return (themeManager.toggleTheme(currThemePack.currentTheme))
-    })
-  }
-
-  return (
-    <ThemeManager.Provider value={theme}>
-      <br /><br />
-      <LoginButton label='Login' />
-      <br /><br />
-      <LogoutButton label='Logout' />
-      <br /><br />
-      <NormalButton label='Toggle Theme' changeTheme={togTheme} />
-      <br /><br />
-      <hr />
-      <TicTacToe />
-    </ThemeManager.Provider>
-  )
-}
+import { StrictMode } from 'react'
+import App from './App'
 
 ReactDOM.render(
   <StrictMode>
@@ -34,3 +8,14 @@ ReactDOM.render(
   </StrictMode>,
   document.querySelector('#root')
 )
+
+if (module.hot) {
+  module.hot.accept('./App.tsx', () => {
+    ReactDOM.render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+      document.querySelector('#root')
+    )
+  })
+}
