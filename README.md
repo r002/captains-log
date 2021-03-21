@@ -21,7 +21,7 @@ git log origin/main..HEAD \
 git remote -v
 
 ### Firebase Commands
-firebase emulators:start --only "auth,firestore" --import=data\base_example --export-on-exit=data\saved_data \
+firebase emulators:start --only "auth,firestore" --import=data\multi-users --export-on-exit=data\saved_data \
 firebase emulators:start --only hosting \
 firebase deploy --only hosting \
 firebase emulators:export data\2021-03-18
