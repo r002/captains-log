@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
 import firebase from 'firebase/app'
@@ -46,23 +46,32 @@ const formattedDt = (d: Date) => {
   )
 }
 
-const FLogRecord = styled.div`
+interface IFlog {
+  readonly background?: string
+}
+
+const FLogRecord = styled.div<IFlog>`
   padding: 10px;
   width: 900px;
   background: darkblue;
   color: white;
   box-sizing: border-box;
   border: solid darkgray 1px;
+
+  ${props => props.background && css`
+    background: ${props.background};
+  `}
 `
 interface ILog {
   dt: Date
   activity: string
 }
 
-export const LogRecord = (log: ILog) => {
+const LogRecord = ({ dt, activity, saved }: {dt: Date, activity: string, saved: boolean}) => {
+  const bg = saved ? 'darkblue' : '#00468b'
   return (
-    <FLogRecord title={log.dt.toString()}>
-      {formattedDt(log.dt)}: {log.activity}
+    <FLogRecord title={dt.toString()} background={bg}>
+      {formattedDt(dt)}: {activity}
     </FLogRecord>
   )
 }
@@ -162,8 +171,8 @@ export const LogEntry = () => {
       <hr />
       <br /><br />
       {/* {logs} */}
-      {logs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} />)}
-      {logsFromDb.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} />)}
+      {logs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={!!user} />)}
+      {logsFromDb.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={true} />)}
     </>
   )
 }
