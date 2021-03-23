@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useEffect, useRef, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
 import firebase from 'firebase/app'
 
@@ -40,7 +40,8 @@ const formattedDt = (d: Date) => {
   return (
     <>
       <LimeGreen>{d.toString().slice(0, 15)} </LimeGreen>
-      <Yellow>{d.toString().slice(16, 21)} ET</Yellow> {/* (16, 24) Include seconds */}
+      {/* <Yellow>{d.toString().slice(16, 21)} ET</Yellow>  */}
+      <Yellow>{d.toString().slice(16, 24)} ET</Yellow> {/* Include seconds */}
     </>
   )
 }
@@ -66,104 +67,103 @@ export const LogRecord = (log: ILog) => {
   )
 }
 
-function useLogs (user: firebase.User | null) {
-  const [logsFire, setLogsFire] = useState([] as Array<ILog>)
+async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
+  console.log('----------------- fire getLogs!')
 
-  let l = null as any
-  useEffect(
-    () => {
-      if (user) {
-        console.log('>> user.uid:', user.uid)
-        firebase
-          .firestore()
-          .collection(`users/${user.uid}/logs`)
-          .orderBy('dt', 'desc').limit(100)
-          .get().then(rs => {
-            l = rs.docs.map((doc: any) =>
-              ({
-                dt: doc.data().dt.toDate(), // Convert Firestore Timestamp into JS Date
-                activity: doc.data().activity
-              })
-            )
-            console.log('>> logs fetched from db:', l)
-            setLogsFire(l)
-          })
-      } else {
-        console.log('>> useLogs empty logs')
-        setLogsFire([])
-      }
-    }, [user]
-  )
+  const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
+    .orderBy('dt', 'desc').limit(100).get()
+  const logs = qs.docs.map((doc: any) => (
+    {
+      dt: doc.data().dt.toDate(),
+      activity: doc.data().activity
+    }))
+  console.log('------------------ Return results from db!', logs, user)
+  return logs
+}
 
-  return {
-    logsFire: logsFire
-  }
+function writeLog (user: firebase.User, log:ILog): void {
+  firebase.firestore().collection(`users/${user.uid}/logs`)
+  // .withConverter(m.articleConverter)
+    .add(log)
+    .then((docRef: any) => {
+      // newLog.id = docRef.id
+      console.log('>> log added!', docRef.id, log)
+    })
 }
 
 export const LogEntry = () => {
+  // console.log('🚀🚀 LogEntry BEGIN rendering')
+
+  const { user } = useContext(UserContext)
+  const [logsFromDb, setLogsFromDb] = useState([] as Array<ILog>)
+  const [logs, setLogs] = useState([] as Array<ILog>)
   const [dt, setDt] = useState(new Date())
+  const [activity, setActivity] = useState('')
+
   function tick () {
     setDt(new Date())
   }
 
-  const inputEl = useRef(null as any)
-  const [logs, setLogs] = useState([] as Array<ILog>)
-  const { user } = useContext(UserContext)
+  useEffect(() => {
+    // tick()
+    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
+    return () => clearInterval(interval)
+  }, [])
 
-  function addLog (event: any) {
-    if (event.key === 'Enter') {
+  function handleChange (e: React.FormEvent<HTMLInputElement>) {
+    setActivity(e.currentTarget.value)
+  }
+
+  // Initial load logs from db if user signs in
+  if (user && logsFromDb.length === 0) {
+    getLogs(user).then(l => {
+      setLogsFromDb(l)
+
+      // If user has written logs anonymously, write the unsaved logs to Firestore
+      for (const log of logs) {
+        writeLog(user, log)
+        console.log('>> write unsaved log to firestore', log)
+      }
+    })
+
+  // Clear logs from db if user signs out
+  } else if (!user && logsFromDb.length > 0) {
+    setLogsFromDb([])
+    setLogs([])
+  }
+
+  function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
       const newLog = {
         dt: dt,
-        activity: inputEl.current.value
+        activity: activity
       }
       setLogs((oldLogs: Array<ILog>) => [
         newLog,
         ...oldLogs]
       )
+      setActivity('')
+
       // Write to Firebase if user is signed in
       if (user) {
-        firebase.firestore().collection(`users/${user.uid}/logs`)
-        // .withConverter(m.articleConverter)
-          .add(newLog)
-          .then((docRef: any) => {
-            // newLog.id = docRef.id
-            console.log('>> log added!', docRef.id, newLog)
-          })
+        writeLog(user, newLog)
       }
     }
   }
 
-  useEffect(() => {
-    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    inputEl.current.value = ''
-  }, [logs])
-
-  // If a user is logged in, get all of the user's logs from Firestore
-  const { logsFire } = useLogs(user)
-
-  useEffect(() => {
-    if (!logsFire.length && !user) {
-      setLogs([]) // Clear all locally added logs if user logs out and had logged activities earlier
-    }
-    console.log('$$$$ User has logged out; clear local logs', user, logsFire)
-  }, [logsFire])
-
-  // console.log('>> Logs right before render', logs)
+  // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering', logs, user)
   return (
     <>
       <Box>
         <Prompt><span title='Robert Shell 😄'>RS</span> {formattedDt(dt)}</Prompt>
-        $ <LogInput ref={inputEl} autoFocus={true} onKeyDown={addLog} />
+        $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={addLog}></LogInput>
       </Box>
       <br /><br />
       <hr />
       <br /><br />
+      {/* {logs} */}
       {logs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} />)}
-      {logsFire.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} />)}
+      {logsFromDb.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} />)}
     </>
   )
 }
