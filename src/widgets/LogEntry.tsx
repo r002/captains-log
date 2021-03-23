@@ -1,7 +1,9 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
 import firebase from 'firebase/app'
+import { FormattedDt, ILog } from './Shared'
+import { LogViewer } from './LogViewer'
 
 const Box = styled.div`
   padding: 20px;
@@ -19,14 +21,6 @@ const Prompt = styled.div`
   margin-bottom: 10px;
 `
 
-const LimeGreen = styled.span`
-  color: limegreen;
-`
-
-const Yellow = styled.span`
-  color: yellow;
-`
-
 const LogInput = styled.input`
   width: 900px;
   font-size: 22px;
@@ -35,44 +29,6 @@ const LogInput = styled.input`
   border: none;
   outline: none;
 `
-// Awaiting TC39 to approve 'Temporal'! 🥴
-const formattedDt = (d: Date) => {
-  return (
-    <><LimeGreen>{d.toString().slice(0, 15)} </LimeGreen>
-      <Yellow>{d.toString().slice(16, 24)} ET</Yellow></>
-      // <Yellow>{d.toString().slice(16, 21)} ET</Yellow> // Omit seconds
-  )
-}
-
-interface IFlog {
-  readonly background?: string
-}
-
-const FLogRecord = styled.div<IFlog>`
-  padding: 10px;
-  width: 900px;
-  background: darkblue;
-  color: white;
-  box-sizing: border-box;
-  border: solid darkgray 1px;
-
-  ${props => props.background && css`
-    background: ${props.background};
-  `}
-`
-interface ILog {
-  dt: Date
-  activity: string
-}
-
-const LogRecord = ({ dt, activity, saved }: {dt: Date, activity: string, saved: boolean}) => {
-  const bg = saved ? 'darkblue' : '#00468b'
-  return (
-    <FLogRecord title={dt.toString()} background={bg}>
-      {formattedDt(dt)} :: {activity}
-    </FLogRecord>
-  )
-}
 
 async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
   console.log('----------------- fire getLogs!')
@@ -122,7 +78,7 @@ export const LogEntry = () => {
 
   // Initial load logs from db if user signs in
   useEffect(() => {
-    console.log('******** fire useEffect', user)
+    // console.log('******** LogEntry fire useEffect', user)
     if (user) {
       getLogs(user).then(logsFromDb => {
         if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
@@ -139,7 +95,7 @@ export const LogEntry = () => {
         }
       })
     } else {
-      console.log('&&&&& User has logged out; clear logs', user)
+      // console.log('&&&&& LogEntry User has logged out; clear logs', user)
       setLogs([])
     }
   }, [user])
@@ -167,14 +123,13 @@ export const LogEntry = () => {
   return (
     <>
       <Box>
-        <Prompt><span title='Robert Shell 😄'>RS</span> {formattedDt(dt)}</Prompt>
+        <Prompt><span title='Robert Shell 😄'>RS</span> {FormattedDt(dt)}</Prompt>
         $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={addLog}></LogInput>
       </Box>
       <br /><br />
       <hr />
       <br /><br />
-      {/* {logs} */}
-      {logs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={!!user} />)}
+      <LogViewer logs={logs} />
     </>
   )
 }
