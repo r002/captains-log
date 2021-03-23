@@ -24,7 +24,7 @@ git remote -v
 firebase emulators:start --only "auth,firestore" --import=data\multi-users --export-on-exit=data\saved_data \
 firebase emulators:start --only hosting \
 firebase deploy --only hosting \
-firebase emulators:export data\2021-03-18
+firebase emulators:export data\multi-users
 
 https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files
 https://stackoverflow.com/questions/39632667/how-do-i-kill-the-process-currently-using-a-port-on-localhost-in-windows
