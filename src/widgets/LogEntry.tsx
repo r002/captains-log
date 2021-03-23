@@ -38,11 +38,9 @@ const LogInput = styled.input`
 // Awaiting TC39 to approve 'Temporal'! 🥴
 const formattedDt = (d: Date) => {
   return (
-    <>
-      <LimeGreen>{d.toString().slice(0, 15)} </LimeGreen>
-      {/* <Yellow>{d.toString().slice(16, 21)} ET</Yellow>  */}
-      <Yellow>{d.toString().slice(16, 24)} ET</Yellow> {/* Include seconds */}
-    </>
+    <><LimeGreen>{d.toString().slice(0, 15)} </LimeGreen>
+      <Yellow>{d.toString().slice(16, 24)} ET</Yellow></>
+      // <Yellow>{d.toString().slice(16, 21)} ET</Yellow> // Omit seconds
   )
 }
 
@@ -71,7 +69,7 @@ const LogRecord = ({ dt, activity, saved }: {dt: Date, activity: string, saved: 
   const bg = saved ? 'darkblue' : '#00468b'
   return (
     <FLogRecord title={dt.toString()} background={bg}>
-      {formattedDt(dt)}: {activity}
+      {formattedDt(dt)} :: {activity}
     </FLogRecord>
   )
 }
