@@ -12,13 +12,16 @@ export const useAuth = () => {
     const user = firebase.auth().currentUser
 
     return {
-      initializing: !user,
-      user
+      initializing: true,
+      user: user
     }
   })
 
   function onChange (user: any) {
-    setState(() => { return ({ initializing: false, user }) })
+    setState({
+      initializing: false,
+      user: user
+    })
   }
 
   useEffect(() => {
@@ -41,8 +44,7 @@ const Body = styled.div`
 
 const App = () => {
   const [theme, setTheme] = useState(themes.light)
-  const { user } = useAuth()
-  // console.log('>> initializing', initializing)
+  const { initializing, user } = useAuth()
 
   function togTheme () {
     setTheme(currentTheme => {
@@ -52,18 +54,26 @@ const App = () => {
     })
   }
 
-  // console.log('>> user:', user)
+  let appWrapper = <></>
+  if (!initializing) {
+    appWrapper =
+      <>
+        <ThemeManager.Provider value={theme}>
+          <UserContext.Provider value={{ user }}>
+            <Navbar changeTheme={togTheme} />
+            <Body>
+              <LogEntry />
+            </Body>
+          </UserContext.Provider>
+        </ThemeManager.Provider>
+      </>
+    document.body.style.visibility = 'visible'
+  }
 
-  return (
-    <ThemeManager.Provider value={theme}>
-      <UserContext.Provider value={{ user }}>
-        <Navbar changeTheme={togTheme} />
-        <Body>
-          <LogEntry />
-        </Body>
-      </UserContext.Provider>
-    </ThemeManager.Provider>
-  )
+  // console.log('App render fired 😁')
+  console.log('App render fired 😁', initializing, user)
+
+  return (appWrapper)
 }
 
 export default App

@@ -11,6 +11,7 @@ module.exports = {
   devServer: {
     contentBase: './dist',
     hot: true,
+    // inline: false,
     port: 3000
   },
   plugins: [

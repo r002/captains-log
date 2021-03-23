@@ -27,5 +27,5 @@ if (firebase.apps.length === 0) {
 }
 
 export const UserContext = createContext({
-  user: null as any
+  user: null as firebase.User | null
 })
