@@ -102,7 +102,6 @@ export const LogEntry = () => {
   // console.log('🚀🚀 LogEntry BEGIN rendering')
 
   const { user } = useContext(UserContext)
-  const [logsFromDb, setLogsFromDb] = useState([] as Array<ILog>)
   const [logs, setLogs] = useState([] as Array<ILog>)
   const [dt, setDt] = useState(new Date())
   const [activity, setActivity] = useState('')
@@ -122,22 +121,28 @@ export const LogEntry = () => {
   }
 
   // Initial load logs from db if user signs in
-  if (user && logsFromDb.length === 0) {
-    getLogs(user).then(l => {
-      setLogsFromDb(l)
-
-      // If user has written logs anonymously, write the unsaved logs to Firestore
-      for (const log of logs) {
-        writeLog(user, log)
-        console.log('>> write unsaved log to firestore', log)
-      }
-    })
-
-  // Clear logs from db if user signs out
-  } else if (!user && logsFromDb.length > 0) {
-    setLogsFromDb([])
-    setLogs([])
-  }
+  useEffect(() => {
+    console.log('******** fire useEffect', user)
+    if (user) {
+      getLogs(user).then(logsFromDb => {
+        if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
+          // If user has written logs anonymously, first write the unsaved logs to Firestore
+          for (const log of logs) {
+            writeLog(user, log)
+            console.log('>> write unsaved log to firestore', log)
+          }
+          // Now update the logs with any from the db. This will update the view.
+          setLogs(oldLogs => [
+            ...oldLogs,
+            ...logsFromDb
+          ])
+        }
+      })
+    } else {
+      console.log('&&&&& User has logged out; clear logs', user)
+      setLogs([])
+    }
+  }, [user])
 
   function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
@@ -170,7 +175,6 @@ export const LogEntry = () => {
       <br /><br />
       {/* {logs} */}
       {logs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={!!user} />)}
-      {logsFromDb.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={true} />)}
     </>
   )
 }
