@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 import { FormattedDt, ILog } from './Shared'
 import { UserContext } from '../providers/AuthContext'
 import { useContext, useEffect, useState } from 'react'
+import { msToTime } from '../lib/util'
 
 interface IFlog {
   readonly background?: string
@@ -26,11 +27,25 @@ const FLogRecord = styled.div<IFlog>`
   `}
 `
 
-const MetaLog = ({ title, content }: {title: string, content: string}) => {
+const FDuration = styled.div`
+  font-size: 20px;
+`
+
+const Grey = styled.span`
+color: grey;
+`
+
+const Duration = ({ hours, minutes }: {hours: number, minutes: number}) => {
+  return (
+    <FDuration>{hours} <Grey>hr</Grey> {minutes} <Grey>min</Grey></FDuration>
+  )
+}
+
+const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minutes: number}) => {
   return (
     <FLogRecord background='purple' type='meta'>
       😴 {title} 🌙<br />
-      {content}
+      <Duration hours={hours} minutes={minutes} />
     </FLogRecord>
   )
 }
@@ -41,19 +56,6 @@ const ActivityLog = ({ dt, activity, bg }: {dt: Date, activity: string, bg: stri
       {FormattedDt(dt)} :: {activity}
     </FLogRecord>
   )
-}
-
-// https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
-function msToTime (ms: number): string {
-  let seconds: any = Math.floor((ms / 1000) % 60)
-  let minutes: any = Math.floor((ms / (1000 * 60)) % 60)
-  let hours: any = Math.floor((ms / (1000 * 60 * 60)) % 24)
-
-  hours = (hours < 10) ? '0' + hours : hours
-  minutes = (minutes < 10) ? '0' + minutes : minutes
-  seconds = (seconds < 10) ? '0' + seconds : seconds
-
-  return hours + ':' + minutes + ':' + seconds
 }
 
 /**
@@ -73,12 +75,14 @@ function processLogs (logs: Array<ILog>): Array<any> {
     processedLogs.push(activityLog)
 
     if (log.activity.toLowerCase() === 'wake up') {
-      const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime()
+      const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime() // Possible IooB error here!
+      const sleepObj = msToTime(sleepDuration)
       const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
       const metaLog = {
-        type: 'MetaLog',
+        type: 'SleepLog',
         title: nightBefore.toString().slice(0, 15),
-        content: `Slept: ${msToTime(sleepDuration)}`
+        hours: sleepObj.hours,
+        minutes: sleepObj.minutes
       }
       processedLogs.push(metaLog)
     }
@@ -95,8 +99,8 @@ function renderLogs (items: Array<any>, bg: string): Array<any> {
   console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
   const renderItems = [] as any
   for (const [i, item] of items.entries()) {
-    if (item.type === 'MetaLog') {
-      renderItems.push(<MetaLog key={'ri' + i} {...item} />)
+    if (item.type === 'SleepLog') {
+      renderItems.push(<SleepLog key={'ri' + i} {...item} />)
     } else {
       renderItems.push(<ActivityLog key={'ri' + i} {...item} bg={bg} />)
     }
