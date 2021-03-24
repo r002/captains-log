@@ -26,9 +26,10 @@ const FLogRecord = styled.div<IFlog>`
   `}
 `
 
-const MetaLog = ({ content }: {content: string}) => {
+const MetaLog = ({ title, content }: {title: string, content: string}) => {
   return (
     <FLogRecord background='purple' type='meta'>
+      😴 {title} 🌙<br />
       {content}
     </FLogRecord>
   )
@@ -42,35 +43,45 @@ const ActivityLog = ({ dt, activity, bg }: {dt: Date, activity: string, bg: stri
   )
 }
 
+// https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
+function msToTime (ms: number): string {
+  let seconds: any = Math.floor((ms / 1000) % 60)
+  let minutes: any = Math.floor((ms / (1000 * 60)) % 60)
+  let hours: any = Math.floor((ms / (1000 * 60 * 60)) % 24)
+
+  hours = (hours < 10) ? '0' + hours : hours
+  minutes = (minutes < 10) ? '0' + minutes : minutes
+  seconds = (seconds < 10) ? '0' + seconds : seconds
+
+  return hours + ':' + minutes + ':' + seconds
+}
+
 /**
  * Loop through all raw logs once to add MetaLogs. Happens first.
  * @param logs
  * @returns
  */
 function processLogs (logs: Array<ILog>): Array<any> {
-  // 1. Loop through all logs and add day breaks
   const processedLogs = [] as any
-  let curDate = logs[0].dt
-  console.log('*******cur date:', curDate)
 
-  for (const log of logs) {
-    if (log.dt.toString().slice(0, 15) !== curDate.toString().slice(0, 15)) {
-      // Push a MetaLog into the array
-      const metaLog = {
-        type: 'MetaLog',
-        content: `A NEW DAY!! ${curDate.toString().slice(0, 15)}`
-      }
-      processedLogs.push(metaLog)
-      // processedLogs.push({ dt: curDate, activity: `A NEW DAY!! ${curDate.toString().slice(0, 15)}` })
-      curDate = log.dt
-    }
-
+  for (const [i, log] of logs.entries()) {
     const activityLog = {
       type: 'ActivityLog',
       dt: log.dt,
       activity: log.activity
     }
     processedLogs.push(activityLog)
+
+    if (log.activity.toLowerCase() === 'wake up') {
+      const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime()
+      const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
+      const metaLog = {
+        type: 'MetaLog',
+        title: nightBefore.toString().slice(0, 15),
+        content: `Slept: ${msToTime(sleepDuration)}`
+      }
+      processedLogs.push(metaLog)
+    }
   }
   return processedLogs // Return an array of RenderItems PLUS additional data.
 }
