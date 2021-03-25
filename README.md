@@ -38,4 +38,3 @@ $> taskkill /PID <PID> /F
 - https://mariusschulz.com/blog/declaring-global-variables-in-typescript
 - https://stackoverflow.com/questions/52100103/getting-all-documents-from-one-collection-in-firestore
 - https://medium.com/firebase-developers/the-secrets-of-firestore-fieldvalue-servertimestamp-revealed-29dd7a38a82b
-- https://gitmoji.dev/
