@@ -138,6 +138,7 @@ function renderLogs (items: Array<any>, bg: string): Array<any> {
         renderItems.push(<SleepLog key={'ri' + i} {...item} />)
         break
       case 'ActivityLog':
+      default:
         renderItems.push(<ActivityLog key={'ri' + i} {...item} bg={bg} />)
         break
     }
@@ -160,7 +161,7 @@ export const LogViewer = ({ logs }: {logs: Array<ILog>}) => {
 
       // console.log('>> fired useEffect, pl:', pl)
     } else {
-      setPLogs([])
+      setPLogs([]) // If logs arrives here empty, it means the user has logged out. Clear all logs from viewer.
     }
   }, [logs])
 
