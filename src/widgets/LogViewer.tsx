@@ -98,10 +98,11 @@ function processLogs (logs: Array<ILog>): Array<any> {
         processedLogs.push(sleepLog)
         break
       }
+      case 'return':
       case 'finish': {
         const duration = log.dt.getTime() - logs[i + 1].dt.getTime()
         const activityLog = logs[i + 1].activity.toLowerCase()
-        const activity = /^start\s(?<name>.*)/.exec(activityLog)
+        const activity = /(?:^start|^eat|^begin|^go for)\s(?<name>.*)/.exec(activityLog)
         let activityName = activity?.groups?.name ?? 'Error!!!!'
         activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
         const o = msToTime(duration)
