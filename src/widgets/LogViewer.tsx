@@ -12,7 +12,7 @@ interface IFlog {
 const FLogRecord = styled.div<IFlog>`
   padding: 10px;
   width: 900px;
-  background: darkblue;
+  /* background: darkblue; */
   color: white;
   box-sizing: border-box;
   border: solid darkgray 1px;
@@ -41,9 +41,18 @@ const Duration = ({ hours, minutes }: {hours: number, minutes: number}) => {
   )
 }
 
-const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minutes: number}) => {
+const DurationLog = ({ title, hours, minutes }: {title: string, hours: number, minutes: number}) => {
   return (
     <FLogRecord background='purple' type='meta'>
+      ⌛ {title} 🕒<br />
+      <Duration hours={hours} minutes={minutes} />
+    </FLogRecord>
+  )
+}
+
+const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minutes: number}) => {
+  return (
+    <FLogRecord background='#292929' type='meta'>
       😴 {title} 🌙<br />
       <Duration hours={hours} minutes={minutes} />
     </FLogRecord>
@@ -72,19 +81,39 @@ function processLogs (logs: Array<ILog>): Array<any> {
       dt: log.dt,
       activity: log.activity
     }
-    processedLogs.push(activityLog)
+    processedLogs.push(activityLog) // Add the activity log first.
 
-    if (log.activity.toLowerCase() === 'wake up') {
-      const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime() // Possible IooB error here!
-      const sleepObj = msToTime(sleepDuration)
-      const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
-      const metaLog = {
-        type: 'SleepLog',
-        title: nightBefore.toString().slice(0, 15),
-        hours: sleepObj.hours,
-        minutes: sleepObj.minutes
+    // https://eslint.org/docs/rules/no-case-declarations
+    switch (log.activity.toLowerCase()) {
+      case 'wake up': {
+        const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime() // Possible IooB error here!
+        const sleepObj = msToTime(sleepDuration)
+        const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
+        const sleepLog = {
+          type: 'SleepLog',
+          title: nightBefore.toString().slice(0, 15),
+          hours: sleepObj.hours,
+          minutes: sleepObj.minutes
+        }
+        processedLogs.push(sleepLog)
+        break
       }
-      processedLogs.push(metaLog)
+      case 'finish': {
+        const duration = log.dt.getTime() - logs[i + 1].dt.getTime()
+        const activityLog = logs[i + 1].activity.toLowerCase()
+        const activity = /^start\s(?<name>.*)/.exec(activityLog)
+        let activityName = activity?.groups?.name ?? 'Error!!!!'
+        activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
+        const o = msToTime(duration)
+        const durationLog = {
+          type: 'DurationLog',
+          title: activityName,
+          hours: o.hours,
+          minutes: o.minutes
+        }
+        processedLogs.push(durationLog)
+        break
+      }
     }
   }
   return processedLogs // Return an array of RenderItems PLUS additional data.
@@ -98,11 +127,18 @@ function processLogs (logs: Array<ILog>): Array<any> {
 function renderLogs (items: Array<any>, bg: string): Array<any> {
   console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
   const renderItems = [] as any
+
   for (const [i, item] of items.entries()) {
-    if (item.type === 'SleepLog') {
-      renderItems.push(<SleepLog key={'ri' + i} {...item} />)
-    } else {
-      renderItems.push(<ActivityLog key={'ri' + i} {...item} bg={bg} />)
+    switch (item.type) {
+      case 'DurationLog':
+        renderItems.push(<DurationLog key={'ri' + i} {...item} />)
+        break
+      case 'SleepLog':
+        renderItems.push(<SleepLog key={'ri' + i} {...item} />)
+        break
+      case 'ActivityLog':
+        renderItems.push(<ActivityLog key={'ri' + i} {...item} bg={bg} />)
+        break
     }
   }
   return renderItems
