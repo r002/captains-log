@@ -4,6 +4,7 @@ import { UserContext } from '../providers/AuthContext'
 import firebase from 'firebase/app'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
+import { AutoId } from '../lib/util'
 
 const Box = styled.div`
   padding: 20px;
@@ -37,6 +38,7 @@ async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
     .orderBy('dt', 'desc').limit(100).get()
   const logs = qs.docs.map((doc: any) => (
     {
+      id: doc.id,
       dt: doc.data().dt.toDate(),
       activity: doc.data().activity
     }))
@@ -45,13 +47,9 @@ async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
 }
 
 function writeLog (user: firebase.User, log:ILog): void {
-  firebase.firestore().collection(`users/${user.uid}/logs`)
-  // .withConverter(m.articleConverter)
-    .add(log)
-    .then((docRef: any) => {
-      // newLog.id = docRef.id
-      console.log('>> log added!', docRef.id, log)
-    })
+  firebase.firestore().collection(`users/${user.uid}/logs`).doc(log.id)
+    .set(log)
+  console.log('>> log written to Firestore!', log)
 }
 
 export const LogEntry = () => {
@@ -103,6 +101,7 @@ export const LogEntry = () => {
   function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       const newLog = {
+        id: AutoId.newId(),
         dt: dt,
         activity: activity
       }

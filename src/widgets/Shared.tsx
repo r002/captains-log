@@ -18,6 +18,7 @@ export const FormattedDt = (d: Date) => {
 }
 
 export interface ILog {
+  id: string
   dt: Date
   activity: string
 }

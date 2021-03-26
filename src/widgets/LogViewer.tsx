@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { FormattedDt, ILog } from './Shared'
 import { UserContext } from '../providers/AuthContext'
-import { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { msToTime } from '../lib/util'
 
 interface IFlog {
@@ -59,10 +59,22 @@ const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minu
   )
 }
 
-const ActivityLog = ({ dt, activity, bg }: {dt: Date, activity: string, bg: string}) => {
+const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
+  function handleLogMutation (e: any) { // React.MouseEvent<HTMLButtonElement>
+    console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e.target.id)
+  }
+
   return (
     <FLogRecord title={dt.toString()} background={bg}>
-      {FormattedDt(dt)} :: {activity}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ background: 'transparent' }}>
+          {FormattedDt(dt)} :: {activity}
+        </div>
+        <div style={{ background: 'transparent' }}>
+          <span id={'edit--' + id} onClick={handleLogMutation}>📝</span>&nbsp;
+          <span id={'delete--' + id} onClick={handleLogMutation}>❌</span>
+        </div>
+      </div>
     </FLogRecord>
   )
 }
@@ -78,6 +90,7 @@ function processLogs (logs: Array<ILog>): Array<any> {
   for (const [i, log] of logs.entries()) {
     const activityLog = {
       type: 'ActivityLog',
+      id: log.id,
       dt: log.dt,
       activity: log.activity
     }
