@@ -7,6 +7,9 @@ yarn-error.log*
 firebase-debug.log*
 firebase-debug.*.log*
 
+# Local Firestore data that's saved on exit
+/data/saved_data/
+
 # Firebase cache
 .firebase/
 
