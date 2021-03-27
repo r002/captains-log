@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
-import { getLogs, writeLog, deleteLog } from '../FirestoreApi'
+import { getLogs, writeLog, deleteLog, updateLog } from '../FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { AutoId } from '../lib/util'
@@ -60,11 +60,34 @@ export const LogEntry = () => {
   const [logs, setLogs] = useState([] as Array<ILog>)
 
   function listenGlobally (e: any) {
-    // console.log('^^^^^^^^^ global message received!', u, e)
-    if (e.detail.action === 'deleteLog') {
-      deleteLog(e.detail.logId)
-      setLogs(oldLogs => oldLogs.filter(log => log.id !== e.detail.logId))
-      console.log('deleteLog called! log removed from local view', e.detail.logId)
+    // console.log('^^^^^^^^^ global message received!', e)
+    switch (e.detail.action) {
+      case 'deleteLog':
+        deleteLog(e.detail.logId)
+        setLogs(oldLogs => oldLogs.filter(log => log.id !== e.detail.logId))
+        console.log('^^^^^^^^^deleteLog called! Log removed from local view', e.detail.logId)
+        break
+      case 'updateLog':
+        updateLog({
+          id: e.detail.logId,
+          activity: e.detail.newActivity,
+          dt: new Date() // Currently not working
+        })
+        setLogs(oldLogs => {
+          const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
+          const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
+          newLogs.push({
+            id: e.detail.logId,
+            activity: e.detail.newActivity,
+            dt: oldLog.dt
+          })
+          newLogs.sort((a: any, b: any) => {
+            return b.dt - a.dt
+          })
+          return newLogs
+        })
+        console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail.logId)
+        break
     }
   }
 

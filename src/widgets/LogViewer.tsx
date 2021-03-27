@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { FormattedDt, ILog } from './Shared'
 import { UserContext } from '../providers/AuthContext'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef, MutableRefObject } from 'react'
 import { msToTime } from '../lib/util'
 
 interface IFlog {
@@ -64,10 +64,20 @@ const ActivityLogInput = styled.input`
   border: none;
   outline: none;
   color: lightgrey;
+  width: 500px;
 `
 
-const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
-  function handleLogMutation (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
+type TActivityLog = ILog & {
+  bg: string
+}
+
+// const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
+const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
+  const [editable, setEditable] = useState(false)
+  const [newActivity, setNewActivity] = useState(activity)
+  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
+
+  function handleDeleteAction (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
     // console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e)
     const customEvent = new CustomEvent('globalListener', {
       detail: {
@@ -78,19 +88,52 @@ const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: 
     document.body.dispatchEvent(customEvent)
   }
 
-  // function handleChange (e: React.FormEvent<HTMLInputElement>) {
-  //   console.log('****** edit:', e.currentTarget.value)
-  // }
+  function handleEditAction () {
+    setEditable(!editable)
+  }
+
+  function handleChange (e: React.FormEvent<HTMLInputElement>) {
+    setNewActivity(e.currentTarget.value)
+  }
+
+  function updateLog (e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      const customEvent = new CustomEvent('globalListener', {
+        detail: {
+          logId: e.currentTarget.dataset.logid,
+          newActivity: newActivity,
+          action: 'updateLog'
+        }
+      })
+      document.body.dispatchEvent(customEvent)
+      setEditable(!editable)
+    }
+  }
+
+  useEffect(() => {
+    if (editable) {
+      inputEl.current.focus()
+      inputEl.current.select()
+    }
+  }, [editable])
+
+  useEffect(() => {
+    setNewActivity(activity)
+  }, [activity])
 
   return (
     <FLogRecord title={dt.toString()} background={bg}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ background: 'transparent' }}>
-          {FormattedDt(dt, false)} :: <ActivityLogInput type="text" value={activity} readOnly={true} />
+          {FormattedDt(dt, false)} :: {editable
+            ? <ActivityLogInput data-logid={id} ref={inputEl} type="text" value={newActivity} onChange={handleChange}
+                onKeyDown={updateLog} style={{ background: 'transparent' }} />
+            : <ActivityLogInput type="text" value={activity} readOnly={true} onDoubleClick={handleEditAction} style={{ cursor: 'pointer' }} />
+          }
         </div>
         <div style={{ background: 'transparent' }}>
-          <span data-action='editLog' id={id} onClick={handleLogMutation} style={{ cursor: 'pointer' }}>📝</span>&nbsp;
-          <span data-action='deleteLog' id={id} onClick={handleLogMutation} style={{ cursor: 'pointer' }}>❌</span>
+          {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
+          <span data-action='deleteLog' id={id} onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
         </div>
       </div>
     </FLogRecord>
