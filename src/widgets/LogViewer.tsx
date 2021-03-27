@@ -160,7 +160,10 @@ function processLogs (logs: Array<ILog>): Array<any> {
     // https://eslint.org/docs/rules/no-case-declarations
     switch (log.activity.toLowerCase()) {
       case 'wake up': {
-        const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime() // Possible IooB error here!
+        const coeff = 1000 * 60 // Round times to the nearest minute
+        const endTime = new Date(Math.round(log.dt.getTime() / coeff) * coeff)
+        const startTime = new Date(Math.round(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+        const sleepDuration = endTime.getTime() - startTime.getTime()
         const sleepObj = msToTime(sleepDuration)
         const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
         const sleepLog = {
@@ -174,7 +177,10 @@ function processLogs (logs: Array<ILog>): Array<any> {
       }
       case 'return':
       case 'finish': {
-        const duration = log.dt.getTime() - logs[i + 1].dt.getTime()
+        const coeff = 1000 * 60 // Round times to the nearest minute
+        const endTime = new Date(Math.round(log.dt.getTime() / coeff) * coeff)
+        const startTime = new Date(Math.round(logs[i + 1].dt.getTime() / coeff) * coeff)
+        const duration = endTime.getTime() - startTime.getTime()
         const activityLog = logs[i + 1].activity.toLowerCase()
         const activity = /.*\s(?<name>.*)$/.exec(activityLog)
         let activityName = activity?.groups?.name ?? 'Error!!!!'

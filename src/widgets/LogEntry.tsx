@@ -71,17 +71,14 @@ export const LogEntry = () => {
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          newLogs.push({
+          const newLog = {
             id: e.detail.logId,
             activity: e.detail.newActivity,
             dt: oldLog.dt
-          })
+          }
+          writeLog(newLog)
+          newLogs.push(newLog)
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
-          writeLog({
-            id: e.detail.logId,
-            activity: e.detail.newActivity,
-            dt: oldLog.dt
-          })
           return newLogs
         })
         console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail.logId)
