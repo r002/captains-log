@@ -161,16 +161,16 @@ function processLogs (logs: Array<ILog>): Array<any> {
     switch (log.activity.toLowerCase()) {
       case 'wake up': {
         const coeff = 1000 * 60 // Round times to the nearest minute
-        const endTime = new Date(Math.round(log.dt.getTime() / coeff) * coeff)
-        const startTime = new Date(Math.round(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
-        const sleepDuration = endTime.getTime() - startTime.getTime()
-        const sleepObj = msToTime(sleepDuration)
+        const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+        const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+        const duration = endTime.getTime() - startTime.getTime()
+        const o = msToTime(duration)
         const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
         const sleepLog = {
           type: 'SleepLog',
           title: nightBefore.toString().slice(0, 15),
-          hours: sleepObj.hours,
-          minutes: sleepObj.minutes
+          hours: o.hours,
+          minutes: o.minutes
         }
         processedLogs.push(sleepLog)
         break
@@ -178,14 +178,14 @@ function processLogs (logs: Array<ILog>): Array<any> {
       case 'return':
       case 'finish': {
         const coeff = 1000 * 60 // Round times to the nearest minute
-        const endTime = new Date(Math.round(log.dt.getTime() / coeff) * coeff)
-        const startTime = new Date(Math.round(logs[i + 1].dt.getTime() / coeff) * coeff)
+        const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+        const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
         const duration = endTime.getTime() - startTime.getTime()
+        const o = msToTime(duration)
         const activityLog = logs[i + 1].activity.toLowerCase()
         const activity = /.*\s(?<name>.*)$/.exec(activityLog)
         let activityName = activity?.groups?.name ?? 'Error!!!!'
         activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
-        const o = msToTime(duration)
         const durationLog = {
           type: 'DurationLog',
           title: activityName,
