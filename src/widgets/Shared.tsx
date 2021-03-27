@@ -9,11 +9,13 @@ color: yellow;
 `
 
 // Awaiting TC39 to approve 'Temporal'! 🥴
-export const FormattedDt = (d: Date) => {
+export const FormattedDt = (d: Date, includeSeconds = true) => {
   return (
     <><LimeGreen>{d.toString().slice(0, 15)} </LimeGreen>
-      <Yellow>{d.toString().slice(16, 24)} ET</Yellow></>
-      // <Yellow>{d.toString().slice(16, 21)} ET</Yellow> // Omit seconds
+    {includeSeconds
+      ? <Yellow>{d.toString().slice(16, 24)} ET</Yellow>
+      : <Yellow>{d.toString().slice(16, 21)} ET</Yellow> // Omit seconds
+    }</>
   )
 }
 

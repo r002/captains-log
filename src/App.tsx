@@ -1,9 +1,9 @@
+import firebase from 'firebase/app'
 import { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
 import { LogEntry } from './widgets/LogEntry'
 import { ThemeManager, themes } from './providers/ThemeContext'
 import './style.css'
-import firebase from 'firebase/app'
 import { UserContext } from './providers/AuthContext'
 import styled from 'styled-components'
 

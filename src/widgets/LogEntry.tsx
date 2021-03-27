@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
-import firebase from 'firebase/app'
+import { getLogs, writeLog, deleteLog } from '../FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { AutoId } from '../lib/util'
@@ -31,38 +31,9 @@ const LogInput = styled.input`
   outline: none;
 `
 
-async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
-  // console.log('----------------- fire getLogs!')
+// const LogInputter = () => {
 
-  const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
-    .orderBy('dt', 'desc').limit(100).get()
-  const logs = qs.docs.map((doc: any) => (
-    {
-      id: doc.id,
-      dt: doc.data().dt.toDate(),
-      activity: doc.data().activity
-    }))
-  // console.log('------------------ Return results from db!', logs, user)
-  return logs
-}
-
-function writeLog (user: firebase.User, log:ILog): void {
-  firebase.firestore().collection(`users/${user.uid}/logs`).doc(log.id)
-    .set(log)
-  console.log('>> log written to Firestore!', log)
-}
-
-function deleteLog (logId: string) {
-  const u = firebase.auth().currentUser
-  if (u) {
-    firebase.firestore().collection(`users/${u.uid}/logs`).doc(logId)
-      .delete().then(() => {
-        console.log('Log successfully deleted from Firestore!', u, logId)
-      }).catch((error) => {
-        console.error('Error removing log from Firestore: ', error)
-      })
-  }
-}
+// }
 
 export const LogEntry = () => {
   // console.log('🚀🚀 LogEntry BEGIN rendering')
@@ -107,7 +78,7 @@ export const LogEntry = () => {
         if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
           // If user has written logs anonymously, first write the unsaved logs to Firestore
           for (const log of logs) {
-            writeLog(user, log)
+            writeLog(log)
             console.log('>> write unsaved log to firestore', log)
           }
           // Now update the logs with any from the db. This will update the view.
@@ -135,11 +106,7 @@ export const LogEntry = () => {
         ...oldLogs]
       )
       setActivity('')
-
-      // Write to Firebase if user is signed in
-      if (user) {
-        writeLog(user, newLog)
-      }
+      writeLog(newLog)
     }
   }
 

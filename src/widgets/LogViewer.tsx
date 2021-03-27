@@ -59,6 +59,13 @@ const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minu
   )
 }
 
+const ActivityLogInput = styled.input`
+  background: transparent;
+  border: none;
+  outline: none;
+  color: lightgrey;
+`
+
 const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
   function handleLogMutation (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
     // console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e)
@@ -71,15 +78,19 @@ const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: 
     document.body.dispatchEvent(customEvent)
   }
 
+  // function handleChange (e: React.FormEvent<HTMLInputElement>) {
+  //   console.log('****** edit:', e.currentTarget.value)
+  // }
+
   return (
     <FLogRecord title={dt.toString()} background={bg}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ background: 'transparent' }}>
-          {FormattedDt(dt)} :: {activity}
+          {FormattedDt(dt, false)} :: <ActivityLogInput type="text" value={activity} readOnly={true} />
         </div>
         <div style={{ background: 'transparent' }}>
-          <span data-action='editLog' id={id} onClick={handleLogMutation}>📝</span>&nbsp;
-          <span data-action='deleteLog' id={id} onClick={handleLogMutation}>❌</span>
+          <span data-action='editLog' id={id} onClick={handleLogMutation} style={{ cursor: 'pointer' }}>📝</span>&nbsp;
+          <span data-action='deleteLog' id={id} onClick={handleLogMutation} style={{ cursor: 'pointer' }}>❌</span>
         </div>
       </div>
     </FLogRecord>
