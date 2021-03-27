@@ -31,25 +31,33 @@ const LogInput = styled.input`
   outline: none;
 `
 
-// const LogInputter = () => {
-
-// }
-
-export const LogEntry = () => {
-  // console.log('🚀🚀 LogEntry BEGIN rendering')
-
-  const { user } = useContext(UserContext)
-  const [logs, setLogs] = useState([] as Array<ILog>)
+const Ticker = () => {
   const [dt, setDt] = useState(new Date())
-  const [activity, setActivity] = useState('')
 
   function tick () {
     setDt(new Date())
   }
 
-  function handleChange (e: React.FormEvent<HTMLInputElement>) {
-    setActivity(e.currentTarget.value)
-  }
+  useEffect(() => {
+    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
+
+  return (
+    <>
+      {FormattedDt(dt)}
+    </>
+  )
+}
+
+export const LogEntry = () => {
+  // console.log('🚀🚀 LogEntry BEGIN rendering')
+
+  const [activity, setActivity] = useState('')
+  const { user } = useContext(UserContext)
+  const [logs, setLogs] = useState([] as Array<ILog>)
 
   function listenGlobally (e: any) {
     // console.log('^^^^^^^^^ global message received!', u, e)
@@ -61,11 +69,8 @@ export const LogEntry = () => {
   }
 
   useEffect(() => {
-    // tick()
-    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
     document.body.addEventListener('globalListener', listenGlobally, false)
     return () => {
-      clearInterval(interval)
       document.body.removeEventListener('globalListener', listenGlobally)
     }
   }, [])
@@ -94,11 +99,15 @@ export const LogEntry = () => {
     }
   }, [user])
 
+  function handleChange (e: React.FormEvent<HTMLInputElement>) {
+    setActivity(e.currentTarget.value)
+  }
+
   function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       const newLog = {
         id: AutoId.newId(),
-        dt: dt,
+        dt: new Date(),
         activity: activity
       }
       setLogs((oldLogs: Array<ILog>) => [
@@ -114,7 +123,7 @@ export const LogEntry = () => {
   return (
     <>
       <Box>
-        <Prompt><span title='Robert Shell 😄'>RS</span> {FormattedDt(dt)}</Prompt>
+        <Prompt><span title='Robert Shell 😄'>RS</span> <Ticker /></Prompt>
         $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={addLog}></LogInput>
       </Box>
       <br /><br />
