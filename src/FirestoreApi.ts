@@ -20,25 +20,10 @@ export function writeLog (log: ILog): void {
   const u = firebase.auth().currentUser
   if (u) {
     firebase.firestore().collection(`users/${u.uid}/logs`).doc(log.id)
-      .set(log).then(() => {
+      .set(log, { merge: true }).then(() => {
         console.log('>> Log written to Firestore!', log)
       }).catch((error) => {
         console.error('Error writing log to Firestore: ', error)
-      })
-  }
-}
-
-export function updateLog (log: ILog): void {
-  const u = firebase.auth().currentUser
-  if (u) {
-    firebase.firestore().collection(`users/${u.uid}/logs`).doc(log.id)
-      .update({
-        id: log.id,
-        activity: log.activity
-      }).then(() => {
-        console.log('>> Log updated Firestore!', log)
-      }).catch((error) => {
-        console.error('Error updating log in Firestore: ', error)
       })
   }
 }

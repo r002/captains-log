@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
-import { getLogs, writeLog, deleteLog, updateLog } from '../FirestoreApi'
+import { getLogs, writeLog, deleteLog } from '../FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { AutoId } from '../lib/util'
@@ -68,11 +68,6 @@ export const LogEntry = () => {
         console.log('^^^^^^^^^deleteLog called! Log removed from local view', e.detail.logId)
         break
       case 'updateLog':
-        updateLog({
-          id: e.detail.logId,
-          activity: e.detail.newActivity,
-          dt: new Date() // Currently not working
-        })
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
@@ -81,8 +76,11 @@ export const LogEntry = () => {
             activity: e.detail.newActivity,
             dt: oldLog.dt
           })
-          newLogs.sort((a: any, b: any) => {
-            return b.dt - a.dt
+          newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
+          writeLog({
+            id: e.detail.logId,
+            activity: e.detail.newActivity,
+            dt: oldLog.dt
           })
           return newLogs
         })
