@@ -9,19 +9,23 @@ import styled from 'styled-components'
 
 export const useAuth = () => {
   const [state, setState] = useState(() => {
-    const user = firebase.auth().currentUser
+    // const user = firebase.auth().currentUser
 
     return {
       initializing: true,
-      user: user
+      user: null
     }
   })
 
   function onChange (user: any) {
-    setState({
-      initializing: false,
-      user: user
+    setState(() => {
+      // console.log('^^^^^^^^^^^^^^^^^^user auth has changed!', user)
+      return {
+        initializing: false,
+        user: user
+      }
     })
+    // console.log('^^^^^^^^^^^^^^^^^^firesbase auth onChange fired. User:', user)
   }
 
   useEffect(() => {
@@ -68,6 +72,8 @@ const App = () => {
         </ThemeManager.Provider>
       </>
     document.body.style.visibility = 'visible'
+  } else {
+    console.log('firebase is initializing!!!!')
   }
 
   // console.log('App render fired 😁')

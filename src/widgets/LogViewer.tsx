@@ -60,8 +60,15 @@ const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minu
 }
 
 const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
-  function handleLogMutation (e: any) { // React.MouseEvent<HTMLButtonElement>
-    console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e.target.id)
+  function handleLogMutation (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
+    // console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e)
+    const customEvent = new CustomEvent('globalListener', {
+      detail: {
+        logId: e.currentTarget.id,
+        action: e.currentTarget.dataset.action
+      }
+    })
+    document.body.dispatchEvent(customEvent)
   }
 
   return (
@@ -71,8 +78,8 @@ const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: 
           {FormattedDt(dt)} :: {activity}
         </div>
         <div style={{ background: 'transparent' }}>
-          <span id={'edit--' + id} onClick={handleLogMutation}>📝</span>&nbsp;
-          <span id={'delete--' + id} onClick={handleLogMutation}>❌</span>
+          <span data-action='editLog' id={id} onClick={handleLogMutation}>📝</span>&nbsp;
+          <span data-action='deleteLog' id={id} onClick={handleLogMutation}>❌</span>
         </div>
       </div>
     </FLogRecord>
@@ -139,7 +146,7 @@ function processLogs (logs: Array<ILog>): Array<any> {
  * @returns
  */
 function renderLogs (items: Array<any>, bg: string): Array<any> {
-  console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
+  // console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
   const renderItems = [] as any
 
   for (const [i, item] of items.entries()) {

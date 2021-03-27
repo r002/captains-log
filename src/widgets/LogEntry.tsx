@@ -32,7 +32,7 @@ const LogInput = styled.input`
 `
 
 async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
-  console.log('----------------- fire getLogs!')
+  // console.log('----------------- fire getLogs!')
 
   const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
     .orderBy('dt', 'desc').limit(100).get()
@@ -42,7 +42,7 @@ async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
       dt: doc.data().dt.toDate(),
       activity: doc.data().activity
     }))
-  console.log('------------------ Return results from db!', logs, user)
+  // console.log('------------------ Return results from db!', logs, user)
   return logs
 }
 
@@ -50,6 +50,18 @@ function writeLog (user: firebase.User, log:ILog): void {
   firebase.firestore().collection(`users/${user.uid}/logs`).doc(log.id)
     .set(log)
   console.log('>> log written to Firestore!', log)
+}
+
+function deleteLog (logId: string) {
+  const u = firebase.auth().currentUser
+  if (u) {
+    firebase.firestore().collection(`users/${u.uid}/logs`).doc(logId)
+      .delete().then(() => {
+        console.log('Log successfully deleted from Firestore!', u, logId)
+      }).catch((error) => {
+        console.error('Error removing log from Firestore: ', error)
+      })
+  }
 }
 
 export const LogEntry = () => {
@@ -64,15 +76,28 @@ export const LogEntry = () => {
     setDt(new Date())
   }
 
-  useEffect(() => {
-    // tick()
-    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
-    return () => clearInterval(interval)
-  }, [])
-
   function handleChange (e: React.FormEvent<HTMLInputElement>) {
     setActivity(e.currentTarget.value)
   }
+
+  function listenGlobally (e: any) {
+    // console.log('^^^^^^^^^ global message received!', u, e)
+    if (e.detail.action === 'deleteLog') {
+      deleteLog(e.detail.logId)
+      setLogs(oldLogs => oldLogs.filter(log => log.id !== e.detail.logId))
+      console.log('deleteLog called! log removed from local view', e.detail.logId)
+    }
+  }
+
+  useEffect(() => {
+    // tick()
+    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
+    document.body.addEventListener('globalListener', listenGlobally, false)
+    return () => {
+      clearInterval(interval)
+      document.body.removeEventListener('globalListener', listenGlobally)
+    }
+  }, [])
 
   // Initial load logs from db if user signs in
   useEffect(() => {
