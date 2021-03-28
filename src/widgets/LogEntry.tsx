@@ -59,7 +59,7 @@ export const LogEntry = () => {
   const { user } = useContext(UserContext)
   const [logs, setLogs] = useState([] as Array<ILog>)
 
-  function listenGlobally (event: Event) {
+  function listenForLogAction (event: Event) {
     const e = event as CustomEvent
     // console.log('^^^^^^^^^ global message received!', e)
 
@@ -105,9 +105,9 @@ export const LogEntry = () => {
   }
 
   useEffect(() => {
-    document.body.addEventListener('globalListener', listenGlobally, false)
+    document.body.addEventListener('logAction', listenForLogAction, false)
     return () => {
-      document.body.removeEventListener('globalListener', listenGlobally)
+      document.body.removeEventListener('logAction', listenForLogAction)
     }
   }, [])
 

@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { msToTime } from '../lib/util'
 import DtInput from './DtInput'
 import ActivityInput from './ActivityInput'
+import { sendLogDelete } from '../services/Internal'
 
 interface IFlog {
   readonly background?: string
@@ -67,15 +68,8 @@ type TActivityLog = ILog & {
 
 // const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
 const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
-  function handleDeleteAction (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
-    // console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e)
-    const customEvent = new CustomEvent('globalListener', {
-      detail: {
-        logId: e.currentTarget.id,
-        action: e.currentTarget.dataset.action
-      }
-    })
-    document.body.dispatchEvent(customEvent)
+  function handleDeleteAction () {
+    sendLogDelete(id)
   }
 
   return (
@@ -86,7 +80,7 @@ const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
         </div>
         <div style={{ background: 'transparent' }}>
           {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
-          <span data-action='deleteLog' id={id} onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
+          <span onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
         </div>
       </div>
     </FLogRecord>

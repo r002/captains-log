@@ -23,7 +23,7 @@ type TDateUpdate = {
 }
 
 export function sendDateUpdate (du: TDateUpdate) {
-  const customEvent = new CustomEvent('globalListener', {
+  const customEvent = new CustomEvent('logAction', {
     detail: {
       logId: du.logId,
       newDate: du.newDate,
@@ -39,11 +39,21 @@ type TActivityUpdate = {
 }
 
 export function sendActivityUpdate (au: TActivityUpdate) {
-  const customEvent = new CustomEvent('globalListener', {
+  const customEvent = new CustomEvent('logAction', {
     detail: {
       logId: au.logId,
       newActivity: au.newActivity,
       action: 'updateActivity'
+    }
+  })
+  document.body.dispatchEvent(customEvent)
+}
+
+export function sendLogDelete (logId: string) {
+  const customEvent = new CustomEvent('logAction', {
+    detail: {
+      logId: logId,
+      action: 'deleteLog'
     }
   })
   document.body.dispatchEvent(customEvent)
