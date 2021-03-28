@@ -119,6 +119,10 @@ export const DtInput = ({ date, logId }: TDtInput) => {
     }
   }, [editableDt])
 
+  useEffect(() => {
+    setNewDate(date.toString().slice(0, 21) + ' ET')
+  }, [date])
+
   return (
     <>
       {editableDt
