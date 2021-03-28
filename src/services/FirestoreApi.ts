@@ -1,5 +1,5 @@
 import firebase from 'firebase/app'
-import { ILog } from './widgets/Shared'
+import { ILog } from '../widgets/Shared'
 
 export async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
   // console.log('----------------- fire getLogs!')

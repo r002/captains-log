@@ -6,8 +6,10 @@ import { ThemeManager, themes } from './providers/ThemeContext'
 import './style.css'
 import { UserContext } from './providers/AuthContext'
 import styled from 'styled-components'
+import { TFlashAlert } from './services/Internal'
+import { FlashAlert } from './widgets/FlashAlert'
 
-export const useAuth = () => {
+const useAuth = () => {
   const [state, setState] = useState(() => {
     // const user = firebase.auth().currentUser
 
@@ -49,6 +51,7 @@ const Body = styled.div`
 const App = () => {
   const [theme, setTheme] = useState(themes.light)
   const { initializing, user } = useAuth()
+  const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
 
   function togTheme () {
     setTheme(currentTheme => {
@@ -58,6 +61,19 @@ const App = () => {
     })
   }
 
+  function listenForFlashAlert (event: Event) {
+    const fa = (event as CustomEvent).detail as TFlashAlert
+    setFlashAlert(fa)
+    console.log('!!!!!!!!!!!!!! FlashAlert received!', fa)
+  }
+
+  useEffect(() => {
+    document.body.addEventListener('flashAlert', listenForFlashAlert, false)
+    return () => {
+      document.body.removeEventListener('flashAlert', listenForFlashAlert)
+    }
+  }, [])
+
   let appWrapper = <></>
   if (!initializing) {
     appWrapper =
@@ -66,6 +82,10 @@ const App = () => {
           <UserContext.Provider value={{ user }}>
             <Navbar changeTheme={togTheme} />
             <Body>
+              {flashAlert &&
+                <FlashAlert key={new Date().toString()} {...flashAlert} />
+              }
+              <br />
               <LogEntry />
             </Body>
           </UserContext.Provider>

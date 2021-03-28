@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { LimeGreen, Yellow } from './Shared'
 import React, { useEffect, useState, useRef, MutableRefObject } from 'react'
+import { sendFlashAlert, sendDateUpdate } from '../services/Internal'
 
 const FDtInput = styled.input`
   background: transparent;
@@ -33,17 +34,28 @@ const DtInput = ({ date, logId }: TDtInput) => {
   function handleKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
     switch (e.key) {
       case 'Enter': {
-        const customEvent = new CustomEvent('globalListener', {
-          detail: {
-            logId: e.currentTarget.dataset.logid,
-            newDate: new Date(newDate.slice(0, -3)),
-            action: 'updateDt'
-          }
+        // Try to parse newDate. If it's invalid, send FlashAlert and return early
+        console.log('------trying to parse:', newDate.slice(0, -3))
+        const newDateFromUser = new Date(newDate.slice(0, -3)) // Chop off the ' ET'
+        if (isNaN(newDateFromUser.getTime())) {
+          console.log('------newDateFromUser is malformed:', newDate.slice(0, -3))
+          sendFlashAlert({
+            alert: 'Error! Your datetime is malformed',
+            content: newDate, // This is a malformed date string
+            debug: {
+              logId: logId
+            }
+          })
+          return
+        }
+
+        sendDateUpdate({
+          logId: logId,
+          newDate: newDateFromUser // This is a legit, well-formed Date obj
         })
-        document.body.dispatchEvent(customEvent)
 
         // Convert the string into a date object
-        console.log('newDate:', new Date(newDate.slice(0, -3)))
+        console.log('newDateFromUser:', newDateFromUser)
 
         setEditableDt(false)
         break
@@ -64,12 +76,13 @@ const DtInput = ({ date, logId }: TDtInput) => {
 
   useEffect(() => {
     setNewDate(date.toString().slice(0, 21) + ' ET')
+    setEditableDt(false) // Reset to readonly mode if entire widget is rerendered
   }, [date])
 
   return (
     <>
       {editableDt
-        ? <FDtInput type="text" data-logid={logId} value={newDate} onChange={handleChange}
+        ? <FDtInput type="text" value={newDate} onChange={handleChange}
             onKeyDown={handleKeyDown} ref={inputDt} style={{ color: 'white' }} />
         : <span onDoubleClick={handleDtDoubleClick} style={{ cursor: 'pointer' }}>
             <LimeGreen>{date.toString().slice(0, 15)} </LimeGreen>

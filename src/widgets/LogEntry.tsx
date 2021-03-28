@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
-import { getLogs, writeLog, deleteLog } from '../FirestoreApi'
+import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { AutoId } from '../lib/util'
@@ -59,8 +59,10 @@ export const LogEntry = () => {
   const { user } = useContext(UserContext)
   const [logs, setLogs] = useState([] as Array<ILog>)
 
-  function listenGlobally (e: any) {
+  function listenGlobally (event: Event) {
+    const e = event as CustomEvent
     // console.log('^^^^^^^^^ global message received!', e)
+
     switch (e.detail.action) {
       case 'deleteLog':
         deleteLog(e.detail.logId)

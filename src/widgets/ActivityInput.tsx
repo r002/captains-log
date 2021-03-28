@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useRef, MutableRefObject } from 'react'
+import { sendActivityUpdate } from '../services/Internal'
 
 const FActivityInput = styled.input`
   background: transparent;
@@ -30,15 +31,11 @@ const ActivityInput = ({ logId, activity }: TActivityInput) => {
   function handleActivityKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
     switch (e.key) {
       case 'Enter': {
-        const customEvent = new CustomEvent('globalListener', {
-          detail: {
-            logId: e.currentTarget.dataset.logid,
-            newActivity: newActivity,
-            action: 'updateActivity'
-          }
+        sendActivityUpdate({
+          logId: logId,
+          newActivity: newActivity
         })
-        document.body.dispatchEvent(customEvent)
-        setEditableActivity(!editableActivity)
+        setEditableActivity(false)
         break
       }
       case 'Escape':
@@ -57,14 +54,16 @@ const ActivityInput = ({ logId, activity }: TActivityInput) => {
 
   useEffect(() => {
     setNewActivity(activity)
+    setEditableActivity(false) // Reset to readonly mode if entire widget is rerendered
   }, [activity])
 
   return (
     <>
       {editableActivity
-        ? <FActivityInput data-logid={logId} ref={inputActivity} type="text" value={newActivity} onChange={handleChange}
-            onKeyDown={handleActivityKeyDown} style={{ color: 'white' }} />
-        : <FActivityInput type="text" value={activity} readOnly={true} onDoubleClick={handleActivityDoubleClick} style={{ cursor: 'pointer' }} />
+        ? <FActivityInput ref={inputActivity} type="text" value={newActivity}
+            onChange={handleChange} onKeyDown={handleActivityKeyDown} style={{ color: 'white' }} />
+        : <FActivityInput type="text" value={activity} readOnly={true}
+            onDoubleClick={handleActivityDoubleClick} style={{ cursor: 'pointer' }} />
       }
     </>
   )
