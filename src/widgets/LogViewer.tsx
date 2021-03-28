@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { FormattedDt, ILog } from './Shared'
+import { ILog, LimeGreen, Yellow } from './Shared'
 import { UserContext } from '../providers/AuthContext'
 import React, { useContext, useEffect, useState, useRef, MutableRefObject } from 'react'
 import { msToTime } from '../lib/util'
@@ -59,7 +59,81 @@ const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minu
   )
 }
 
-const ActivityLogInput = styled.input`
+const FDtInput = styled.input`
+  background: transparent;
+  border: none;
+  outline: none;
+  color: lightgrey;
+  width: 202px;
+  margin: 0;
+  padding: 0;
+`
+
+type TDtInput = {
+  date: Date,
+  logId: string
+}
+
+export const DtInput = ({ date, logId }: TDtInput) => {
+  const [editableDt, setEditableDt] = useState(false)
+  const [newDate, setNewDate] = useState(date.toString().slice(0, 21) + ' ET')
+  const inputDt = useRef() as MutableRefObject<HTMLInputElement>
+
+  function handleDtDoubleClick () {
+    setEditableDt(true)
+  }
+
+  function handleChange (e: React.FormEvent<HTMLInputElement>) {
+    setNewDate(e.currentTarget.value)
+  }
+
+  function handleKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
+    switch (e.key) {
+      case 'Enter': {
+        const customEvent = new CustomEvent('globalListener', {
+          detail: {
+            logId: e.currentTarget.dataset.logid,
+            newDate: new Date(newDate.slice(0, -3)),
+            action: 'updateDt'
+          }
+        })
+        document.body.dispatchEvent(customEvent)
+
+        // Convert the string into a date object
+        console.log('newDate:', new Date(newDate.slice(0, -3)))
+
+        setEditableDt(false)
+        break
+      }
+      case 'Escape':
+        setEditableDt(false)
+        setNewDate(date.toString().slice(0, 21) + ' ET')
+        break
+    }
+  }
+
+  useEffect(() => {
+    if (editableDt) {
+      inputDt.current.focus()
+      inputDt.current.select()
+    }
+  }, [editableDt])
+
+  return (
+    <>
+      {editableDt
+        ? <FDtInput type="text" data-logid={logId} value={newDate} onChange={handleChange}
+            onKeyDown={handleKeyDown} ref={inputDt} style={{ color: 'white' }} />
+        : <span onDoubleClick={handleDtDoubleClick} style={{ cursor: 'pointer' }}>
+            <LimeGreen>{date.toString().slice(0, 15)} </LimeGreen>
+            <Yellow>{date.toString().slice(16, 21)} ET</Yellow>
+          </span>
+      }
+    </>
+  )
+}
+
+const ActivityInput = styled.input`
   background: transparent;
   border: none;
   outline: none;
@@ -73,9 +147,9 @@ type TActivityLog = ILog & {
 
 // const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
 const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
-  const [editable, setEditable] = useState(false)
+  const [editableActivity, setEditableActivity] = useState(false)
   const [newActivity, setNewActivity] = useState(activity)
-  const inputEl = useRef() as MutableRefObject<HTMLInputElement>
+  const inputActivity = useRef() as MutableRefObject<HTMLInputElement>
 
   function handleDeleteAction (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
     // console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e)
@@ -88,34 +162,41 @@ const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
     document.body.dispatchEvent(customEvent)
   }
 
-  function handleEditAction () {
-    setEditable(!editable)
+  function handleActivityDoubleClick () {
+    setEditableActivity(true)
   }
 
   function handleChange (e: React.FormEvent<HTMLInputElement>) {
     setNewActivity(e.currentTarget.value)
   }
 
-  function updateLog (e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
-      const customEvent = new CustomEvent('globalListener', {
-        detail: {
-          logId: e.currentTarget.dataset.logid,
-          newActivity: newActivity,
-          action: 'updateLog'
-        }
-      })
-      document.body.dispatchEvent(customEvent)
-      setEditable(!editable)
+  function handleActivityKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
+    switch (e.key) {
+      case 'Enter': {
+        const customEvent = new CustomEvent('globalListener', {
+          detail: {
+            logId: e.currentTarget.dataset.logid,
+            newActivity: newActivity,
+            action: 'updateActivity'
+          }
+        })
+        document.body.dispatchEvent(customEvent)
+        setEditableActivity(!editableActivity)
+        break
+      }
+      case 'Escape':
+        setEditableActivity(false)
+        setNewActivity(activity)
+        break
     }
   }
 
   useEffect(() => {
-    if (editable) {
-      inputEl.current.focus()
-      inputEl.current.select()
+    if (editableActivity) {
+      inputActivity.current.focus()
+      inputActivity.current.select()
     }
-  }, [editable])
+  }, [editableActivity])
 
   useEffect(() => {
     setNewActivity(activity)
@@ -125,10 +206,10 @@ const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
     <FLogRecord title={dt.toString()} background={bg}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ background: 'transparent' }}>
-          {FormattedDt(dt, false)} :: {editable
-            ? <ActivityLogInput data-logid={id} ref={inputEl} type="text" value={newActivity} onChange={handleChange}
-                onKeyDown={updateLog} style={{ background: 'transparent' }} />
-            : <ActivityLogInput type="text" value={activity} readOnly={true} onDoubleClick={handleEditAction} style={{ cursor: 'pointer' }} />
+          <DtInput date={dt} logId={id} /> :: {editableActivity
+            ? <ActivityInput data-logid={id} ref={inputActivity} type="text" value={newActivity} onChange={handleChange}
+                onKeyDown={handleActivityKeyDown} style={{ color: 'white' }} />
+            : <ActivityInput type="text" value={activity} readOnly={true} onDoubleClick={handleActivityDoubleClick} style={{ cursor: 'pointer' }} />
           }
         </div>
         <div style={{ background: 'transparent' }}>

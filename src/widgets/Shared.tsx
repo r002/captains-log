@@ -1,20 +1,21 @@
 import styled from 'styled-components'
 
-const LimeGreen = styled.span`
-color: limegreen;
+export const LimeGreen = styled.span`
+  color: limegreen;
 `
 
-const Yellow = styled.span`
-color: yellow;
+export const Yellow = styled.span`
+  color: yellow;
 `
 
 // Awaiting TC39 to approve 'Temporal'! 🥴
-export const FormattedDt = (d: Date, includeSeconds = true) => {
+export const FormattedDt = ({ date, includeSeconds }: {date: Date, includeSeconds: boolean}) => {
   return (
-    <><LimeGreen>{d.toString().slice(0, 15)} </LimeGreen>
+    <>
+      <LimeGreen>{date.toString().slice(0, 15)} </LimeGreen>
     {includeSeconds
-      ? <Yellow>{d.toString().slice(16, 24)} ET</Yellow>
-      : <Yellow>{d.toString().slice(16, 21)} ET</Yellow> // Omit seconds
+      ? <Yellow>{date.toString().slice(16, 24)} ET</Yellow>
+      : <Yellow>{date.toString().slice(16, 21)} ET</Yellow> // Omit seconds
     }</>
   )
 }

@@ -47,7 +47,7 @@ const Ticker = () => {
 
   return (
     <>
-      {FormattedDt(dt)}
+      <FormattedDt date={dt} includeSeconds={true} />
     </>
   )
 }
@@ -65,9 +65,9 @@ export const LogEntry = () => {
       case 'deleteLog':
         deleteLog(e.detail.logId)
         setLogs(oldLogs => oldLogs.filter(log => log.id !== e.detail.logId))
-        console.log('^^^^^^^^^deleteLog called! Log removed from local view', e.detail.logId)
+        console.log('^^^^^^^^^deleteLog called! Log removed from local view', e.detail)
         break
-      case 'updateLog':
+      case 'updateActivity':
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
@@ -81,7 +81,23 @@ export const LogEntry = () => {
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
           return newLogs
         })
-        console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail.logId)
+        console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail)
+        break
+      case 'updateDt':
+        setLogs(oldLogs => {
+          const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
+          const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
+          const newLog = {
+            id: e.detail.logId,
+            activity: oldLog.activity,
+            dt: e.detail.newDate
+          }
+          writeLog(newLog)
+          newLogs.push(newLog)
+          newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
+          return newLogs
+        })
+        console.log('^^^^^^^^^updateDt called! Log updated in local view', e.detail)
         break
     }
   }
