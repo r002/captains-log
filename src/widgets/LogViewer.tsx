@@ -1,8 +1,10 @@
 import styled, { css } from 'styled-components'
-import { ILog, LimeGreen, Yellow } from './Shared'
+import { ILog } from './Shared'
 import { UserContext } from '../providers/AuthContext'
-import React, { useContext, useEffect, useState, useRef, MutableRefObject } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { msToTime } from '../lib/util'
+import DtInput from './DtInput'
+import ActivityInput from './ActivityInput'
 
 interface IFlog {
   readonly background?: string
@@ -59,102 +61,12 @@ const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minu
   )
 }
 
-const FDtInput = styled.input`
-  background: transparent;
-  border: none;
-  outline: none;
-  color: lightgrey;
-  width: 202px;
-  margin: 0;
-  padding: 0;
-`
-
-type TDtInput = {
-  date: Date,
-  logId: string
-}
-
-export const DtInput = ({ date, logId }: TDtInput) => {
-  const [editableDt, setEditableDt] = useState(false)
-  const [newDate, setNewDate] = useState(date.toString().slice(0, 21) + ' ET')
-  const inputDt = useRef() as MutableRefObject<HTMLInputElement>
-
-  function handleDtDoubleClick () {
-    setEditableDt(true)
-  }
-
-  function handleChange (e: React.FormEvent<HTMLInputElement>) {
-    setNewDate(e.currentTarget.value)
-  }
-
-  function handleKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
-    switch (e.key) {
-      case 'Enter': {
-        const customEvent = new CustomEvent('globalListener', {
-          detail: {
-            logId: e.currentTarget.dataset.logid,
-            newDate: new Date(newDate.slice(0, -3)),
-            action: 'updateDt'
-          }
-        })
-        document.body.dispatchEvent(customEvent)
-
-        // Convert the string into a date object
-        console.log('newDate:', new Date(newDate.slice(0, -3)))
-
-        setEditableDt(false)
-        break
-      }
-      case 'Escape':
-        setEditableDt(false)
-        setNewDate(date.toString().slice(0, 21) + ' ET')
-        break
-    }
-  }
-
-  useEffect(() => {
-    if (editableDt) {
-      inputDt.current.focus()
-      inputDt.current.select()
-    }
-  }, [editableDt])
-
-  useEffect(() => {
-    setNewDate(date.toString().slice(0, 21) + ' ET')
-  }, [date])
-
-  return (
-    <>
-      {editableDt
-        ? <FDtInput type="text" data-logid={logId} value={newDate} onChange={handleChange}
-            onKeyDown={handleKeyDown} ref={inputDt} style={{ color: 'white' }} />
-        : <span onDoubleClick={handleDtDoubleClick} style={{ cursor: 'pointer' }}>
-            <LimeGreen>{date.toString().slice(0, 15)} </LimeGreen>
-            <Yellow>{date.toString().slice(16, 21)} ET</Yellow>
-          </span>
-      }
-    </>
-  )
-}
-
-const ActivityInput = styled.input`
-  background: transparent;
-  border: none;
-  outline: none;
-  color: lightgrey;
-  width: 500px;
-`
-
 type TActivityLog = ILog & {
   bg: string
 }
 
 // const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
 const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
-  const [editableActivity, setEditableActivity] = useState(false)
-  const [newActivity, setNewActivity] = useState(activity)
-  const inputActivity = useRef() as MutableRefObject<HTMLInputElement>
-
   function handleDeleteAction (e: React.MouseEvent<HTMLElement>) { // React.MouseEvent<HTMLButtonElement>
     // console.log('>>>>>>>>> handleLogMutation fired! e.target.id:', e)
     const customEvent = new CustomEvent('globalListener', {
@@ -166,55 +78,11 @@ const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
     document.body.dispatchEvent(customEvent)
   }
 
-  function handleActivityDoubleClick () {
-    setEditableActivity(true)
-  }
-
-  function handleChange (e: React.FormEvent<HTMLInputElement>) {
-    setNewActivity(e.currentTarget.value)
-  }
-
-  function handleActivityKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
-    switch (e.key) {
-      case 'Enter': {
-        const customEvent = new CustomEvent('globalListener', {
-          detail: {
-            logId: e.currentTarget.dataset.logid,
-            newActivity: newActivity,
-            action: 'updateActivity'
-          }
-        })
-        document.body.dispatchEvent(customEvent)
-        setEditableActivity(!editableActivity)
-        break
-      }
-      case 'Escape':
-        setEditableActivity(false)
-        setNewActivity(activity)
-        break
-    }
-  }
-
-  useEffect(() => {
-    if (editableActivity) {
-      inputActivity.current.focus()
-      inputActivity.current.select()
-    }
-  }, [editableActivity])
-
-  useEffect(() => {
-    setNewActivity(activity)
-  }, [activity])
-
   return (
     <FLogRecord title={dt.toString()} background={bg}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ background: 'transparent' }}>
-          <DtInput date={dt} logId={id} /> :: {editableActivity
-            ? <ActivityInput data-logid={id} ref={inputActivity} type="text" value={newActivity} onChange={handleChange}
-                onKeyDown={handleActivityKeyDown} style={{ color: 'white' }} />
-            : <ActivityInput type="text" value={activity} readOnly={true} onDoubleClick={handleActivityDoubleClick} style={{ cursor: 'pointer' }} />
-          }
+          <DtInput date={dt} logId={id} /> :: <ActivityInput activity={activity} logId={id} />
         </div>
         <div style={{ background: 'transparent' }}>
           {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
