@@ -74,6 +74,10 @@ const App = () => {
     }
   }, [])
 
+  useEffect(() => {
+    setFlashAlert(null) // Reset the Flash Alert every time user signs in/out
+  }, [user])
+
   let appWrapper = <></>
   if (!initializing) {
     appWrapper =

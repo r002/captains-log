@@ -21,7 +21,7 @@ const fadeInAndOut = keyframes`
 
 const Fade = styled.div`
   display: inline-block;
-  animation: ${fadeInAndOut} 5s linear forwards;
+  animation: ${fadeInAndOut} 4s linear forwards;
   background-color: palegoldenrod;
   color: black;
   padding: 5px;
