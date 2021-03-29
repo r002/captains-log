@@ -1,8 +1,11 @@
 import styled, { css } from 'styled-components'
-import { FormattedDt, ILog } from './Shared'
+import { ILog } from './Shared'
 import { UserContext } from '../providers/AuthContext'
-import { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { msToTime } from '../lib/util'
+import DtInput from './DtInput'
+import ActivityInput from './ActivityInput'
+import { sendLogDelete } from '../services/Internal'
 
 interface IFlog {
   readonly background?: string
@@ -59,10 +62,27 @@ const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minu
   )
 }
 
-const ActivityLog = ({ dt, activity, bg }: {dt: Date, activity: string, bg: string}) => {
+type TActivityLog = ILog & {
+  bg: string
+}
+
+// const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
+const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
+  function handleDeleteAction () {
+    sendLogDelete(id)
+  }
+
   return (
     <FLogRecord title={dt.toString()} background={bg}>
-      {FormattedDt(dt)} :: {activity}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ background: 'transparent' }}>
+          <DtInput date={dt} logId={id} /> :: <ActivityInput activity={activity} logId={id} />
+        </div>
+        <div style={{ background: 'transparent' }}>
+          {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
+          <span onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
+        </div>
+      </div>
     </FLogRecord>
   )
 }
@@ -78,6 +98,7 @@ function processLogs (logs: Array<ILog>): Array<any> {
   for (const [i, log] of logs.entries()) {
     const activityLog = {
       type: 'ActivityLog',
+      id: log.id,
       dt: log.dt,
       activity: log.activity
     }
@@ -86,26 +107,32 @@ function processLogs (logs: Array<ILog>): Array<any> {
     // https://eslint.org/docs/rules/no-case-declarations
     switch (log.activity.toLowerCase()) {
       case 'wake up': {
-        const sleepDuration = log.dt.getTime() - logs[i + 1].dt.getTime() // Possible IooB error here!
-        const sleepObj = msToTime(sleepDuration)
+        const coeff = 1000 * 60 // Round times to the nearest minute
+        const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+        const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+        const duration = endTime.getTime() - startTime.getTime()
+        const o = msToTime(duration)
         const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
         const sleepLog = {
           type: 'SleepLog',
           title: nightBefore.toString().slice(0, 15),
-          hours: sleepObj.hours,
-          minutes: sleepObj.minutes
+          hours: o.hours,
+          minutes: o.minutes
         }
         processedLogs.push(sleepLog)
         break
       }
       case 'return':
       case 'finish': {
-        const duration = log.dt.getTime() - logs[i + 1].dt.getTime()
+        const coeff = 1000 * 60 // Round times to the nearest minute
+        const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+        const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+        const duration = endTime.getTime() - startTime.getTime()
+        const o = msToTime(duration)
         const activityLog = logs[i + 1].activity.toLowerCase()
         const activity = /.*\s(?<name>.*)$/.exec(activityLog)
         let activityName = activity?.groups?.name ?? 'Error!!!!'
         activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
-        const o = msToTime(duration)
         const durationLog = {
           type: 'DurationLog',
           title: activityName,
@@ -126,7 +153,7 @@ function processLogs (logs: Array<ILog>): Array<any> {
  * @returns
  */
 function renderLogs (items: Array<any>, bg: string): Array<any> {
-  console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
+  // console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
   const renderItems = [] as any
 
   for (const [i, item] of items.entries()) {

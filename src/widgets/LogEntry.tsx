@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
-import firebase from 'firebase/app'
+import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
+import { AutoId } from '../lib/util'
 
 const Box = styled.div`
   padding: 20px;
@@ -30,51 +31,85 @@ const LogInput = styled.input`
   outline: none;
 `
 
-async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
-  console.log('----------------- fire getLogs!')
-
-  const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
-    .orderBy('dt', 'desc').limit(100).get()
-  const logs = qs.docs.map((doc: any) => (
-    {
-      dt: doc.data().dt.toDate(),
-      activity: doc.data().activity
-    }))
-  console.log('------------------ Return results from db!', logs, user)
-  return logs
-}
-
-function writeLog (user: firebase.User, log:ILog): void {
-  firebase.firestore().collection(`users/${user.uid}/logs`)
-  // .withConverter(m.articleConverter)
-    .add(log)
-    .then((docRef: any) => {
-      // newLog.id = docRef.id
-      console.log('>> log added!', docRef.id, log)
-    })
-}
-
-export const LogEntry = () => {
-  // console.log('🚀🚀 LogEntry BEGIN rendering')
-
-  const { user } = useContext(UserContext)
-  const [logs, setLogs] = useState([] as Array<ILog>)
+const Ticker = () => {
   const [dt, setDt] = useState(new Date())
-  const [activity, setActivity] = useState('')
 
   function tick () {
     setDt(new Date())
   }
 
   useEffect(() => {
-    // tick()
     const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+    }
   }, [])
 
-  function handleChange (e: React.FormEvent<HTMLInputElement>) {
-    setActivity(e.currentTarget.value)
+  return (
+    <>
+      <FormattedDt date={dt} includeSeconds={true} />
+    </>
+  )
+}
+
+export const LogEntry = () => {
+  // console.log('🚀🚀 LogEntry BEGIN rendering')
+
+  const [activity, setActivity] = useState('')
+  const { user } = useContext(UserContext)
+  const [logs, setLogs] = useState([] as Array<ILog>)
+
+  function listenForLogAction (event: Event) {
+    const e = event as CustomEvent
+    // console.log('^^^^^^^^^ global message received!', e)
+
+    switch (e.detail.action) {
+      case 'deleteLog':
+        deleteLog(e.detail.logId)
+        setLogs(oldLogs => oldLogs.filter(log => log.id !== e.detail.logId))
+        console.log('^^^^^^^^^deleteLog called! Log removed from local view', e.detail)
+        break
+      case 'updateActivity':
+        setLogs(oldLogs => {
+          const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
+          const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
+          const newLog = {
+            id: e.detail.logId,
+            activity: e.detail.newActivity,
+            dt: oldLog.dt
+          }
+          writeLog(newLog)
+          newLogs.push(newLog)
+          newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
+          return newLogs
+        })
+        console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail)
+        break
+      case 'updateDt':
+        setLogs(oldLogs => {
+          const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
+          const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
+          const newLog = {
+            id: e.detail.logId,
+            activity: oldLog.activity,
+            dt: e.detail.newDate
+          }
+          writeLog(newLog)
+          newLogs.push(newLog)
+          newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
+          return newLogs
+        })
+        console.log('^^^^^^^^^updateDt called! Log updated in local view', e.detail)
+        break
+    }
   }
+
+  useEffect(() => {
+    document.body.addEventListener('logAction', listenForLogAction, false)
+    return () => {
+      document.body.removeEventListener('logAction', listenForLogAction)
+    }
+  }, [])
 
   // Initial load logs from db if user signs in
   useEffect(() => {
@@ -84,7 +119,7 @@ export const LogEntry = () => {
         if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
           // If user has written logs anonymously, first write the unsaved logs to Firestore
           for (const log of logs) {
-            writeLog(user, log)
+            writeLog(log)
             console.log('>> write unsaved log to firestore', log)
           }
           // Now update the logs with any from the db. This will update the view.
@@ -100,10 +135,15 @@ export const LogEntry = () => {
     }
   }, [user])
 
+  function handleChange (e: React.FormEvent<HTMLInputElement>) {
+    setActivity(e.currentTarget.value)
+  }
+
   function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       const newLog = {
-        dt: dt,
+        id: AutoId.newId(),
+        dt: new Date(),
         activity: activity
       }
       setLogs((oldLogs: Array<ILog>) => [
@@ -111,11 +151,7 @@ export const LogEntry = () => {
         ...oldLogs]
       )
       setActivity('')
-
-      // Write to Firebase if user is signed in
-      if (user) {
-        writeLog(user, newLog)
-      }
+      writeLog(newLog)
     }
   }
 
@@ -123,7 +159,7 @@ export const LogEntry = () => {
   return (
     <>
       <Box>
-        <Prompt><span title='Robert Shell 😄'>RS</span> {FormattedDt(dt)}</Prompt>
+        <Prompt><span title='Robert Shell 😄'>RS</span> <Ticker /></Prompt>
         $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={addLog}></LogInput>
       </Box>
       <br /><br />

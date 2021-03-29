@@ -1,4 +1,5 @@
 # Captain's Log
+*"Bring explicit intentionality into your life."* \
 Started: Thu - 3/18/21
 
 npm init \
@@ -8,7 +9,7 @@ npx eslint --init
 ### Set up an `upstream` remote.
 git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git
 
-# Reset my fork to be up-to-date with original repo.
+### Reset my fork to be up-to-date with original repo.
 git reset --hard upstream/master
 
 ### To hard-pull from HEAD and overwrite all local files.
@@ -26,9 +27,10 @@ firebase emulators:start --only hosting \
 firebase deploy --only hosting \
 firebase emulators:export data\multi-users
 
-https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files
-https://stackoverflow.com/questions/39632667/how-do-i-kill-the-process-currently-using-a-port-on-localhost-in-windows
-https://stackoverflow.com/questions/65586212/how-to-shutdown-firebase-emulator-properly-on-windows-10
+- https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files
+- https://stackoverflow.com/questions/39632667/how-do-i-kill-the-process-currently-using-a-port-on-localhost-in-windows
+- https://stackoverflow.com/questions/65586212/how-to-shutdown-firebase-emulator-properly-on-windows-10
+
 ```shell
 $> netstat -ano | findstr :8080
 $> taskkill /PID <PID> /F

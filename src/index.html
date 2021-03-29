@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>#8: Setup webpack.prod.js</title>
+    <title>PR #18: Add dt/activity edit/delete functionality in ActivityLog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body style="visibility: hidden;">
@@ -24,6 +24,28 @@
     <br />
     <h2>Release History:</h2>
     <ul>
+      <li>
+        <a href='https://github.com/r002/captains-log/pull/18'>Fri - 3/26/21 | PR #18: Add dt/activity edit/delete functionality in ActivityLog</a>
+        <ul>
+          <li>🧹 Delete '\data\saved_data' from repo</li>
+          <li>🙈 Update .gitignore to exclude local Firestore data that's saved on exit (`/data/saved_data/`)</li>
+          <li>♻️ Refactor code to generate unique Firestore ids on the clientside before writing to Firestore</li>
+          <li>🤡 Add dummy GUI buttons in ActivityLog widget</li>
+          <li>✨ Impl 'delete button' (❌) in ActivityLog widget</li>
+          <li>♻️ Refactor Firestore api calls into /FirestoreApi.ts</li>
+          <li>♻️ Refactor Ticker into its own widget</li>
+          <li>✨ Impl 'double-click-to-edit/update-activity' for ActivityLog</li>
+          <li>♻️ Combine 'updateLog' into 'writeLog' in /FirestoreApi.ts</li>
+          <li>🩹 Round sleep & activity metalog durations to the nearest minute</li>
+          <li>🩹 Round sleep & activity metalog durations to the nearest minute; try again</li>
+          <li>✨ Impl 'double-click-to-edit/update-datetime' for ActivityLog</li>
+          <li>🐞 Impl 'double-click-to-edit/update-datetime' for ActivityLog; fix bug</li>
+          <li>♻️ Refactor 'DtInput' & 'ActivityInput' into their own widgets</li>
+          <li>✨ Impl 'FlashAlert' modal. Invalid DtInput now flashes alert & fails gracefully</li>
+          <li>♻️ Refactor 'sendLogDelete' into `/services/Internal.ts`</li>
+          <li>🐞 Fix 'FlashAlert' bug. Reset every time user signs in/out</li>
+        </ul>
+      </li>
       <li><a href='https://github.com/r002/captains-log/pull/8'>Tue - 3/23/21 | v0.0.8 | Add Delta Computation</a></li>
       <li><a href='https://github.com/r002/captains-log/pull/6'>Mon - 3/22/21 | v0.0.6 | PR #6</a></li>
     </ul>
