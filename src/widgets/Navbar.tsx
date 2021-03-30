@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { ThemeManager } from '../providers/ThemeContext'
+import { ThemeContext } from '../providers/ThemeContext'
 import { UserContext } from '../providers/AuthContext'
 import { useContext } from 'react'
 import firebase from 'firebase/app'
@@ -29,14 +29,19 @@ const Button = styled.button<ButtonProps>`
   `}
 `
 
-const NormalButton = ({ handleClick, margin, label }: any) => {
-  const tm = useContext(ThemeManager)
+const ThemeToggler = ({ margin, label }: any) => {
+  const tc = useContext(ThemeContext)
+
+  function handleClick () {
+    tc.toggler()
+    console.log('@@ ThemeToggler handleClick called!')
+  }
 
   return (
     <>
       <Button
         onClick={handleClick}
-        theme={tm}
+        theme={tc.theme}
         margin={margin}
         >
         {label}
@@ -47,7 +52,7 @@ const NormalButton = ({ handleClick, margin, label }: any) => {
 
 const LoginButton = (props: any) => {
   // const authContext = useContext(AuthContext)
-  const tm = useContext(ThemeManager)
+  const tc = useContext(ThemeContext)
   const login = () => {
     const provider = new firebase.auth.GoogleAuthProvider()
     firebase.auth().signInWithPopup(provider)
@@ -57,7 +62,7 @@ const LoginButton = (props: any) => {
     <>
       <Button
         onClick={login}
-        theme={tm}
+        theme={tc.theme}
         >
         {props.label}
       </Button>
@@ -67,6 +72,7 @@ const LoginButton = (props: any) => {
 
 const LogoutButton = (props: any) => {
   // const authContext = useContext(AuthContext)
+  const tc = useContext(ThemeContext)
   function logout () {
     console.log('>> User logged out:', firebase.auth().currentUser)
     firebase.auth().signOut()
@@ -74,7 +80,10 @@ const LogoutButton = (props: any) => {
 
   return (
     <>
-      <Button primary onClick={logout}>
+      <Button primary
+        onClick={logout}
+        theme={tc.theme}
+        >
       {props.label}
       </Button>
     </>
@@ -99,7 +108,7 @@ export const Navbar = ({ changeTheme }: any) => {
     : <LoginButton label='Login' />
   return (
     <NavWrapper>
-      <NormalButton label='☀️'
+      <ThemeToggler label='☀️'
                     handleClick={changeTheme}
                     margin='0 15px 0 0' />
       {welcomeMsg}

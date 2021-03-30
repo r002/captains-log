@@ -2,12 +2,20 @@ import firebase from 'firebase/app'
 import { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
 import { LogEntry } from './widgets/LogEntry'
-import { ThemeManager, themes } from './providers/ThemeContext'
+import { ThemeContext, themes } from './providers/ThemeContext'
 import './style.css'
 import { UserContext } from './providers/AuthContext'
 import styled from 'styled-components'
 import { TFlashAlert } from './services/Internal'
 import { FlashAlert } from './widgets/FlashAlert'
+
+const Body = styled.div`
+  padding: 40px 20px 20px 20px;
+  width: 100%;
+  /* background: lightslategray; */
+  box-sizing: border-box;
+  /* border: solid darkgray 1px; */
+`
 
 const useAuth = () => {
   const [state, setState] = useState(() => {
@@ -40,25 +48,22 @@ const useAuth = () => {
   return state
 }
 
-const Body = styled.div`
-  padding: 40px 20px 20px 20px;
-  width: 100%;
-  /* background: lightslategray; */
-  box-sizing: border-box;
-  /* border: solid darkgray 1px; */
-`
-
 const App = () => {
-  const [theme, setTheme] = useState(themes.light)
   const { initializing, user } = useAuth()
   const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
+  const [context, setContext] = useState({
+    theme: themes.light,
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    toggler: customToggler
+  })
 
-  function togTheme () {
-    setTheme(currentTheme => {
-      return currentTheme === themes.dark
-        ? themes.light
-        : themes.dark
-    })
+  function customToggler (): void {
+    setContext((oldContext) => ({
+      theme: oldContext.theme === themes.light
+        ? themes.dark
+        : themes.light,
+      toggler: customToggler
+    }))
   }
 
   function listenForFlashAlert (event: Event) {
@@ -76,15 +81,15 @@ const App = () => {
 
   useEffect(() => {
     setFlashAlert(null) // Reset the Flash Alert every time. This is hacky; fix later 3/28/21
-  }, [user, theme])
+  }, [user])
 
   let appWrapper = <></>
   if (!initializing) {
     appWrapper =
       <>
-        <ThemeManager.Provider value={theme}>
+        <ThemeContext.Provider value={context}>
           <UserContext.Provider value={{ user }}>
-            <Navbar changeTheme={togTheme} />
+            <Navbar />
             <Body>
               {flashAlert &&
                 <FlashAlert key={new Date().toString()} {...flashAlert} />
@@ -93,7 +98,7 @@ const App = () => {
               <LogEntry />
             </Body>
           </UserContext.Provider>
-        </ThemeManager.Provider>
+        </ThemeContext.Provider>
       </>
     document.body.style.visibility = 'visible'
   } else {
