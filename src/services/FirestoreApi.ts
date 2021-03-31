@@ -11,8 +11,10 @@ export async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
       id: doc.id,
       dt: doc.data().dt.toDate(),
       activity: doc.data().activity,
-      created: doc.data().created?.toDate() ?? null, // Temporary. Eventually, all logs will have 'created' field 3/30/21
       type: doc.data().type,
+      created: doc.data().created?.toDate() ?? null, // Temporary. Eventually, all logs will have 'created' field 3/30/21
+      command: doc.data().command,
+      rawInput: doc.data().rawInput,
       vidTitle: doc.data().vidTitle,
       url: doc.data().url
     }))

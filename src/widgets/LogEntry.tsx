@@ -74,8 +74,8 @@ export const LogEntry = () => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
           const newLog = {
-            id: e.detail.logId,
-            activity: e.detail.newActivity,
+            id: oldLog.id,
+            activity: e.detail.newActivity, // Only update the activity field
             dt: oldLog.dt
           }
           writeLog(newLog)
@@ -83,16 +83,22 @@ export const LogEntry = () => {
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
           return newLogs
         })
-        console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail)
+        console.log('^^^^^^^^^updateActivity called! Log updated in local view', e.detail)
         break
       case 'updateDt':
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
           const newLog = {
-            id: e.detail.logId,
+            id: oldLog.id,
+            dt: e.detail.newDate, // Only update the dt field
             activity: oldLog.activity,
-            dt: e.detail.newDate
+            type: oldLog.type,
+            created: oldLog.created,
+            command: oldLog.command,
+            rawInput: oldLog.rawInput,
+            vidTitle: oldLog.vidTitle,
+            url: oldLog.url
           }
           writeLog(newLog)
           newLogs.push(newLog)
