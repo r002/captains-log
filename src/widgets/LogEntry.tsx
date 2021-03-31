@@ -73,11 +73,8 @@ export const LogEntry = () => {
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          const newLog = {
-            id: oldLog.id,
-            activity: e.detail.newActivity, // Only update the activity field
-            dt: oldLog.dt
-          }
+          const newLog = Object.assign({}, oldLog)
+          newLog.activity = e.detail.newActivity // Only update the activity field
           writeLog(newLog)
           newLogs.push(newLog)
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
@@ -89,17 +86,8 @@ export const LogEntry = () => {
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          const newLog = {
-            id: oldLog.id,
-            dt: e.detail.newDate, // Only update the dt field
-            activity: oldLog.activity,
-            type: oldLog.type,
-            created: oldLog.created,
-            command: oldLog.command,
-            rawInput: oldLog.rawInput,
-            vidTitle: oldLog.vidTitle,
-            url: oldLog.url
-          }
+          const newLog = Object.assign({}, oldLog)
+          newLog.dt = e.detail.newDate // Only update the dt field
           writeLog(newLog)
           newLogs.push(newLog)
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)

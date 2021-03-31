@@ -6,23 +6,19 @@ export async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
 
   const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
     .orderBy('dt', 'desc').limit(50).get()
-  const logs = qs.docs.map((doc: any) => (
-    {
-      id: doc.id,
-      dt: doc.data().dt.toDate(),
-      activity: doc.data().activity,
-      type: doc.data().type,
-      created: doc.data().created?.toDate() ?? null, // Temporary. Eventually, all logs will have 'created' field 3/30/21
-      command: doc.data().command,
-      rawInput: doc.data().rawInput,
-      vidTitle: doc.data().vidTitle,
-      url: doc.data().url
-    }))
+  const logs = qs.docs.map((doc: any) => {
+    const l = Object.assign({}, doc.data())
+    // console.log('>> l:', l)
+    l.dt = l.dt.toDate()
+    l.created = l.created?.toDate() ?? null // Temporary; eventually all logs will have 'created' field
+    return l
+  })
   // console.log('------------------ Return results from db!', logs, user)
   return logs
 }
 
 export function writeLog (log: ILog): void {
+  // console.log('>> Attempting to write log:', log)
   const u = firebase.auth().currentUser
   if (u) {
     firebase.firestore().collection(`users/${u.uid}/logs`).doc(log.id)

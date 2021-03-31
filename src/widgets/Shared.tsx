@@ -26,8 +26,8 @@ export type ILog = {
   activity: string
   type? : string
   created? : Date
-  command? : string
   rawInput? : string
+  command? : string
   vidTitle? : string
   url? : string
 }
