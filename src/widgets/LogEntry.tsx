@@ -4,7 +4,7 @@ import { UserContext } from '../providers/AuthContext'
 import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
-import { AutoId } from '../lib/util'
+import { parseInput } from '../services/InputEngine'
 
 const Box = styled.div`
   padding: 20px;
@@ -141,17 +141,14 @@ export const LogEntry = () => {
 
   function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
-      const newLog = {
-        id: AutoId.newId(),
-        dt: new Date(),
-        activity: activity
-      }
-      setLogs((oldLogs: Array<ILog>) => [
-        newLog,
-        ...oldLogs]
-      )
-      setActivity('')
-      writeLog(newLog)
+      parseInput(activity).then(newLog => {
+        setLogs((oldLogs: Array<ILog>) => [
+          newLog,
+          ...oldLogs]
+        )
+        setActivity('')
+        writeLog(newLog)
+      })
     }
   }
 

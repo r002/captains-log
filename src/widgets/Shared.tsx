@@ -20,8 +20,14 @@ export const FormattedDt = ({ date, includeSeconds }: {date: Date, includeSecond
   )
 }
 
-export interface ILog {
+export type ILog = {
   id: string
   dt: Date
   activity: string
+  type? : string
+  created? : Date
+  command? : string
+  rawInput? : string
+  vidTitle? : string
+  url? : string
 }

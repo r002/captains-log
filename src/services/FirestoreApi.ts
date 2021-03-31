@@ -5,12 +5,16 @@ export async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
   // console.log('----------------- fire getLogs!')
 
   const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
-    .orderBy('dt', 'desc').limit(100).get()
+    .orderBy('dt', 'desc').limit(50).get()
   const logs = qs.docs.map((doc: any) => (
     {
       id: doc.id,
       dt: doc.data().dt.toDate(),
-      activity: doc.data().activity
+      activity: doc.data().activity,
+      created: doc.data().created?.toDate() ?? null, // Temporary. Eventually, all logs will have 'created' field 3/30/21
+      type: doc.data().type,
+      vidTitle: doc.data().vidTitle,
+      url: doc.data().url
     }))
   // console.log('------------------ Return results from db!', logs, user)
   return logs

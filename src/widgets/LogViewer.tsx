@@ -19,6 +19,21 @@ const FLogRecord = styled.div<IFlog>`
   color: white;
   box-sizing: border-box;
   border: solid darkgray 1px;
+  a:link {
+    color: orange;
+    background-color: transparent;
+    text-decoration: none;
+  }
+  a:visited {
+    color: orange;
+    background-color: transparent;
+    text-decoration: none;
+  }
+  a:hover {
+    color: turquoise;
+    background-color: transparent;
+    text-decoration: none;
+  }
 
   ${props => props.background && css`
     background: ${props.background};
@@ -66,7 +81,6 @@ type TActivityLog = ILog & {
   bg: string
 }
 
-// const ActivityLog = ({ id, dt, activity, bg }: {id: string, dt: Date, activity: string, bg: string}) => {
 const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
   function handleDeleteAction () {
     sendLogDelete(id)
@@ -87,6 +101,34 @@ const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
   )
 }
 
+type TYoutubeLog = {
+  bg: string
+  id: string
+  dt: Date
+  vidTitle: string
+  url: string
+}
+
+const YoutubeLog = ({ id, dt, vidTitle, url, bg }: TYoutubeLog) => {
+  function handleDeleteAction () {
+    sendLogDelete(id)
+  }
+
+  return (
+    <FLogRecord title={dt.toString()} background={bg}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ background: 'transparent' }}>
+          <DtInput date={dt} logId={id} /> :: <a href={url}>{vidTitle}</a>
+        </div>
+        <div style={{ background: 'transparent' }}>
+          {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
+          <span onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
+        </div>
+      </div>
+    </FLogRecord>
+  )
+}
+
 /**
  * Loop through all raw logs once to add MetaLogs. Happens first.
  * @param logs
@@ -96,51 +138,62 @@ function processLogs (logs: Array<ILog>): Array<any> {
   const processedLogs = [] as any
 
   for (const [i, log] of logs.entries()) {
-    const activityLog = {
-      type: 'ActivityLog',
-      id: log.id,
-      dt: log.dt,
-      activity: log.activity
-    }
-    processedLogs.push(activityLog) // Add the activity log first.
-
-    // https://eslint.org/docs/rules/no-case-declarations
-    switch (log.activity.toLowerCase()) {
-      case 'wake up': {
-        const coeff = 1000 * 60 // Round times to the nearest minute
-        const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
-        const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
-        const duration = endTime.getTime() - startTime.getTime()
-        const o = msToTime(duration)
-        const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
-        const sleepLog = {
-          type: 'SleepLog',
-          title: nightBefore.toString().slice(0, 15),
-          hours: o.hours,
-          minutes: o.minutes
-        }
-        processedLogs.push(sleepLog)
-        break
+    if (log.type === 'YoutubeLog') {
+      const youtubeLog = {
+        type: 'YoutubeLog',
+        id: log.id,
+        dt: log.dt,
+        vidTitle: log.vidTitle,
+        url: log.url
       }
-      case 'return':
-      case 'finish': {
-        const coeff = 1000 * 60 // Round times to the nearest minute
-        const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
-        const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
-        const duration = endTime.getTime() - startTime.getTime()
-        const o = msToTime(duration)
-        const activityLog = logs[i + 1].activity.toLowerCase()
-        const activity = /.*\s(?<name>.*)$/.exec(activityLog)
-        let activityName = activity?.groups?.name ?? 'Error!!!!'
-        activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
-        const durationLog = {
-          type: 'DurationLog',
-          title: activityName,
-          hours: o.hours,
-          minutes: o.minutes
+      processedLogs.push(youtubeLog)
+    } else {
+      const activityLog = {
+        type: 'ActivityLog',
+        id: log.id,
+        dt: log.dt,
+        activity: log.activity
+      }
+      processedLogs.push(activityLog) // Add the activity log first.
+
+      // https://eslint.org/docs/rules/no-case-declarations
+      switch (log.activity.toLowerCase()) {
+        case 'wake up': {
+          const coeff = 1000 * 60 // Round times to the nearest minute
+          const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+          const duration = endTime.getTime() - startTime.getTime()
+          const o = msToTime(duration)
+          const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
+          const sleepLog = {
+            type: 'SleepLog',
+            title: nightBefore.toString().slice(0, 15),
+            hours: o.hours,
+            minutes: o.minutes
+          }
+          processedLogs.push(sleepLog)
+          break
         }
-        processedLogs.push(durationLog)
-        break
+        case 'return':
+        case 'finish': {
+          const coeff = 1000 * 60 // Round times to the nearest minute
+          const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+          const duration = endTime.getTime() - startTime.getTime()
+          const o = msToTime(duration)
+          const activityLog = logs[i + 1].activity.toLowerCase()
+          const activity = /.*\s(?<name>.*)$/.exec(activityLog)
+          let activityName = activity?.groups?.name ?? 'Error!!!!'
+          activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
+          const durationLog = {
+            type: 'DurationLog',
+            title: activityName,
+            hours: o.hours,
+            minutes: o.minutes
+          }
+          processedLogs.push(durationLog)
+          break
+        }
       }
     }
   }
@@ -163,6 +216,9 @@ function renderLogs (items: Array<any>, bg: string): Array<any> {
         break
       case 'SleepLog':
         renderItems.push(<SleepLog key={'ri' + i} {...item} />)
+        break
+      case 'YoutubeLog':
+        renderItems.push(<YoutubeLog key={'ri' + i} {...item} bg={bg} />)
         break
       case 'ActivityLog':
       default:
