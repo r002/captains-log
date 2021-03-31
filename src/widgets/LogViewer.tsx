@@ -135,9 +135,10 @@ const YoutubeLog = ({ id, dt, vidTitle, url, bg }: TYoutubeLog) => {
  * @returns
  */
 function processLogs (logs: Array<ILog>): Array<any> {
-  const processedLogs = [] as any
+  const processedLogs = [] as any // TODO: Decalre a type here! 3/31/21
 
-  for (const [i, log] of logs.entries()) {
+  for (let i = 0; i < logs.length - 1; i++) {
+    const log = logs[i]
     if (log.type === 'YoutubeLog') {
       const youtubeLog = {
         type: 'YoutubeLog',
@@ -156,12 +157,11 @@ function processLogs (logs: Array<ILog>): Array<any> {
       }
       processedLogs.push(activityLog) // Add the activity log first.
 
-      // https://eslint.org/docs/rules/no-case-declarations
       switch (log.activity.toLowerCase()) {
         case 'wake up': {
           const coeff = 1000 * 60 // Round times to the nearest minute
           const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
-          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff)
           const duration = endTime.getTime() - startTime.getTime()
           const o = msToTime(duration)
           const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
@@ -178,7 +178,7 @@ function processLogs (logs: Array<ILog>): Array<any> {
         case 'finish': {
           const coeff = 1000 * 60 // Round times to the nearest minute
           const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
-          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff) // TODO: Possible IooB error here!
+          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff)
           const duration = endTime.getTime() - startTime.getTime()
           const o = msToTime(duration)
           const activityLog = logs[i + 1].activity.toLowerCase()
