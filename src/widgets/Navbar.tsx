@@ -5,10 +5,9 @@ import { useContext } from 'react'
 import firebase from 'firebase/app'
 
 type TFButton = {
-  readonly primary? : boolean,
-  readonly theme? : boolean
-  margin? : string,
-  label? : string
+  readonly theme : boolean
+  readonly primary? : boolean
+  margin? : string
 }
 
 const FButton = styled.button<TFButton>`
@@ -30,28 +29,25 @@ const FButton = styled.button<TFButton>`
   `}
 `
 
-const ThemeToggler = (props: TFButton) => {
+const ThemeToggler = () => {
   const tc = useContext(ThemeContext)
 
-  function handleClick () {
+  function toggleTheme () {
     tc.toggler()
-    console.log('@@ ThemeToggler handleClick called!')
   }
 
   return (
-    <>
-      <FButton
-        onClick={handleClick}
-        theme={tc.theme}
-        margin={props.margin}
-        >
-        {props.label}
-      </FButton>
-    </>
+    <FButton
+      onClick={toggleTheme}
+      theme={tc.theme}
+      margin='0 15px 0 0'
+      >
+      ☀️
+    </FButton>
   )
 }
 
-const LoginButton = (props: TFButton) => {
+const LoginButton = () => {
   const tc = useContext(ThemeContext)
   const login = () => {
     const provider = new firebase.auth.GoogleAuthProvider()
@@ -59,18 +55,16 @@ const LoginButton = (props: TFButton) => {
   }
 
   return (
-    <>
-      <FButton
-        onClick={login}
-        theme={tc.theme}
-        >
-        {props.label}
-      </FButton>
-    </>
+    <FButton
+      onClick={login}
+      theme={tc.theme}
+      >
+      Login
+    </FButton>
   )
 }
 
-const LogoutButton = (props: TFButton) => {
+const LogoutButton = () => {
   const tc = useContext(ThemeContext)
   function logout () {
     console.log('>> User logged out:', firebase.auth().currentUser)
@@ -78,14 +72,23 @@ const LogoutButton = (props: TFButton) => {
   }
 
   return (
-    <>
-      <FButton primary
-        onClick={logout}
-        theme={tc.theme}
-        >
-      {props.label}
-      </FButton>
-    </>
+    <FButton primary
+      onClick={logout}
+      theme={tc.theme}
+      >
+      Logout
+    </FButton>
+  )
+}
+
+const ExportButton = () => {
+  const tc = useContext(ThemeContext)
+  return (
+    <FButton
+      theme={tc.theme}
+      >
+      Export Logs
+    </FButton>
   )
 }
 
@@ -102,13 +105,12 @@ export const Navbar = () => {
   const { user } = useContext(UserContext)
   const welcomeMsg = user
     ? <>
-        {user.displayName} <LogoutButton label='Logout' />
+        <ExportButton /> {user.displayName} <LogoutButton />
       </>
-    : <LoginButton label='Login' />
+    : <LoginButton />
   return (
     <NavWrapper>
-      <ThemeToggler label='☀️'
-                    margin='0 15px 0 0' />
+      <ThemeToggler />
       {welcomeMsg}
     </NavWrapper>
   )
