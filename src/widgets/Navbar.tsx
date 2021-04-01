@@ -3,6 +3,7 @@ import { ThemeContext } from '../providers/ThemeContext'
 import { UserContext } from '../providers/AuthContext'
 import { useContext } from 'react'
 import firebase from 'firebase/app'
+import { exportLogs } from '../services/Exporter'
 
 type TFButton = {
   readonly theme : boolean
@@ -32,13 +33,13 @@ const FButton = styled.button<TFButton>`
 const ThemeToggler = () => {
   const tc = useContext(ThemeContext)
 
-  function toggleTheme () {
-    tc.toggler()
+  function handleClick () {
+    tc.toggleTheme()
   }
 
   return (
     <FButton
-      onClick={toggleTheme}
+      onClick={handleClick}
       theme={tc.theme}
       margin='0 15px 0 0'
       >
@@ -49,14 +50,14 @@ const ThemeToggler = () => {
 
 const LoginButton = () => {
   const tc = useContext(ThemeContext)
-  const login = () => {
+  function handleClick () {
     const provider = new firebase.auth.GoogleAuthProvider()
     firebase.auth().signInWithPopup(provider)
   }
 
   return (
     <FButton
-      onClick={login}
+      onClick={handleClick}
       theme={tc.theme}
       >
       Login
@@ -66,14 +67,14 @@ const LoginButton = () => {
 
 const LogoutButton = () => {
   const tc = useContext(ThemeContext)
-  function logout () {
+  function handleClick () {
     console.log('>> User logged out:', firebase.auth().currentUser)
     firebase.auth().signOut()
   }
 
   return (
     <FButton primary
-      onClick={logout}
+      onClick={handleClick}
       theme={tc.theme}
       >
       Logout
@@ -83,9 +84,14 @@ const LogoutButton = () => {
 
 const ExportButton = () => {
   const tc = useContext(ThemeContext)
+  function handleClick () {
+    exportLogs(1000)
+  }
+
   return (
     <FButton
       theme={tc.theme}
+      onClick={handleClick}
       >
       Export Logs
     </FButton>

@@ -54,7 +54,7 @@ const App = () => {
   const [context, setContext] = useState({
     theme: themes.light,
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    toggler: customToggler
+    toggleTheme: customToggler
   })
 
   function customToggler (): void {
@@ -62,7 +62,7 @@ const App = () => {
       theme: oldContext.theme === themes.light
         ? themes.dark
         : themes.light,
-      toggler: customToggler
+      toggleTheme: customToggler
     }))
   }
 
@@ -106,7 +106,7 @@ const App = () => {
   }
 
   // console.log('App render fired 😁')
-  console.log('App render fired 😁', initializing, user)
+  // console.log('App render fired 😁', initializing, user)
 
   return (appWrapper)
 }

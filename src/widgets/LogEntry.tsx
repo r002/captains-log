@@ -109,7 +109,7 @@ export const LogEntry = () => {
   useEffect(() => {
     // console.log('******** LogEntry fire useEffect', user)
     if (user) {
-      getLogs(user).then(logsFromDb => {
+      getLogs(50).then(logsFromDb => {
         if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
           // If user has written logs anonymously, first write the unsaved logs to Firestore
           for (const log of logs) {

@@ -1,19 +1,23 @@
 import firebase from 'firebase/app'
 import { ILog } from '../widgets/Shared'
 
-export async function getLogs (user: firebase.User) : Promise<Array<ILog>> {
+export async function getLogs (limit: number) : Promise<Array<ILog>> {
   // console.log('----------------- fire getLogs!')
-
-  const qs = await firebase.firestore().collection(`users/${user.uid}/logs`)
-    .orderBy('dt', 'desc').limit(50).get()
-  const logs = qs.docs.map((doc: any) => {
-    const l = Object.assign({}, doc.data())
-    // console.log('>> l:', l)
-    l.dt = l.dt.toDate()
-    l.created = l.created?.toDate() ?? null // Temporary; eventually all logs will have 'created' field
-    return l
-  })
-  // console.log('------------------ Return results from db!', logs, user)
+  const u = firebase.auth().currentUser
+  if (u) {
+    const qs = await firebase.firestore().collection(`users/${u.uid}/logs`)
+      .orderBy('dt', 'desc').limit(limit).get()
+    const logs = qs.docs.map((doc: any) => {
+      const l = Object.assign({}, doc.data())
+      // console.log('>> l:', l)
+      l.dt = l.dt.toDate()
+      l.created = l.created?.toDate() ?? null // Temporary; eventually all logs will have 'created' field
+      return l
+    })
+    // console.log('------------------ Return results from db!', logs, user)
+    return logs
+  }
+  const logs = [] as Array<ILog>
   return logs
 }
 
