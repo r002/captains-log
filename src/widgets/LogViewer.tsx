@@ -1,144 +1,11 @@
-import styled, { css } from 'styled-components'
 import { ILog } from './Shared'
 import { UserContext } from '../providers/AuthContext'
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { msToTime } from '../lib/util'
-import DtInput from './DtInput'
-import ActivityInput from './ActivityInput'
-import { sendLogDelete } from '../services/Internal'
-
-interface IFlog {
-  readonly background? : string
-  readonly type? : string
-  height? : string
-}
-
-const FLogRecord = styled.div<IFlog>`
-  padding: 10px;
-  margin: 0;
-  width: 900px;
-  /* background: darkblue; */
-  color: white;
-  box-sizing: border-box;
-  border: solid darkgray 1px;
-  a:link {
-    color: orange;
-    background-color: transparent;
-    text-decoration: none;
-  }
-  a:visited {
-    color: orange;
-    background-color: transparent;
-    text-decoration: none;
-  }
-  a:hover {
-    color: turquoise;
-    background-color: transparent;
-    text-decoration: none;
-  }
-
-  ${props => props.height && css`
-    height: ${props.height};
-  `}
-
-  ${props => props.background && css`
-    background: ${props.background};
-  `}
-
-  ${props => props.type === 'meta' && css`
-    height: 70px;
-    text-align: center;
-  `}
-`
-
-const FDuration = styled.div`
-  font-size: 20px;
-`
-
-const Grey = styled.span`
-color: grey;
-`
-
-const Duration = ({ hours, minutes }: {hours: number, minutes: number}) => {
-  return (
-    <FDuration>{hours} <Grey>hr</Grey> {minutes} <Grey>min</Grey></FDuration>
-  )
-}
-
-const DurationLog = ({ title, hours, minutes }: {title: string, hours: number, minutes: number}) => {
-  return (
-    <FLogRecord background='purple' type='meta'>
-      ⌛ {title} 🕒<br />
-      <Duration hours={hours} minutes={minutes} />
-    </FLogRecord>
-  )
-}
-
-const SleepLog = ({ title, hours, minutes }: {title: string, hours: number, minutes: number}) => {
-  return (
-    <FLogRecord background='#292929' type='meta'>
-      😴 {title} 🌙<br />
-      <Duration hours={hours} minutes={minutes} />
-    </FLogRecord>
-  )
-}
-
-type TActivityLog = ILog & {
-  bg: string
-}
-
-const ActivityLog = ({ id, dt, activity, bg }: TActivityLog) => {
-  function handleDeleteAction () {
-    sendLogDelete(id)
-  }
-
-  return (
-    <FLogRecord title={dt.toString()} background={bg}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ background: 'transparent' }}>
-          <DtInput date={dt} logId={id} /> :: <ActivityInput activity={activity} logId={id} />
-        </div>
-        <div style={{ background: 'transparent' }}>
-          {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
-          <span onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
-        </div>
-      </div>
-    </FLogRecord>
-  )
-}
-
-type TYoutubeLog = {
-  bg: string
-  id: string
-  dt: Date
-  vidTitle: string
-  vid: string
-}
-
-const YoutubeLog = ({ id, dt, vidTitle, vid, bg }: TYoutubeLog) => {
-  function handleDelete () {
-    sendLogDelete(id)
-  }
-
-  if (vidTitle.length > 58) {
-    vidTitle = vidTitle.slice(0, 55) + '...'
-  }
-
-  return (
-    <FLogRecord title={dt.toString()} background={bg}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div>
-          <DtInput date={dt} logId={id} /> :: <a href={`https://youtu.be/${vid}`}>{vidTitle}</a>
-        </div>
-        <div>
-          {/* <img src={`https://i.ytimg.com/vi/${vid}/default.jpg`}
-            style={{ margin: '-10px' }} /> */}
-          <span onClick={handleDelete} style={{ cursor: 'pointer' }}>❌</span>
-        </div>
-      </div>
-    </FLogRecord>
-  )
-}
+import DurationLog from './LogTypes/DurationLog'
+import SleepLog from './LogTypes/SleepLog'
+import ActivityLog from './LogTypes/ActivityLog'
+import YoutubeLog from './LogTypes/YoutubeLog'
 
 /**
  * Loop through all raw logs once to add MetaLogs. Happens first.
@@ -242,26 +109,26 @@ function renderLogs (items: Array<any>, bg: string): Array<any> {
 
 export const LogViewer = ({ logs }: {logs: Array<ILog>}) => {
   const { user } = useContext(UserContext)
-  const [pLogs, setPLogs] = useState([] as Array<any>) // processed logs
+  const [renderItems, setRenderItems] = useState([] as Array<any>)
 
   useEffect(() => {
     if (logs.length > 0) {
       if (user) {
         const processedLogs = processLogs(logs)
-        setPLogs(renderLogs(processedLogs, 'darkblue')) // Saved logs
+        setRenderItems(renderLogs(processedLogs, 'darkblue')) // Saved logs
       } else {
-        setPLogs(renderLogs(logs, '#00468b')) // Unsaved logs
+        setRenderItems(renderLogs(logs, '#00468b')) // Unsaved logs
       }
 
       // console.log('>> fired useEffect, pl:', pl)
     } else {
-      setPLogs([]) // If logs arrives here empty, it means the user has logged out. Clear all logs from viewer.
+      setRenderItems([]) // If logs arrive here empty, it means the user has logged out. Clear all logs from viewer.
     }
   }, [logs])
 
   return (
     <>
-      {pLogs}
+      {renderItems}
       {/* {pLogs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={!!user} />)} */}
       {/* {pLogs.map((l: ILog, i: number) => <LogRecord key={'log' + i} dt={l.dt} activity={l.activity} saved={!!user} />)} */}
     </>

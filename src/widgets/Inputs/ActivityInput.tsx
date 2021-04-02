@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React, { useEffect, useState, useRef, MutableRefObject } from 'react'
-import { sendActivityUpdate } from '../services/Internal'
+import { sendActivityUpdate } from '../../services/Internal'
 
 const FActivityInput = styled.input`
   background: transparent;

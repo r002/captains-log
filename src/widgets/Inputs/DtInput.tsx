@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { LimeGreen, Yellow } from './Shared'
+import { LimeGreen, Yellow } from '../Shared'
 import React, { useEffect, useState, useRef, MutableRefObject } from 'react'
-import { sendFlashAlert, sendDateUpdate } from '../services/Internal'
+import { sendFlashAlert, sendDateUpdate } from '../../services/Internal'
 
 const FDtInput = styled.input`
   background: transparent;
