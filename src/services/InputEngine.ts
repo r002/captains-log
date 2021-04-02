@@ -18,9 +18,9 @@ export async function parseInput (input: string): Promise<ILog> {
       console.log('>>>>>>> command/url:', command, vid, url)
       const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${vid}&key=${CONFIG.apiKey}&part=snippet`)
       const data = await response.json()
-      console.log('>>>> data:', data)
+      // console.log('>>>> data:', data)
       const vidTitle = data.items[0].snippet.title
-      console.log('>>>> vidTitle:', vidTitle)
+      // console.log('>>>> vidTitle:', vidTitle)
       const newLog = {
         id: AutoId.newId(),
         dt: new Date(),
@@ -30,7 +30,7 @@ export async function parseInput (input: string): Promise<ILog> {
         activity: vidTitle, // `${command} ${vidTitle}`,
         vidTitle: vidTitle,
         command: command,
-        url: url
+        vid: vid
       }
       console.log('>>>> newLog:', newLog)
       return newLog

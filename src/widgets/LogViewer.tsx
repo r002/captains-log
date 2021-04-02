@@ -8,12 +8,14 @@ import ActivityInput from './ActivityInput'
 import { sendLogDelete } from '../services/Internal'
 
 interface IFlog {
-  readonly background?: string
-  readonly type?: string
+  readonly background? : string
+  readonly type? : string
+  height? : string
 }
 
 const FLogRecord = styled.div<IFlog>`
   padding: 10px;
+  margin: 0;
   width: 900px;
   /* background: darkblue; */
   color: white;
@@ -34,6 +36,10 @@ const FLogRecord = styled.div<IFlog>`
     background-color: transparent;
     text-decoration: none;
   }
+
+  ${props => props.height && css`
+    height: ${props.height};
+  `}
 
   ${props => props.background && css`
     background: ${props.background};
@@ -106,23 +112,28 @@ type TYoutubeLog = {
   id: string
   dt: Date
   vidTitle: string
-  url: string
+  vid: string
 }
 
-const YoutubeLog = ({ id, dt, vidTitle, url, bg }: TYoutubeLog) => {
-  function handleDeleteAction () {
+const YoutubeLog = ({ id, dt, vidTitle, vid, bg }: TYoutubeLog) => {
+  function handleDelete () {
     sendLogDelete(id)
+  }
+
+  if (vidTitle.length > 58) {
+    vidTitle = vidTitle.slice(0, 55) + '...'
   }
 
   return (
     <FLogRecord title={dt.toString()} background={bg}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ background: 'transparent' }}>
-          <DtInput date={dt} logId={id} /> :: <a href={url}>{vidTitle}</a>
+        <div>
+          <DtInput date={dt} logId={id} /> :: <a href={`https://youtu.be/${vid}`}>{vidTitle}</a>
         </div>
-        <div style={{ background: 'transparent' }}>
-          {/* <span data-action='editLog' id={id} onClick={handleEditAction} style={{ cursor: 'pointer' }}>📝</span>&nbsp; */}
-          <span onClick={handleDeleteAction} style={{ cursor: 'pointer' }}>❌</span>
+        <div>
+          {/* <img src={`https://i.ytimg.com/vi/${vid}/default.jpg`}
+            style={{ margin: '-10px' }} /> */}
+          <span onClick={handleDelete} style={{ cursor: 'pointer' }}>❌</span>
         </div>
       </div>
     </FLogRecord>
@@ -145,7 +156,7 @@ function processLogs (logs: Array<ILog>): Array<any> {
         id: log.id,
         dt: log.dt,
         vidTitle: log.vidTitle,
-        url: log.url
+        vid: log.vid
       }
       processedLogs.push(youtubeLog)
     } else {

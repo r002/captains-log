@@ -24,10 +24,10 @@ export type ILog = {
   id: string
   dt: Date
   activity: string
-  type? : string
-  created? : Date
-  rawInput? : string
+  created : Date
+  type : string
+  rawInput : string
   command? : string
   vidTitle? : string
-  url? : string
+  vid? : string
 }
