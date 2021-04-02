@@ -1,16 +1,13 @@
 import DtInput from '../Inputs/DtInput'
 import { sendLogDelete } from '../../services/Internal'
-import { FLogRecord } from '../LogTypes/LogCommon'
+import { FLogRecord, TBaseLog } from '../LogTypes/LogCommon'
 
-type TYoutubeLog = {
-  bg: string
-  id: string
-  dt: Date
+type TYoutubeLog = TBaseLog & {
   vidTitle: string
   vid: string
 }
 
-const YoutubeLog = ({ id, dt, vidTitle, vid, bg }: TYoutubeLog) => {
+const YoutubeLog = ({ id, dt, bg, selected, vidTitle, vid }: TYoutubeLog) => {
   function handleDelete () {
     sendLogDelete(id)
   }
@@ -20,7 +17,7 @@ const YoutubeLog = ({ id, dt, vidTitle, vid, bg }: TYoutubeLog) => {
   }
 
   return (
-    <FLogRecord title={dt.toString()} background={bg}>
+    <FLogRecord title={dt.toString()} background={bg} selected={selected}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>
           <DtInput date={dt} logId={id} /> :: <a href={`https://youtu.be/${vid}`}>{vidTitle}</a>

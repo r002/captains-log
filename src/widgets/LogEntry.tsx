@@ -5,6 +5,7 @@ import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { parseInput } from '../services/InputEngine'
+import { DataContext } from '../providers/DataContext'
 
 const Box = styled.div`
   padding: 20px;
@@ -58,6 +59,25 @@ export const LogEntry = () => {
   const [activity, setActivity] = useState('')
   const { user } = useContext(UserContext)
   const [logs, setLogs] = useState([] as Array<ILog>)
+  const [selectedLog, setSelectedLog] = useState<string | null>(null)
+  const [dataContext] = useState({
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    deleteLog: deleteLogImpl
+  })
+
+  function deleteLogImpl (logIdToDelete: string): void {
+    console.log('>> calling deleteLogImpl!', logIdToDelete)
+    deleteLog(logIdToDelete)
+    setLogs(oldLogs => oldLogs.filter(log => log.id !== logIdToDelete))
+  }
+
+  if (logs.length > 0) {
+    // console.log('>> LogViewer.selectedLog before', selectedLog)
+    if (selectedLog === null) {
+      setSelectedLog(logs[0].id)
+    }
+    // console.log('>> LogViewer.selectedLog after', selectedLog)
+  }
 
   function listenForLogAction (event: Event) {
     const e = event as CustomEvent
@@ -148,7 +168,7 @@ export const LogEntry = () => {
 
   // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering', logs, user)
   return (
-    <>
+    <DataContext.Provider value={dataContext}>
       <Box>
         <Prompt><span title='Robert Shell 😄'>RS</span> <Ticker /></Prompt>
         $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={addLog}></LogInput>
@@ -156,7 +176,7 @@ export const LogEntry = () => {
       <br /><br />
       <hr />
       <br /><br />
-      <LogViewer logs={logs} />
-    </>
+      <LogViewer logs={logs} selectedLog={selectedLog} />
+    </DataContext.Provider>
   )
 }

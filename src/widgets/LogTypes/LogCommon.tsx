@@ -1,12 +1,20 @@
 import styled, { css } from 'styled-components'
 
-interface IFlog {
+export type TBaseLog = {
+  id: string
+  dt: Date
+  bg: string
+  selected: boolean
+}
+
+type TFlog = {
   readonly background? : string
   readonly type? : string
   height? : string
+  selected? : boolean
 }
 
-export const FLogRecord = styled.div<IFlog>`
+export const FLogRecord = styled.div<TFlog>`
   padding: 10px;
   margin: 0;
   width: 850px;
@@ -29,6 +37,10 @@ export const FLogRecord = styled.div<IFlog>`
     background-color: transparent;
     text-decoration: none;
   }
+
+  ${props => props.selected && css`
+    border: solid green 5px;
+  `}
 
   ${props => props.height && css`
     height: ${props.height};

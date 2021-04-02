@@ -83,11 +83,14 @@ function processLogs (logs: Array<ILog>): Array<any> {
  * @param logs
  * @returns
  */
-function renderLogs (items: Array<any>, bg: string): Array<any> {
+function renderLogs (items: Array<any>, bg: string, selectedLog: string | null): Array<any> {
   // console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
   const renderItems = [] as any
 
+  console.log('>> selectedLog', selectedLog)
   for (const [i, item] of items.entries()) {
+    const selected = item.id === selectedLog
+
     switch (item.type) {
       case 'DurationLog':
         renderItems.push(<DurationLog key={'ri' + i} {...item} />)
@@ -96,18 +99,18 @@ function renderLogs (items: Array<any>, bg: string): Array<any> {
         renderItems.push(<SleepLog key={'ri' + i} {...item} />)
         break
       case 'YoutubeLog':
-        renderItems.push(<YoutubeLog key={'ri' + i} {...item} bg={bg} />)
+        renderItems.push(<YoutubeLog key={'ri' + i} {...item} bg={bg} selected={selected} />)
         break
       case 'ActivityLog':
       default:
-        renderItems.push(<ActivityLog key={'ri' + i} {...item} bg={bg} />)
+        renderItems.push(<ActivityLog key={'ri' + i} {...item} bg={bg} selected={selected} />)
         break
     }
   }
   return renderItems
 }
 
-export const LogViewer = ({ logs }: {logs: Array<ILog>}) => {
+export const LogViewer = ({ logs, selectedLog }: {logs: Array<ILog>, selectedLog: string | null}) => {
   const { user } = useContext(UserContext)
   const [renderItems, setRenderItems] = useState([] as Array<any>)
 
@@ -115,9 +118,9 @@ export const LogViewer = ({ logs }: {logs: Array<ILog>}) => {
     if (logs.length > 0) {
       if (user) {
         const processedLogs = processLogs(logs)
-        setRenderItems(renderLogs(processedLogs, 'darkblue')) // Saved logs
+        setRenderItems(renderLogs(processedLogs, 'darkblue', selectedLog)) // Saved logs
       } else {
-        setRenderItems(renderLogs(logs, '#00468b')) // Unsaved logs
+        setRenderItems(renderLogs(logs, '#00468b', selectedLog)) // Unsaved logs
       }
 
       // console.log('>> fired useEffect, pl:', pl)
