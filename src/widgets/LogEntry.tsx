@@ -4,7 +4,7 @@ import { UserContext } from '../providers/AuthContext'
 import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
-import { AutoId } from '../lib/util'
+import { parseInput } from '../services/InputEngine'
 
 const Box = styled.div`
   padding: 20px;
@@ -73,27 +73,21 @@ export const LogEntry = () => {
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          const newLog = {
-            id: e.detail.logId,
-            activity: e.detail.newActivity,
-            dt: oldLog.dt
-          }
+          const newLog = Object.assign({}, oldLog)
+          newLog.activity = e.detail.newActivity // Only update the activity field
           writeLog(newLog)
           newLogs.push(newLog)
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
           return newLogs
         })
-        console.log('^^^^^^^^^updateLog called! Log updated in local view', e.detail)
+        console.log('^^^^^^^^^updateActivity called! Log updated in local view', e.detail)
         break
       case 'updateDt':
         setLogs(oldLogs => {
           const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
           const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          const newLog = {
-            id: e.detail.logId,
-            activity: oldLog.activity,
-            dt: e.detail.newDate
-          }
+          const newLog = Object.assign({}, oldLog)
+          newLog.dt = e.detail.newDate // Only update the dt field
           writeLog(newLog)
           newLogs.push(newLog)
           newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
@@ -115,7 +109,7 @@ export const LogEntry = () => {
   useEffect(() => {
     // console.log('******** LogEntry fire useEffect', user)
     if (user) {
-      getLogs(user).then(logsFromDb => {
+      getLogs(50).then(logsFromDb => {
         if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
           // If user has written logs anonymously, first write the unsaved logs to Firestore
           for (const log of logs) {
@@ -141,17 +135,14 @@ export const LogEntry = () => {
 
   function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
-      const newLog = {
-        id: AutoId.newId(),
-        dt: new Date(),
-        activity: activity
-      }
-      setLogs((oldLogs: Array<ILog>) => [
-        newLog,
-        ...oldLogs]
-      )
-      setActivity('')
-      writeLog(newLog)
+      parseInput(activity).then(newLog => {
+        setLogs((oldLogs: Array<ILog>) => [
+          newLog,
+          ...oldLogs]
+        )
+        setActivity('')
+        writeLog(newLog)
+      })
     }
   }
 

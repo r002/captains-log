@@ -1,16 +1,17 @@
 import styled, { css } from 'styled-components'
-import { ThemeManager } from '../providers/ThemeContext'
+import { ThemeContext } from '../providers/ThemeContext'
 import { UserContext } from '../providers/AuthContext'
 import { useContext } from 'react'
 import firebase from 'firebase/app'
+import { exportLogs } from '../services/Exporter'
 
-interface ButtonProps {
-  readonly primary?: boolean,
-  readonly theme?: boolean
+type TFButton = {
+  readonly theme : boolean
+  readonly primary? : boolean
   margin? : string
 }
 
-const Button = styled.button<ButtonProps>`
+const FButton = styled.button<TFButton>`
   background: transparent;
   border-radius: 3px;
   border: 2px solid palevioletred;
@@ -29,55 +30,71 @@ const Button = styled.button<ButtonProps>`
   `}
 `
 
-const NormalButton = ({ handleClick, margin, label }: any) => {
-  const tm = useContext(ThemeManager)
+const ThemeToggler = () => {
+  const tc = useContext(ThemeContext)
+
+  function handleClick () {
+    tc.toggleTheme()
+  }
 
   return (
-    <>
-      <Button
-        onClick={handleClick}
-        theme={tm}
-        margin={margin}
-        >
-        {label}
-      </Button>
-    </>
+    <FButton
+      onClick={handleClick}
+      theme={tc.theme}
+      margin='0 15px 0 0'
+      >
+      ☀️
+    </FButton>
   )
 }
 
-const LoginButton = (props: any) => {
-  // const authContext = useContext(AuthContext)
-  const tm = useContext(ThemeManager)
-  const login = () => {
+const LoginButton = () => {
+  const tc = useContext(ThemeContext)
+  function handleClick () {
     const provider = new firebase.auth.GoogleAuthProvider()
     firebase.auth().signInWithPopup(provider)
   }
 
   return (
-    <>
-      <Button
-        onClick={login}
-        theme={tm}
-        >
-        {props.label}
-      </Button>
-    </>
+    <FButton
+      onClick={handleClick}
+      theme={tc.theme}
+      >
+      Login
+    </FButton>
   )
 }
 
-const LogoutButton = (props: any) => {
-  // const authContext = useContext(AuthContext)
-  function logout () {
+const LogoutButton = () => {
+  const tc = useContext(ThemeContext)
+  function handleClick () {
     console.log('>> User logged out:', firebase.auth().currentUser)
     firebase.auth().signOut()
   }
 
   return (
-    <>
-      <Button primary onClick={logout}>
-      {props.label}
-      </Button>
-    </>
+    <FButton primary
+      onClick={handleClick}
+      theme={tc.theme}
+      >
+      Logout
+    </FButton>
+  )
+}
+
+const ExportButton = () => {
+  const tc = useContext(ThemeContext)
+  function handleClick () {
+    exportLogs(1000)
+  }
+
+  return (
+    <FButton
+      theme={tc.theme}
+      onClick={handleClick}
+      >
+      Export Logs
+    </FButton>
   )
 }
 
@@ -90,18 +107,16 @@ const NavWrapper = styled.div`
   border-bottom: solid darkgray 1px;
 `
 
-export const Navbar = ({ changeTheme }: any) => {
+export const Navbar = () => {
   const { user } = useContext(UserContext)
   const welcomeMsg = user
     ? <>
-        {user.displayName} <LogoutButton label='Logout' />
+        <ExportButton /> {user.displayName} <LogoutButton />
       </>
-    : <LoginButton label='Login' />
+    : <LoginButton />
   return (
     <NavWrapper>
-      <NormalButton label='☀️'
-                    handleClick={changeTheme}
-                    margin='0 15px 0 0' />
+      <ThemeToggler />
       {welcomeMsg}
     </NavWrapper>
   )

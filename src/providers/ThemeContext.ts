@@ -11,4 +11,10 @@ export const themes = {
   }
 }
 
-export const ThemeManager = createContext(themes.light)
+export const ThemeContext = createContext({
+  theme: themes.light,
+  toggleTheme: () => {
+    // Default. Never appears if overridden in /App.tsx.
+    console.log('Default toggler has been called! If I am overriden, I will never appear!')
+  }
+})

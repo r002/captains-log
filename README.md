@@ -13,8 +13,8 @@ git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.gi
 git reset --hard upstream/master
 
 ### To hard-pull from HEAD and overwrite all local files.
-git fetch
-git reset --hard origin/main
+git fetch \
+git reset --hard origin/main \
 git reset --hard upstream/master
 
 ### Git commands
