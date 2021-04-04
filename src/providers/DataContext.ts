@@ -1,10 +1,26 @@
 import { createContext } from 'react'
-// import { ILog } from '../widgets/Shared'
 
+export type TActivityUpdate = {
+  logId: string,
+  newActivity: string
+}
+
+export type TDateUpdate = {
+  logId: string,
+  newDate: Date
+}
+
+/**
+ * Default. These never trigger if overridden in /App.tsx.
+ */
 export const DataContext = createContext({
-  // logs: [] as Array<ILog>,
+  updateDate: ({ logId, newDate }: TDateUpdate) => {
+    console.log("Default 'updateDate' fxn called!", logId, newDate)
+  },
+  updateActivity: ({ logId, newActivity }: TActivityUpdate) => {
+    console.log("Default 'updateActivity' fxn called!", logId, newActivity)
+  },
   deleteLog: (logId: string) => {
-    // Default. Never appears if overridden in /App.tsx.
-    console.log("Default deleteLog has been called! If overriden, I'll never appear!", logId)
+    console.log("Default 'deleteLog' fxn called!", logId)
   }
 })

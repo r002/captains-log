@@ -5,7 +5,7 @@ import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
 import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { parseInput } from '../services/InputEngine'
-import { DataContext } from '../providers/DataContext'
+import { DataContext, TActivityUpdate, TDateUpdate } from '../providers/DataContext'
 
 const Box = styled.div`
   padding: 20px;
@@ -62,8 +62,39 @@ export const LogEntry = () => {
   const [selectedLog, setSelectedLog] = useState<string | null>(null)
   const [dataContext] = useState({
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    updateDate: updateDateImpl,
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    updateActivity: updateActivityImpl,
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     deleteLog: deleteLogImpl
   })
+
+  function updateDateImpl ({ logId, newDate }: TDateUpdate): void {
+    setLogs(oldLogs => {
+      const oldLog = oldLogs.filter(log => log.id === logId)[0]
+      const newLogs = oldLogs.filter(log => log.id !== logId)
+      const newLog = Object.assign({}, oldLog)
+      newLog.dt = newDate // Only update the dt field
+      writeLog(newLog)
+      newLogs.push(newLog)
+      newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
+      return newLogs
+    })
+  }
+
+  function updateActivityImpl ({ logId, newActivity }: TActivityUpdate): void {
+    console.log('>> calling updateActivityImpl!', logId, newActivity)
+    setLogs(oldLogs => {
+      const oldLog = oldLogs.filter(log => log.id === logId)[0]
+      const newLogs = oldLogs.filter(log => log.id !== logId)
+      const newLog = Object.assign({}, oldLog)
+      newLog.activity = newActivity // Only update the activity field
+      writeLog(newLog)
+      newLogs.push(newLog)
+      newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
+      return newLogs
+    })
+  }
 
   function deleteLogImpl (logIdToDelete: string): void {
     console.log('>> calling deleteLogImpl!', logIdToDelete)
@@ -78,52 +109,6 @@ export const LogEntry = () => {
     }
     // console.log('>> LogViewer.selectedLog after', selectedLog)
   }
-
-  function listenForLogAction (event: Event) {
-    const e = event as CustomEvent
-    // console.log('^^^^^^^^^ global message received!', e)
-
-    switch (e.detail.action) {
-      case 'deleteLog':
-        deleteLog(e.detail.logId)
-        setLogs(oldLogs => oldLogs.filter(log => log.id !== e.detail.logId))
-        console.log('^^^^^^^^^deleteLog called! Log removed from local view', e.detail)
-        break
-      case 'updateActivity':
-        setLogs(oldLogs => {
-          const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
-          const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          const newLog = Object.assign({}, oldLog)
-          newLog.activity = e.detail.newActivity // Only update the activity field
-          writeLog(newLog)
-          newLogs.push(newLog)
-          newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
-          return newLogs
-        })
-        console.log('^^^^^^^^^updateActivity called! Log updated in local view', e.detail)
-        break
-      case 'updateDt':
-        setLogs(oldLogs => {
-          const oldLog = oldLogs.filter(log => log.id === e.detail.logId)[0]
-          const newLogs = oldLogs.filter(log => log.id !== e.detail.logId)
-          const newLog = Object.assign({}, oldLog)
-          newLog.dt = e.detail.newDate // Only update the dt field
-          writeLog(newLog)
-          newLogs.push(newLog)
-          newLogs.sort((a: any, b: any) => b.dt - a.dt) // Sorts logs by dt in desc order (newest->oldest)
-          return newLogs
-        })
-        console.log('^^^^^^^^^updateDt called! Log updated in local view', e.detail)
-        break
-    }
-  }
-
-  useEffect(() => {
-    document.body.addEventListener('logAction', listenForLogAction, false)
-    return () => {
-      document.body.removeEventListener('logAction', listenForLogAction)
-    }
-  }, [])
 
   // Initial load logs from db if user signs in
   useEffect(() => {

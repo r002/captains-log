@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import React, { useEffect, useState, useRef, MutableRefObject } from 'react'
-import { sendActivityUpdate } from '../../services/Internal'
+import React, { useEffect, useState, useRef, useContext, MutableRefObject } from 'react'
+import { DataContext } from '../../providers/DataContext'
 
 const FActivityInput = styled.input`
   background: transparent;
@@ -19,6 +19,7 @@ const ActivityInput = ({ logId, activity }: TActivityInput) => {
   const [editableActivity, setEditableActivity] = useState(false)
   const [newActivity, setNewActivity] = useState(activity)
   const inputActivity = useRef() as MutableRefObject<HTMLInputElement>
+  const dc = useContext(DataContext)
 
   function handleActivityDoubleClick () {
     setEditableActivity(true)
@@ -30,14 +31,10 @@ const ActivityInput = ({ logId, activity }: TActivityInput) => {
 
   function handleActivityKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
     switch (e.key) {
-      case 'Enter': {
-        sendActivityUpdate({
-          logId: logId,
-          newActivity: newActivity
-        })
+      case 'Enter':
+        dc.updateActivity({ logId, newActivity })
         setEditableActivity(false)
         break
-      }
       case 'Escape':
         setEditableActivity(false)
         setNewActivity(activity)

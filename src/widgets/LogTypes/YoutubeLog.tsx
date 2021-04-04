@@ -1,6 +1,7 @@
 import DtInput from '../Inputs/DtInput'
-import { sendLogDelete } from '../../services/Internal'
 import { FLogRecord, TBaseLog } from '../LogTypes/LogCommon'
+import { DataContext } from '../../providers/DataContext'
+import { useContext } from 'react'
 
 type TYoutubeLog = TBaseLog & {
   vidTitle: string
@@ -8,8 +9,10 @@ type TYoutubeLog = TBaseLog & {
 }
 
 const YoutubeLog = ({ id, dt, bg, selected, vidTitle, vid }: TYoutubeLog) => {
+  const dc = useContext(DataContext)
+
   function handleDelete () {
-    sendLogDelete(id)
+    dc.deleteLog(id)
   }
 
   if (vidTitle.length > 58) {

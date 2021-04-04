@@ -1,6 +1,5 @@
 import ActivityInput from '../Inputs/ActivityInput'
 import DtInput from '../Inputs/DtInput'
-// import { sendLogDelete } from '../../services/Internal'
 import { FLogRecord, TBaseLog } from '../LogTypes/LogCommon'
 import { DataContext } from '../../providers/DataContext'
 import { useContext } from 'react'
@@ -14,7 +13,6 @@ const ActivityLog = ({ id, dt, activity, bg, selected }: TActivityLog) => {
 
   function handleDeleteAction () {
     dc.deleteLog(id)
-    // sendLogDelete(id)
   }
 
   return (
