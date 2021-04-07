@@ -6,7 +6,7 @@ import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { parseInput } from '../services/InputEngine'
 import { DataContext, TActivityUpdate, TDateUpdate } from '../providers/DataContext'
-import DetailsPane from './DetailsPane'
+import YoutubePane from './DetailPanes/YoutubePane'
 
 const Box = styled.div`
   padding: 20px;
@@ -54,13 +54,8 @@ const Ticker = () => {
   )
 }
 
-export const LogEntry = () => {
-  // console.log('🚀🚀 LogEntry BEGIN rendering')
-
-  const [activity, setActivity] = useState('')
-  const { user } = useContext(UserContext)
-  const [logs, setLogs] = useState([] as Array<ILog>)
-  const [selectedLog, setSelectedLog] = useState<string>('')
+const useDataContext = (setLogs: React.Dispatch<React.SetStateAction<ILog[]>>,
+  setSelectedLog: React.Dispatch<React.SetStateAction<string>>) => {
   const [dataContext] = useState({
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     updateDate: updateDateImpl,
@@ -110,13 +105,20 @@ export const LogEntry = () => {
     setSelectedLog(logIdToSelect)
   }
 
-  if (logs.length > 0) {
-    // console.log('>> LogViewer.selectedLog before', selectedLog)
-    if (selectedLog === '') {
-      // console.log('>> fire default selectLog')
-      setSelectedLog(logs[0].id)
-    }
-    // console.log('>> LogViewer.selectedLog after', selectedLog)
+  return dataContext
+}
+
+export const LogEntry = () => {
+  // console.log('🚀🚀 LogEntry BEGIN rendering')
+
+  const [activity, setActivity] = useState('')
+  const { user } = useContext(UserContext)
+  const [logs, setLogs] = useState([] as Array<ILog>)
+  const [selectedLog, setSelectedLog] = useState<string>('')
+  const dataContext = useDataContext(setLogs, setSelectedLog)
+
+  if (logs.length > 0 && selectedLog === '') { // TODO: Clean this up later. 4/7/21
+    setSelectedLog(logs[0].id)
   }
 
   // Initial load logs from db if user signs in
@@ -161,6 +163,7 @@ export const LogEntry = () => {
   }
 
   const log = logs.filter(l => l.id === selectedLog)[0]
+  console.log('********************** log:', log)
 
   // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering', logs, user)
   return (
@@ -174,7 +177,7 @@ export const LogEntry = () => {
       <br /><br />
       <div style={{ display: 'flex' }}>
         <LogViewer logs={logs} selectedLog={selectedLog} />
-        <DetailsPane log={log} />
+        <YoutubePane log={log} />
       </div>
     </DataContext.Provider>
   )
