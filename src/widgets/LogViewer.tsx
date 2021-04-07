@@ -87,7 +87,7 @@ function renderLogs (items: Array<any>, bg: string, selectedLog: string | null):
   // console.log('{{{{}}}} logs first/last item:', items[0], items.slice(-1)[0])
   const renderItems = [] as any
 
-  console.log('>> selectedLog', selectedLog)
+  // console.log('>> selectedLog', selectedLog)
   for (const [i, item] of items.entries()) {
     const selected = item.id === selectedLog
 
@@ -110,7 +110,7 @@ function renderLogs (items: Array<any>, bg: string, selectedLog: string | null):
   return renderItems
 }
 
-export const LogViewer = ({ logs, selectedLog }: {logs: Array<ILog>, selectedLog: string | null}) => {
+export const LogViewer = ({ logs, selectedLog }: {logs: Array<ILog>, selectedLog: string}) => {
   const { user } = useContext(UserContext)
   const [renderItems, setRenderItems] = useState([] as Array<any>)
 
@@ -127,13 +127,13 @@ export const LogViewer = ({ logs, selectedLog }: {logs: Array<ILog>, selectedLog
     } else {
       setRenderItems([]) // If logs arrive here empty, it means the user has logged out. Clear all logs from viewer.
     }
-  }, [logs])
+  }, [logs, selectedLog])
 
   return (
-    <>
+    <div>
       {renderItems}
       {/* {pLogs.map((l: ILog, i: number) => <LogRecord key={'log' + i} {...l} saved={!!user} />)} */}
       {/* {pLogs.map((l: ILog, i: number) => <LogRecord key={'log' + i} dt={l.dt} activity={l.activity} saved={!!user} />)} */}
-    </>
+    </div>
   )
 }

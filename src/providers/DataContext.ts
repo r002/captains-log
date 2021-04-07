@@ -22,5 +22,8 @@ export const DataContext = createContext({
   },
   deleteLog: (logId: string) => {
     console.log("Default 'deleteLog' fxn called!", logId)
+  },
+  selectLog: (logId: string) => {
+    console.log("Default 'selectLog' fxn called!", logId)
   }
 })

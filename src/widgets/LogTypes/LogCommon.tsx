@@ -22,6 +22,9 @@ export const FLogRecord = styled.div<TFlog>`
   color: white;
   box-sizing: border-box;
   border: solid darkgray 1px;
+  display: flex;
+  justify-content: space-between;
+
   a:link {
     color: orange;
     background-color: transparent;
@@ -39,7 +42,7 @@ export const FLogRecord = styled.div<TFlog>`
   }
 
   ${props => props.selected && css`
-    border: solid green 5px;
+    border: solid orangered 5px;
   `}
 
   ${props => props.height && css`
@@ -53,8 +56,17 @@ export const FLogRecord = styled.div<TFlog>`
   ${props => props.type === 'meta' && css`
     height: 70px;
     text-align: center;
+    display: block;
   `}
 `
+
+// export const LogBase = () => {
+//   return (
+//     <FLogRecord>
+
+//     </FLogRecord>
+//   )
+// }
 
 const FDuration = styled.div`
   font-size: 20px;

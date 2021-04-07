@@ -6,6 +6,7 @@ import { FormattedDt, ILog } from './Shared'
 import { LogViewer } from './LogViewer'
 import { parseInput } from '../services/InputEngine'
 import { DataContext, TActivityUpdate, TDateUpdate } from '../providers/DataContext'
+import DetailsPane from './DetailsPane'
 
 const Box = styled.div`
   padding: 20px;
@@ -59,14 +60,16 @@ export const LogEntry = () => {
   const [activity, setActivity] = useState('')
   const { user } = useContext(UserContext)
   const [logs, setLogs] = useState([] as Array<ILog>)
-  const [selectedLog, setSelectedLog] = useState<string | null>(null)
+  const [selectedLog, setSelectedLog] = useState<string>('')
   const [dataContext] = useState({
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     updateDate: updateDateImpl,
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     updateActivity: updateActivityImpl,
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    deleteLog: deleteLogImpl
+    deleteLog: deleteLogImpl,
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    selectLog: selectLogImpl
   })
 
   function updateDateImpl ({ logId, newDate }: TDateUpdate): void {
@@ -102,9 +105,15 @@ export const LogEntry = () => {
     setLogs(oldLogs => oldLogs.filter(log => log.id !== logIdToDelete))
   }
 
+  function selectLogImpl (logIdToSelect: string): void {
+    console.log('>> calling selectLogImpl!', logIdToSelect)
+    setSelectedLog(logIdToSelect)
+  }
+
   if (logs.length > 0) {
     // console.log('>> LogViewer.selectedLog before', selectedLog)
-    if (selectedLog === null) {
+    if (selectedLog === '') {
+      // console.log('>> fire default selectLog')
       setSelectedLog(logs[0].id)
     }
     // console.log('>> LogViewer.selectedLog after', selectedLog)
@@ -151,6 +160,8 @@ export const LogEntry = () => {
     }
   }
 
+  const log = logs.filter(l => l.id === selectedLog)[0]
+
   // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering', logs, user)
   return (
     <DataContext.Provider value={dataContext}>
@@ -161,7 +172,10 @@ export const LogEntry = () => {
       <br /><br />
       <hr />
       <br /><br />
-      <LogViewer logs={logs} selectedLog={selectedLog} />
+      <div style={{ display: 'flex' }}>
+        <LogViewer logs={logs} selectedLog={selectedLog} />
+        <DetailsPane log={log} />
+      </div>
     </DataContext.Provider>
   )
 }
