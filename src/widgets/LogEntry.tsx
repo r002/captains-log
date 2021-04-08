@@ -105,17 +105,8 @@ const useDataContext = (setLogs: React.Dispatch<React.SetStateAction<ILog[]>>,
   return dataContext
 }
 
-export const LogEntry = () => {
-  // console.log('🚀🚀 LogEntry BEGIN rendering')
-
-  const [activity, setActivity] = useState('')
-  const { user } = useContext(UserContext)
-  const [logs, setLogs] = useState([] as Array<ILog>)
-  const [selectedLog, setSelectedLog] = useState<string>('')
-  const dataContext = useDataContext(setLogs, setSelectedLog)
-
-  // console.log('🚀🚀 selectedLog, user, logs:', selectedLog, user, logs)
-
+const useInitialLoad = (setLogs: React.Dispatch<React.SetStateAction<ILog[]>>,
+  logs: ILog[], user: any, addLog: any) => {
   // Initial load logs from db if user signs in
   useEffect(() => {
     // console.log('******** LogEntry fire useEffect', user)
@@ -145,6 +136,19 @@ export const LogEntry = () => {
       addLog('watch https://www.youtube.com/watch?v=dQw4w9WgXcQ') // Default "WelcomeLog"
     }
   }, [user])
+}
+
+export const LogEntry = () => {
+  // console.log('🚀🚀 LogEntry BEGIN rendering')
+
+  const [activity, setActivity] = useState('')
+  const { user } = useContext(UserContext)
+  const [logs, setLogs] = useState([] as Array<ILog>)
+  const [selectedLog, setSelectedLog] = useState<string>('')
+  const dataContext = useDataContext(setLogs, setSelectedLog)
+
+  // console.log('🚀🚀 selectedLog, user, logs:', selectedLog, user, logs)
+  useInitialLoad(setLogs, logs, user, addLog)
 
   function handleChange (e: React.FormEvent<HTMLInputElement>) {
     setActivity(e.currentTarget.value)
@@ -175,7 +179,6 @@ export const LogEntry = () => {
   if (log) {
     // Depending on the log's type, decide what to paint in the right pane
     // console.log('>>>>>>>> Paint right pane:', log.type)
-
     switch (log.type) {
       case 'YoutubeLog':
         rightPane = <YoutubePane log={log} />
@@ -188,19 +191,44 @@ export const LogEntry = () => {
     setSelectedLog(logs[0].id)
   }
 
-  // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering', logs, user)
+  function handleArrows (e: React.KeyboardEvent<HTMLDivElement>) {
+    switch (e.code) {
+      case 'ArrowUp': {
+        const i = logs.map(l => l.id).indexOf(selectedLog) // Find the index of the currently selected log
+        // console.log('>>> keyup:', selectedLog, i, logs)
+        if (i !== 0) {
+          setSelectedLog(logs[i - 1].id)
+        }
+        e.preventDefault()
+        break
+      }
+      case 'ArrowDown': {
+        const i = logs.map(l => l.id).indexOf(selectedLog) // Find the index of the currently selected log
+        // console.log('>>> keydown:', selectedLog, i, logs)
+        if (i !== logs.length - 1) {
+          setSelectedLog(logs[i + 1].id)
+        }
+        e.preventDefault()
+        break
+      }
+    }
+  }
+
+  // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering. selectedLog:', selectedLog)
   return (
     <DataContext.Provider value={dataContext}>
-      <Box>
-        <Prompt><span title='Robert Shell 😄'>RS</span> <Ticker /></Prompt>
-        $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={handleKeyDown}></LogInput>
-      </Box>
-      <br /><br />
-      <hr />
-      <br /><br />
-      <div style={{ display: 'flex' }}>
-        <LogViewer logs={logs} selectedLog={selectedLog} />
-        {rightPane}
+      <div onKeyDown={handleArrows}>
+        <Box>
+          <Prompt><span title='Robert Shell 😄'>RS</span> <Ticker /></Prompt>
+          $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={handleKeyDown}></LogInput>
+        </Box>
+        <br /><br />
+        <hr />
+        <br /><br />
+        <div style={{ display: 'flex' }}>
+          <LogViewer logs={logs} selectedLog={selectedLog} />
+          {rightPane}
+        </div>
       </div>
     </DataContext.Provider>
   )
