@@ -15,7 +15,7 @@ import YoutubeLog from './LogTypes/YoutubeLog'
 function processLogs (logs: Array<ILog>): Array<any> {
   const processedLogs = [] as any // TODO: Decalre a type here! 3/31/21
 
-  for (let i = 0; i < logs.length - 1; i++) {
+  for (let i = 0; i < logs.length; i++) { // TODO: Fix this! First log never shows!
     const log = logs[i]
     if (log.type === 'YoutubeLog') {
       const youtubeLog = {
@@ -35,42 +35,45 @@ function processLogs (logs: Array<ILog>): Array<any> {
       }
       processedLogs.push(activityLog) // Add the activity log first.
 
-      switch (log.activity.toLowerCase()) {
-        case 'wake up': {
-          const coeff = 1000 * 60 // Round times to the nearest minute
-          const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
-          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff)
-          const duration = endTime.getTime() - startTime.getTime()
-          const o = msToTime(duration)
-          const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
-          const sleepLog = {
-            type: 'SleepLog',
-            title: nightBefore.toString().slice(0, 15),
-            hours: o.hours,
-            minutes: o.minutes
+      // Only add a MetaLog if we're currently not already on the last log
+      if (i !== logs.length - 1) {
+        switch (log.activity.toLowerCase()) {
+          case 'wake up': {
+            const coeff = 1000 * 60 // Round times to the nearest minute
+            const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+            const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff)
+            const duration = endTime.getTime() - startTime.getTime()
+            const o = msToTime(duration)
+            const nightBefore = new Date(log.dt.getTime() - 1 * 24 * 60 * 60 * 1000)
+            const sleepLog = {
+              type: 'SleepLog',
+              title: nightBefore.toString().slice(0, 15),
+              hours: o.hours,
+              minutes: o.minutes
+            }
+            processedLogs.push(sleepLog)
+            break
           }
-          processedLogs.push(sleepLog)
-          break
-        }
-        case 'return':
-        case 'finish': {
-          const coeff = 1000 * 60 // Round times to the nearest minute
-          const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
-          const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff)
-          const duration = endTime.getTime() - startTime.getTime()
-          const o = msToTime(duration)
-          const activityLog = logs[i + 1].activity.toLowerCase()
-          const activity = /.*\s(?<name>.*)$/.exec(activityLog)
-          let activityName = activity?.groups?.name ?? 'Error!!!!'
-          activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
-          const durationLog = {
-            type: 'DurationLog',
-            title: activityName,
-            hours: o.hours,
-            minutes: o.minutes
+          case 'return':
+          case 'finish': {
+            const coeff = 1000 * 60 // Round times to the nearest minute
+            const endTime = new Date(Math.floor(log.dt.getTime() / coeff) * coeff)
+            const startTime = new Date(Math.floor(logs[i + 1].dt.getTime() / coeff) * coeff)
+            const duration = endTime.getTime() - startTime.getTime()
+            const o = msToTime(duration)
+            const activityLog = logs[i + 1].activity.toLowerCase()
+            const activity = /.*\s(?<name>.*)$/.exec(activityLog)
+            let activityName = activity?.groups?.name ?? 'Error!!!!'
+            activityName = activityName.charAt(0).toUpperCase() + activityName.slice(1)
+            const durationLog = {
+              type: 'DurationLog',
+              title: activityName,
+              hours: o.hours,
+              minutes: o.minutes
+            }
+            processedLogs.push(durationLog)
+            break
           }
-          processedLogs.push(durationLog)
-          break
         }
       }
     }

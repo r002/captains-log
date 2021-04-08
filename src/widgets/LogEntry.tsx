@@ -57,13 +57,9 @@ const Ticker = () => {
 const useDataContext = (setLogs: React.Dispatch<React.SetStateAction<ILog[]>>,
   setSelectedLog: React.Dispatch<React.SetStateAction<string>>) => {
   const [dataContext] = useState({
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     updateDate: updateDateImpl,
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     updateActivity: updateActivityImpl,
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     deleteLog: deleteLogImpl,
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     selectLog: selectLogImpl
   })
 
@@ -117,31 +113,35 @@ export const LogEntry = () => {
   const [selectedLog, setSelectedLog] = useState<string>('')
   const dataContext = useDataContext(setLogs, setSelectedLog)
 
-  if (logs.length > 0 && selectedLog === '') { // TODO: Clean this up later. 4/7/21
-    setSelectedLog(logs[0].id)
-  }
+  // console.log('🚀🚀 selectedLog, user, logs:', selectedLog, user, logs)
 
   // Initial load logs from db if user signs in
   useEffect(() => {
     // console.log('******** LogEntry fire useEffect', user)
     if (user) {
       getLogs(50).then(logsFromDb => {
-        if (logs.length === 0 || logs.length + logsFromDb.length > logsFromDb.length) {
+        // Only save the WelcomeLog to the user's account if they've never saved any logs before.
+        if (logsFromDb.length > 0) {
+          logs.pop() // Remove WelcomeLog -- always the last element!
+        }
+
+        if (logs.length > 0) {
           // If user has written logs anonymously, first write the unsaved logs to Firestore
           for (const log of logs) {
             writeLog(log)
             console.log('>> write unsaved log to firestore', log)
           }
-          // Now update the logs with any from the db. This will update the view.
-          setLogs(oldLogs => [
-            ...oldLogs,
-            ...logsFromDb
-          ])
         }
+        // Now update the logs with any from the db. This will update the view.
+        setLogs(logs => [
+          ...logs,
+          ...logsFromDb
+        ])
       })
     } else {
       // console.log('&&&&& LogEntry User has logged out; clear logs', user)
       setLogs([])
+      addLog('watch https://www.youtube.com/watch?v=dQw4w9WgXcQ') // Default "WelcomeLog"
     }
   }, [user])
 
@@ -149,28 +149,37 @@ export const LogEntry = () => {
     setActivity(e.currentTarget.value)
   }
 
-  function addLog (e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
-      parseInput(activity).then(newLog => {
-        setLogs((oldLogs: Array<ILog>) => [
-          newLog,
-          ...oldLogs]
-        )
-        setActivity('')
-        writeLog(newLog)
-      })
+      addLog(activity)
     }
   }
 
+  function addLog (userInput: string) {
+    parseInput(userInput).then(newLog => {
+      setLogs((oldLogs: Array<ILog>) => [
+        newLog,
+        ...oldLogs]
+      )
+      setActivity('')
+      writeLog(newLog)
+      setSelectedLog(newLog.id)
+    })
+  }
+
   const log = logs.filter(l => l.id === selectedLog)[0]
-  console.log('********************** log:', log)
+  // console.log('********************** selectedLog, log:', selectedLog, log)
+  // This is a catch-all. Is there a better way of doing this? 4/7/21
+  if (!log && logs[0]) {
+    setSelectedLog(logs[0].id)
+  }
 
   // console.log('🚀🚀🚀🚀 LogEntry FINISHED rendering', logs, user)
   return (
     <DataContext.Provider value={dataContext}>
       <Box>
         <Prompt><span title='Robert Shell 😄'>RS</span> <Ticker /></Prompt>
-        $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={addLog}></LogInput>
+        $ <LogInput autoFocus={true} value={activity} onChange={handleChange} onKeyDown={handleKeyDown}></LogInput>
       </Box>
       <br /><br />
       <hr />
