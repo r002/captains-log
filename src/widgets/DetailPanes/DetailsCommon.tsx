@@ -1,9 +1,18 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-export const FDetailsPane = styled.div`
+export type TFDetailsPane = {
+  readonly background? : string
+}
+
+export const FDetailsPane = styled.div<TFDetailsPane>`
   margin-left: 30px;
   background: pink;
   padding: 20px;
+
+  ${props => props.background && css`
+    background: ${props.background};
+  `}
+
   /* 
   width: 100%;
   color: lightgrey;

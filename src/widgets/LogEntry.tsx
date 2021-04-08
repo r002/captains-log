@@ -7,6 +7,7 @@ import { LogViewer } from './LogViewer'
 import { parseInput } from '../services/InputEngine'
 import { DataContext, TActivityUpdate, TDateUpdate } from '../providers/DataContext'
 import YoutubePane from './DetailPanes/YoutubePane'
+import SummaryPane from './DetailPanes/SummaryPane'
 
 const Box = styled.div`
   padding: 20px;
@@ -169,8 +170,21 @@ export const LogEntry = () => {
 
   const log = logs.filter(l => l.id === selectedLog)[0]
   // console.log('********************** selectedLog, log:', selectedLog, log)
-  // This is a catch-all. Is there a better way of doing this? 4/7/21
-  if (!log && logs[0]) {
+
+  let rightPane = <></>
+  if (log) {
+    // Depending on the log's type, decide what to paint in the right pane
+    // console.log('>>>>>>>> Paint right pane:', log.type)
+
+    switch (log.type) {
+      case 'YoutubeLog':
+        rightPane = <YoutubePane log={log} />
+        break
+      case 'ActivityLog':
+        rightPane = <SummaryPane logs={logs} />
+        break
+    }
+  } else if (logs[0]) {
     setSelectedLog(logs[0].id)
   }
 
@@ -186,7 +200,7 @@ export const LogEntry = () => {
       <br /><br />
       <div style={{ display: 'flex' }}>
         <LogViewer logs={logs} selectedLog={selectedLog} />
-        <YoutubePane log={log} />
+        {rightPane}
       </div>
     </DataContext.Provider>
   )
