@@ -10,11 +10,12 @@ import CONFIG from '../config'
 export async function parseInput (input: string): Promise<ILog> {
   const re = /^(?<command>.*?)\s(?<url>[^\s]*)$/.exec(input.trim())
   const command = re?.groups?.command ?? 'Invalid command!'
-  const url = re?.groups?.url ?? 'Invalid url!'
-  const vid = /.*\?v=(?<vid>.*)/.exec(url)?.groups?.vid ?? 'No vid!'
 
   switch (command) {
     case 'watch': {
+      const url = re?.groups?.url ?? 'Invalid url!'
+      const vid = /.*\?v=(?<vid>.*)/.exec(url)?.groups?.vid ?? /.*\/(?<vid>.*)/.exec(url)?.groups?.vid ?? 'No vid'
+
       console.log('>>>>>>> command/url:', command, vid, url)
       const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${vid}&key=${CONFIG.apiKey}&part=snippet`)
       const data = await response.json()
