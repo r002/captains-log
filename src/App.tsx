@@ -81,7 +81,7 @@ const App = () => {
 
   useEffect(() => {
     setFlashAlert(null) // Reset the Flash Alert every time. This is hacky; fix later 3/28/21
-  }, [user])
+  }, [user, context])
 
   let appWrapper = <></>
   if (!initializing) {

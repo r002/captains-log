@@ -33,9 +33,7 @@
     // note you must disable the base rule as it can report incorrect errors
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/no-use-before-define.md#how-to-use
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": [
-      "error"
-    ],
+    "@typescript-eslint/no-use-before-define": "off",
     "react/prop-types": 0,
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off"

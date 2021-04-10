@@ -1,7 +1,8 @@
 import styled from 'styled-components'
-import { LimeGreen, Yellow } from './Shared'
-import React, { useEffect, useState, useRef, MutableRefObject } from 'react'
-import { sendFlashAlert, sendDateUpdate } from '../services/Internal'
+import { LimeGreen, Yellow } from '../Shared'
+import React, { useEffect, useState, useRef, useContext, MutableRefObject } from 'react'
+import { sendFlashAlert } from '../../services/Internal'
+import { DataContext } from '../../providers/DataContext'
 
 const FDtInput = styled.input`
   background: transparent;
@@ -22,6 +23,7 @@ const DtInput = ({ date, logId }: TDtInput) => {
   const [editableDt, setEditableDt] = useState(false)
   const [newDate, setNewDate] = useState(date.toString().slice(0, 21) + ' ET')
   const inputDt = useRef() as MutableRefObject<HTMLInputElement>
+  const dc = useContext(DataContext)
 
   function handleDtDoubleClick () {
     setEditableDt(true)
@@ -49,12 +51,11 @@ const DtInput = ({ date, logId }: TDtInput) => {
           return
         }
 
-        sendDateUpdate({
+        dc.updateDate({
           logId: logId,
           newDate: newDateFromUser // This is a legit, well-formed Date obj
         })
 
-        // Convert the string into a date object
         console.log('newDateFromUser:', newDateFromUser)
 
         setEditableDt(false)
