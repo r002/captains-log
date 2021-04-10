@@ -3,13 +3,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: {
-    app: './src/index.tsx'
+    app: './src/index.tsx',
+    wattpad: './src/wattpad.tsx'
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Production',
+      title: 'Home',
+      filename: 'index.html',
       template: './src/index.html',
-      favicon: './src/favicon.ico'
+      favicon: './src/favicon.ico',
+      chunks: ['app']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Wattpad POC',
+      filename: 'wattpad.html',
+      template: './src/wattpad.html',
+      favicon: './src/favicon.ico',
+      chunks: ['wattpad']
     })
   ],
   module: {
@@ -29,10 +39,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js']
-  },
-  output: {
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    clean: true
   }
+  // output: {
+  //   filename: '[name].bundle.js',
+  //   path: path.resolve(__dirname, 'dist'),
+  //   chunkFilename: '[id].[chunkhash].js',
+  //   clean: true
+  // }
 }

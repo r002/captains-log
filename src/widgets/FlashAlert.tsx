@@ -25,7 +25,7 @@ const Fade = styled.div`
   background-color: palegoldenrod;
   color: black;
   padding: 5px;
-  margin: -5px;
+  margin: 0;
   /* transition: visibility 1s linear; */
 `
 

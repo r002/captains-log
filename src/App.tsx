@@ -1,13 +1,11 @@
 import firebase from 'firebase/app'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
-import { LogEntry } from './widgets/LogEntry'
 import { ThemeContext, themes } from './providers/ThemeContext'
 import './style.css'
 import { UserContext } from './providers/AuthContext'
 import styled from 'styled-components'
 import { TFlashAlert } from './services/Internal'
-import { FlashAlert } from './widgets/FlashAlert'
 
 const Body = styled.div`
   padding: 40px 20px 20px 20px;
@@ -17,25 +15,60 @@ const Body = styled.div`
   /* border: solid darkgray 1px; */
 `
 
-const useAuth = () => {
+type TUserAuth = {
+  initializing: boolean
+  user: firebase.User | null
+}
+const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert | null>>) => {
   const [state, setState] = useState(() => {
     // const user = firebase.auth().currentUser
-
     return {
       initializing: true,
       user: null
-    }
+    } as TUserAuth
   })
 
-  function onChange (user: any) {
-    setState(() => {
-      // console.log('^^^^^^^^^^^^^^^^^^user auth has changed!', user)
-      return {
-        initializing: false,
-        user: user
-      }
-    })
-    // console.log('^^^^^^^^^^^^^^^^^^firesbase auth onChange fired. User:', user)
+  function onChange (u: firebase.User | null) {
+    // console.log('^^^^^^^^^^^^^^^^^^user auth onChange fired!', user)
+    // Check if the user is authorized to use the system
+    if (u) {
+      const docRef = firebase.firestore().collection('authorized').doc(u.uid)
+      docRef.get().then((doc) => {
+        if (doc.exists) {
+          console.log('Document data:', doc.data())
+          setState(() => {
+            return {
+              initializing: false,
+              user: u
+            }
+          })
+        }
+        // Note: else block never fires because of security rule
+        // else {
+        //   // doc.data() will be undefined in this case
+        //   console.log('No such document!')
+        // }
+      }).catch((error) => {
+        console.log(`${u.displayName} has insufficient firestore security permissions. Sign out.`, error)
+        const flashAlert = {
+          alert: `Sorry! ${u.displayName} isn't authorized`,
+          content: u.email,
+          debug: {
+            logId: '' // TODO: Such a hack. Fix this later. 4/10/21
+          }
+        } as TFlashAlert
+        setFlashAlert(flashAlert)
+        firebase.auth().signOut()
+      })
+    } else {
+      // user object is null. No user signed in
+      setState(() => {
+        return {
+          initializing: false,
+          user: null
+        }
+      })
+    }
   }
 
   useEffect(() => {
@@ -48,12 +81,14 @@ const useAuth = () => {
   return state
 }
 
-const App = () => {
-  const { initializing, user } = useAuth()
+type TApp = {
+  bodyContent: React.ReactNode
+}
+const App = (props: TApp) => {
   const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
+  const { initializing, user } = useAuth(setFlashAlert)
   const [context, setContext] = useState({
     theme: themes.light,
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     toggleTheme: customToggler
   })
 
@@ -89,13 +124,9 @@ const App = () => {
       <>
         <ThemeContext.Provider value={context}>
           <UserContext.Provider value={{ user }}>
-            <Navbar />
+            <Navbar flashAlert={flashAlert} />
             <Body>
-              {flashAlert &&
-                <FlashAlert key={new Date().toString()} {...flashAlert} />
-              }
-              <br />
-              <LogEntry />
+              {props.bodyContent}
             </Body>
           </UserContext.Provider>
         </ThemeContext.Provider>
