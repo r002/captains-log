@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import LogEntry from './widgets/LogEntry'
 import StoryBoard from './widgets/StoryBoard'
+import Admin from './widgets/Admin'
 
 // Parse the url and route to the requested page
 const urlParams = new URLSearchParams(window.location.search)
@@ -16,6 +17,9 @@ switch (page) {
     break
   case 'storyboard':
     bc = <StoryBoard />
+    break
+  case 'admin':
+    bc = <Admin />
     break
 }
 

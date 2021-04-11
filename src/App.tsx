@@ -104,7 +104,7 @@ const App = (props: TApp) => {
   function listenForFlashAlert (event: Event) {
     const fa = (event as CustomEvent).detail as TFlashAlert
     setFlashAlert(fa)
-    console.log('!!!!!!!!!!!!!! FlashAlert received!', fa)
+    console.log('!!!!!!!!!! FlashAlert received!', fa)
   }
 
   useEffect(() => {

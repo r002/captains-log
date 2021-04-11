@@ -1,5 +1,35 @@
 import firebase from 'firebase/app'
-import { ILog } from '../widgets/Shared'
+import { ILog, TPassage } from '../widgets/Shared'
+
+export function addPassage (passage: TPassage): void {
+  const u = firebase.auth().currentUser
+  if (u) {
+    firebase.firestore().collection('passages').doc(passage.id)
+      .set(passage, { merge: true }).then(() => {
+        console.log('>> Passage written to Firestore!', passage)
+      }).catch((error) => {
+        console.error('Error writing passage to Firestore: ', error)
+      })
+  }
+}
+
+export async function getPassages (storyId: string): Promise<Array<TPassage>> {
+  const u = firebase.auth().currentUser
+  // console.log('----------------- fire getPassages!', u)
+  if (u) {
+    const qs = await firebase.firestore().collection('passages')
+      .where('storyId', '==', storyId)
+      .orderBy('created', 'desc').get()
+    const passages = qs.docs.map((doc: any) => {
+      const p = Object.assign({}, doc.data())
+      // console.log('>> p:', p)
+      p.created = p.created.toDate()
+      return p
+    })
+    return passages
+  }
+  return [] as Array<TPassage>
+}
 
 export async function getLogs (limit: number) : Promise<Array<ILog>> {
   // console.log('----------------- fire getLogs!')

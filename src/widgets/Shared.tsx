@@ -31,3 +31,10 @@ export type ILog = {
   vidTitle? : string
   vid? : string
 }
+
+export type TPassage = {
+  id: string
+  storyId: string
+  content: string
+  created: Date
+}
