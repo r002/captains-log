@@ -138,7 +138,7 @@ const useInitialLoad = (setLogs: React.Dispatch<React.SetStateAction<ILog[]>>,
   }, [user])
 }
 
-export const LogEntry = () => {
+const LogEntry = () => {
   // console.log('🚀🚀 LogEntry BEGIN rendering')
 
   const [activity, setActivity] = useState('')
@@ -233,3 +233,5 @@ export const LogEntry = () => {
     </DataContext.Provider>
   )
 }
+
+export default LogEntry

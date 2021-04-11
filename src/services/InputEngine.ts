@@ -16,7 +16,7 @@ export async function parseInput (input: string): Promise<ILog> {
       const url = re?.groups?.url ?? 'Invalid url!'
       const vid = /.*\?v=(?<vid>.*)/.exec(url)?.groups?.vid ?? /.*\/(?<vid>.*)/.exec(url)?.groups?.vid ?? 'No vid'
 
-      console.log('>>>>>>> command/url:', command, vid, url)
+      // console.log('>>>>>>> command/url:', command, vid, url)
       const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${vid}&key=${CONFIG.apiKey}&part=snippet`)
       const data = await response.json()
       // console.log('>>>> data:', data)
@@ -33,7 +33,7 @@ export async function parseInput (input: string): Promise<ILog> {
         command: command,
         vid: vid
       }
-      console.log('>>>> newLog:', newLog)
+      // console.log('>>>> newLog:', newLog)
       return newLog
     }
     default:

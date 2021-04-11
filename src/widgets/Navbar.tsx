@@ -4,6 +4,8 @@ import { UserContext } from '../providers/AuthContext'
 import { useContext } from 'react'
 import firebase from 'firebase/app'
 import { exportLogs } from '../services/Exporter'
+import { TFlashAlert } from '../services/Internal'
+import { FlashAlert } from './FlashAlert'
 
 type TFButton = {
   readonly theme : boolean
@@ -103,21 +105,34 @@ const NavWrapper = styled.div`
   width: 100%;
   background: lightslategray;
   box-sizing: border-box;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
   border-bottom: solid darkgray 1px;
 `
 
-export const Navbar = () => {
+type TNavBar = {
+  flashAlert: TFlashAlert | null
+}
+
+export const Navbar = (props: TNavBar) => {
   const { user } = useContext(UserContext)
   const welcomeMsg = user
     ? <>
         <ExportButton /> {user.displayName} <LogoutButton />
       </>
     : <LoginButton />
+
   return (
     <NavWrapper>
-      <ThemeToggler />
-      {welcomeMsg}
+      <div id="justifyLeft">
+        {props.flashAlert &&
+          <FlashAlert key={new Date().toString()} {...props.flashAlert} />
+        }
+      </div>
+      <div id="justifyRight">
+        <ThemeToggler />
+        {welcomeMsg}
+      </div>
     </NavWrapper>
   )
 }
