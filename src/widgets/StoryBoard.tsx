@@ -1,4 +1,9 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+import { useState, useContext } from 'react'
+import { UserContext } from '../providers/AuthContext'
+import { TPassage } from './Shared'
+import { getPassages } from '../services/FirestoreApi'
+import Candidates from './Candidates'
 
 export const FLine = styled.div`
   font-family: Georgia, serif;
@@ -7,7 +12,11 @@ export const FLine = styled.div`
   line-height: 1.8;
 `
 
-export const FPassage = styled.div`
+type TFPassage = {
+  background? : string
+}
+
+export const FPassage = styled.div<TFPassage>`
   background: lightgrey;
   border-radius: 3px;
   border: 2px solid palevioletred;
@@ -19,6 +28,12 @@ export const FPassage = styled.div`
   line-height: 1.8;
   margin-left: 150px;
   margin-right: 150px;
+  margin-bottom: 30px;
+
+  ${props => props.background && css`
+    background: ${props.background};
+  `}
+
 `
 
 const Container = styled.div`
@@ -27,41 +42,61 @@ const Container = styled.div`
   text-align: center;
 `
 
-const FEditor = styled.textarea`
-  background: white;
-  color: black;
-  padding: 20px;
-  font-family: Georgia, serif;
-  font-size: 18px;
-  letter-spacing: 1px;
-  line-height: 1.8;
-  width: 100%;
-  height: 500px;
-  box-sizing: border-box;
-`
+// const FEditor = styled.textarea`
+//   background: white;
+//   color: black;
+//   padding: 20px;
+//   font-family: Georgia, serif;
+//   font-size: 18px;
+//   letter-spacing: 1px;
+//   line-height: 1.8;
+//   width: 100%;
+//   height: 500px;
+//   box-sizing: border-box;
+// `
 
 const StoryBoard = () => {
+  const { user } = useContext(UserContext)
+  const [passages, setPassages] = useState(null as unknown as TPassage[])
+  // console.log('>> user:', user)
+
+  if (user && !passages) {
+    getPassages('aaa').then(passages => {
+      console.log('>> passages', passages)
+      setPassages(passages)
+    })
+  }
+
+  const cannon = []
+  let candidates = [] as TPassage[]
+  if (passages) {
+    const cannonPassages = passages.filter(passage => passage.branch === 'cannon')
+    for (const passage of cannonPassages) {
+      const lines = passage.content.split('\n\n')
+      cannon.push(
+        <FPassage key={passage.id} background='palegoldenrod'>
+          {lines.map((line, i) => <FLine key={i}>{line} {i !== lines.length - 1 ? <p /> : ''}</FLine>)}
+        </FPassage>
+      )
+    }
+
+    candidates = passages.filter(passage => passage.branch === 'candidate')
+  }
+
   return (
     <>
-      <FPassage>
-        Nearly ten years had passed since the Dursleys had woken up to find their nephew on the front step, but Privet Drive had hardly changed at all.  The sun rose on the same tidy front gardens and lit up the brass number four on the Dursleys' front door; it crept into their living room, which was almost exactly the same as it had been on the night when Mr. Dursley had seen that fateful news report about the owls.  Only the photographs on the mantelpiece really showed how much time had passed.  Ten years ago, there had been lots of pictures of what looked like a large pink beach ball wearing different-colored bonnets—but Dudley Dursley was no longer a baby, and now the photographs showed a large blonde boy riding his first bicycle, on a carousel at the fair, playing a computer game with his father, being hugged and kissed by his mother.  The room held no sign at all that another boy lived in the house, too.
-        <br /><br />
-        Yet Harry Potter was still there, asleep at the moment, but not for long.  His Aunt Petunia was awake and it was her shrill voice that made the first noise of the day.
-        {/* <br /><br />
-        "Up!  Get up!  Now!"
-        <br /><br />
-        Harry woke with a start.  His aunt rapped on the door again.
-        <br /><br />
-        "Up!" she screeched.  Harry heard her walking toward the kitchen and then the sound of the frying pan being put on the stove.  He rolled onto his back and tried to remember the dream he had been having.  It had been a good one.   */}
-      </FPassage>
-      <br /><br />
       <Container>
+        What happens next? You decide.
+      </Container>
+      <br /><br />
+
+      {cannon}
+
+      <Candidates candidates={candidates} />
+
+      {/* <Container>
         <FEditor defaultValue='Editor goes here' />
-      </Container>
-      <br /><br />
-      <Container>
-        Upvote | Downvote | See Another Candidate | Comments
-      </Container>
+      </Container> */}
     </>
   )
 }

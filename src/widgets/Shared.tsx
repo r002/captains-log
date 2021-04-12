@@ -37,4 +37,5 @@ export type TPassage = {
   storyId: string
   content: string
   created: Date
+  branch: string
 }
