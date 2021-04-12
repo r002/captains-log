@@ -1,5 +1,31 @@
 import firebase from 'firebase/app'
 import { ILog, TPassage } from '../widgets/Shared'
+import { AutoId } from '../lib/util'
+
+export function vote (passageId: string, parentId: string, decision: string): void {
+  const u = firebase.auth().currentUser
+  if (u) {
+    const vote = {
+      id: AutoId.newId(),
+      user: {
+        uid: u.uid,
+        displayName: u.displayName,
+        photoUrl: u.photoURL
+      },
+      created: new Date(),
+      decision: decision,
+      passageId: passageId, // Necessary?
+      parentId: parentId // Necessary?
+    }
+
+    firebase.firestore().collection(`passages/${passageId}/votes`).doc(vote.id)
+      .set(vote, { merge: true }).then(() => {
+        console.log('>> Vote written to Firestore!', vote)
+      }).catch((error) => {
+        console.error('Error writing vote to Firestore: ', error)
+      })
+  }
+}
 
 export function addPassage (passage: TPassage): void {
   const u = firebase.auth().currentUser

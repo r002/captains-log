@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 import { TPassage } from './Shared'
 import { FPassage, FLine } from './StoryBoard'
 import React, { useState } from 'react'
+import { vote } from '../services/FirestoreApi'
 
 const Container = styled.div`
   margin-left: 150px;
@@ -45,10 +46,26 @@ const VoteButton = styled.button<TVoteButton>`
 
 type TCandidates = {
   candidates: TPassage[]
+  parentId: string
 }
 
 const Candidates = (props: TCandidates) => {
   const [candidateNo, setCandidateNo] = useState(0)
+
+  // // Get the voting record of the user for this parentId
+  // const votingRecord = {
+  //   parentId: 'aaaa',
+  //   record: [
+  //     {
+  //       passageId: 'bbb',
+  //       decision: 'upvote'
+  //     },
+  //     {
+  //       passageId: 'ccc',
+  //       decision: 'downvote'
+  //     }
+  //   ]
+  // }
 
   function handleClick (e: React.MouseEvent<HTMLElement>) {
     // console.log('>> clicked: ', e.currentTarget.dataset.index)
@@ -57,10 +74,12 @@ const Candidates = (props: TCandidates) => {
 
   function upvote () {
     console.log('>> upvote:', props.candidates[candidateNo].id)
+    vote(props.candidates[candidateNo].id, props.parentId, 'upvote')
   }
 
   function downvote () {
     console.log('>> downvote:', props.candidates[candidateNo].id)
+    vote(props.candidates[candidateNo].id, props.parentId, 'downvote')
   }
 
   const body = []

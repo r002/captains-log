@@ -69,9 +69,11 @@ const StoryBoard = () => {
 
   const cannon = []
   let candidates = [] as TPassage[]
+  let parentId = ''
   if (passages) {
     const cannonPassages = passages.filter(passage => passage.branch === 'cannon')
     for (const passage of cannonPassages) {
+      parentId = passage.id
       const lines = passage.content.split('\n\n')
       cannon.push(
         <FPassage key={passage.id} background='palegoldenrod'>
@@ -92,7 +94,7 @@ const StoryBoard = () => {
 
       {cannon}
 
-      <Candidates candidates={candidates} />
+      <Candidates candidates={candidates} parentId={parentId} />
 
       {/* <Container>
         <FEditor defaultValue='Editor goes here' />
