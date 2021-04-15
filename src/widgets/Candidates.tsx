@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { TPassage } from './Shared'
 import { FPassage, FLine } from './StoryBoard'
 import React, { useState } from 'react'
-import { vote } from '../services/FirestoreApi'
+import { vote, getVotingRecord } from '../services/FirestoreApi'
 
 const Container = styled.div`
   margin-left: 150px;
@@ -30,6 +30,7 @@ const CandidateButton = styled.button<TCandidateButton>`
 
 type TVoteButton = {
   background: string
+  // disabled: boolean
 }
 
 const VoteButton = styled.button<TVoteButton>`
@@ -46,26 +47,12 @@ const VoteButton = styled.button<TVoteButton>`
 
 type TCandidates = {
   candidates: TPassage[]
-  parentId: string
+  parentId : string
 }
 
 const Candidates = (props: TCandidates) => {
   const [candidateNo, setCandidateNo] = useState(0)
-
-  // // Get the voting record of the user for this parentId
-  // const votingRecord = {
-  //   parentId: 'aaaa',
-  //   record: [
-  //     {
-  //       passageId: 'bbb',
-  //       decision: 'upvote'
-  //     },
-  //     {
-  //       passageId: 'ccc',
-  //       decision: 'downvote'
-  //     }
-  //   ]
-  // }
+  const [voteMap, setVoteMap] = useState(new Map<string, string>())
 
   function handleClick (e: React.MouseEvent<HTMLElement>) {
     // console.log('>> clicked: ', e.currentTarget.dataset.index)
@@ -75,15 +62,20 @@ const Candidates = (props: TCandidates) => {
   function upvote () {
     console.log('>> upvote:', props.candidates[candidateNo].id)
     vote(props.candidates[candidateNo].id, props.parentId, 'upvote')
+    voteMap.set(props.candidates[candidateNo].id, 'upvote')
+    setVoteMap(new Map(voteMap))
   }
 
   function downvote () {
     console.log('>> downvote:', props.candidates[candidateNo].id)
     vote(props.candidates[candidateNo].id, props.parentId, 'downvote')
+    voteMap.set(props.candidates[candidateNo].id, 'downvote')
+    setVoteMap(new Map(voteMap))
   }
 
   const body = []
   const candidateButtons = []
+  const voteButtons = []
   if (props.candidates.length > 0) {
     const passage = props.candidates[candidateNo]
     const lines = passage.content.split('\n\n')
@@ -92,6 +84,32 @@ const Candidates = (props: TCandidates) => {
       {lines.map((line, i) => <FLine key={i}>{line} {i !== lines.length - 1 ? <p /> : ''}</FLine>)}
     </FPassage>
     )
+
+    if (!voteMap.has(props.candidates[candidateNo].id)) {
+      getVotingRecord(props.candidates[candidateNo].id).then(votingRecord => {
+        // console.log('>>>>>>>>>>>>>>> getVotingRecord', votingRecord)
+        if (votingRecord) {
+          voteMap.set(votingRecord.passageId, votingRecord.decision)
+          setVoteMap(new Map(voteMap))
+        }
+      })
+    }
+
+    if (!voteMap.has(props.candidates[candidateNo].id)) {
+      voteButtons.push(
+        <VoteButton background='lightgreen' onClick={upvote} key='upvote'>
+          Upvote 👍
+        </VoteButton>,
+        <VoteButton background='pink' onClick={downvote} key='downvote'>
+          Downvote 👎
+        </VoteButton>
+      )
+    } else {
+      const voteMessage = voteMap.get(props.candidates[candidateNo].id) === 'upvote'
+        ? 'You upvoted!'
+        : 'You downvoted!'
+      voteButtons.push(voteMessage)
+    }
   }
 
   for (const [i, passage] of props.candidates.entries()) {
@@ -102,22 +120,15 @@ const Candidates = (props: TCandidates) => {
     )
   }
 
-  const voteButtons = []
-  voteButtons.push(
-    <VoteButton background='lightgreen' onClick={upvote} key='upvote'>
-      Upvote 👍
-    </VoteButton>,
-    <VoteButton background='pink' onClick={downvote} key='downvote'>
-      Downvote 👎
-    </VoteButton>
-  )
-
+  // console.log('>>>> voteMap:', voteMap)
   return (
     <>
+     <Container>
+        {candidateButtons}
+      </Container>
+      <br /><br />
       {body}
       <Container>
-        {candidateButtons}
-        <br /><br />
         {voteButtons}
       </Container>
     </>

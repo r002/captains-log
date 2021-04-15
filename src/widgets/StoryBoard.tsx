@@ -77,7 +77,7 @@ const StoryBoard = () => {
       const lines = passage.content.split('\n\n')
       cannon.push(
         <FPassage key={passage.id} background='palegoldenrod'>
-          {lines.map((line, i) => <FLine key={i}>{line} {i !== lines.length - 1 ? <p /> : ''}</FLine>)}
+          {lines.map((line, i) => <FLine key={i}>{line} {i !== lines.length - 1 && <p />}</FLine>)}
         </FPassage>
       )
     }

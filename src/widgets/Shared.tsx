@@ -39,3 +39,14 @@ export type TPassage = {
   created: Date
   branch: string
 }
+
+export type TVote = {
+  passageId: string,
+  decision: string
+  // created: Date
+}
+
+// export type TVotingRecord = {
+//   parentId: string,
+//   votes: TVote[]
+// }

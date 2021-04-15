@@ -1,6 +1,24 @@
 import firebase from 'firebase/app'
-import { ILog, TPassage } from '../widgets/Shared'
+import { ILog, TPassage, TVote } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
+
+export async function getVotingRecord (passageId: string): Promise<TVote> {
+  const u = firebase.auth().currentUser
+
+  if (passageId) {
+    // console.log('>>>>> path:', `passages/${passageId}/votes`)
+    const qs = await firebase.firestore().collection(`passages/${passageId}/votes`)
+      .where('user.uid', '==', u!.uid).get()
+    const votingRecord = qs.docs.map((doc: any) => {
+      const o = Object.assign({}, doc.data())
+      o.created = o.created.toDate()
+      return o
+    })
+    return votingRecord[0] ?? null
+  }
+
+  return null as unknown as TVote
+}
 
 export function vote (passageId: string, parentId: string, decision: string): void {
   const u = firebase.auth().currentUser
