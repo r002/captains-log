@@ -106,8 +106,8 @@ const Candidates = (props: TCandidates) => {
       )
     } else {
       const voteMessage = voteMap.get(props.candidates[candidateNo].id) === 'upvote'
-        ? 'You upvoted!'
-        : 'You downvoted!'
+        ? '👍 You upvoted! 👍'
+        : '👎 You downvoted! 👎'
       voteButtons.push(voteMessage)
     }
   }

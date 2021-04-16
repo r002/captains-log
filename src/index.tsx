@@ -31,16 +31,26 @@ ReactDOM.render(
   document.querySelector('#root')
 )
 
+// https://webpack.js.org/api/hot-module-replacement/
 if (module.hot) {
-  module.hot.accept('./App.tsx', () => {
-    console.clear() // Clear the console on every hot reload
+  module.hot.accept(
+    // errorHandler // Function to handle errors when evaluating the new version
+  )
 
-    ReactDOM.render(
-      // <StrictMode>
-      //   <App />
-      // </StrictMode>,
-      <App bodyContent={bc} />,
-      document.querySelector('#root')
-    )
+  module.hot.dispose(() => {
+    console.clear() // Clear the console on every hot reload
+    // Clean up and pass data to the updated module...
   })
+
+  // module.hot.accept('./App.tsx', () => {
+  //   console.clear() // Clear the console on every hot reload
+
+  //   ReactDOM.render(
+  //     // <StrictMode>
+  //     //   <App />
+  //     // </StrictMode>,
+  //     <App bodyContent={bc} />,
+  //     document.querySelector('#root')
+  //   )
+  // })
 }
