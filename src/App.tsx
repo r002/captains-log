@@ -119,21 +119,21 @@ const App = (props: TApp) => {
   }, [user, context])
 
   let appWrapper = <></>
-  if (!initializing) {
+  if (initializing) {
+    console.log('firebase is initializing!!!!')
+  } else {
     appWrapper =
       <>
         <ThemeContext.Provider value={context}>
           <UserContext.Provider value={{ user }}>
             <Navbar flashAlert={flashAlert} />
             <Body>
-              {props.bodyContent}
+              {user === null ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏' : props.bodyContent}
             </Body>
           </UserContext.Provider>
         </ThemeContext.Provider>
       </>
     document.body.style.visibility = 'visible'
-  } else {
-    console.log('firebase is initializing!!!!')
   }
 
   // console.log('App render fired 😁')
