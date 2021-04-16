@@ -88,7 +88,7 @@ const StoryBoard = () => {
   return (
     <>
       <Container>
-        What happens next? You decide.
+        Be part of the story. | What happens next? You decide.
       </Container>
       <br /><br />
 
