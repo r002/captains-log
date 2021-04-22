@@ -2,13 +2,24 @@ import firebase from 'firebase/app'
 import { ILog, TPassage, TVote } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
 
+export function deleteVote (passageId: string): void {
+  const u = firebase.auth().currentUser
+  firebase.firestore().collection(`passages/${passageId}/votes`)
+    .where('user.uid', '==', u!.uid).get().then(qs => {
+      qs.forEach(doc => {
+        doc.ref.delete()
+      })
+    }).catch((error) => {
+      console.error('Error removing document: ', error)
+    })
+}
+
 export async function getVotingRecord (passageId: string): Promise<TVote> {
   const u = firebase.auth().currentUser
-
-  if (passageId) {
+  if (u && passageId) {
     // console.log('>>>>> path:', `passages/${passageId}/votes`)
     const qs = await firebase.firestore().collection(`passages/${passageId}/votes`)
-      .where('user.uid', '==', u!.uid).get()
+      .where('user.uid', '==', u.uid).get()
     const votingRecord = qs.docs.map((doc: any) => {
       const o = Object.assign({}, doc.data())
       o.created = o.created.toDate()
@@ -16,7 +27,6 @@ export async function getVotingRecord (passageId: string): Promise<TVote> {
     })
     return votingRecord[0] ?? null
   }
-
   return null as unknown as TVote
 }
 

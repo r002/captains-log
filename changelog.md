@@ -13,6 +13,8 @@
 - ✨ Add sidebar to 'Write' page (WIP)
 - ♻️ Move 'changelog' into its own 'changelog.md' file
 - ✨ Add overall collapsible sidebar to all pages (WIP)
+- 💄 Beautify the sidebar
+- ✨ Impl 'deleteVote' firestore api call (WIP)
 - TODO: After deadline passes, show results of the voting
 - TODO: Implement Comments
 
