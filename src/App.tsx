@@ -1,15 +1,39 @@
+import styled, { css } from 'styled-components'
 import firebase from 'firebase/app'
 import React, { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
 import { ThemeContext, themes } from './providers/ThemeContext'
 import './style.css'
 import { UserContext } from './providers/AuthContext'
-import styled from 'styled-components'
 import { TFlashAlert } from './services/Internal'
+import Sidebar from './widgets/Sidebar'
+
+type TMainLayout = {
+  readonly collapseSidebar : boolean
+}
+
+const MainLayout = styled.div<TMainLayout>`
+  height: 100vh;
+  display: grid;
+  grid-gap: 0;
+  grid-template-columns: 250px  1fr;
+  grid-template-rows: 52px  1fr;
+  grid-template-areas:
+    "sidebar navbar"
+    "sidebar content";
+  background-color: transparent;
+  color: #444;
+
+  ${props => props.collapseSidebar && css`
+  grid-template-columns: 50px  1fr;
+  `}
+`
 
 const Body = styled.div`
+  grid-area: content;
   padding: 40px 20px 20px 20px;
   width: 100%;
+  background-color: transparent;
   /* background: lightslategray; */
   box-sizing: border-box;
   /* border: solid darkgray 1px; */
@@ -87,6 +111,7 @@ type TApp = {
 const App = (props: TApp) => {
   const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
   const { initializing, user } = useAuth(setFlashAlert)
+  const [collapseSidebar, setCollapseSidebar] = useState(false)
   const [context, setContext] = useState({
     theme: themes.light,
     toggleTheme: customToggler
@@ -126,10 +151,13 @@ const App = (props: TApp) => {
       <>
         <ThemeContext.Provider value={context}>
           <UserContext.Provider value={{ user }}>
-            <Navbar flashAlert={flashAlert} />
-            <Body>
-              {user === null ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏' : props.bodyContent}
-            </Body>
+            <MainLayout collapseSidebar={collapseSidebar}>
+              <Sidebar collapseSidebar={collapseSidebar} setCollapseSidebar={setCollapseSidebar} />
+              <Navbar flashAlert={flashAlert} />
+              <Body>
+                {user === null ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏' : props.bodyContent}
+              </Body>
+            </MainLayout>
           </UserContext.Provider>
         </ThemeContext.Provider>
       </>
