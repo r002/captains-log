@@ -1,6 +1,6 @@
 import { TPassage } from './Shared'
 import { AutoId } from '../lib/util'
-import { addPassage, getPassages } from '../services/FirestoreApi'
+import { addPassage, getPassagesByStory } from '../services/FirestoreApi'
 import { FPassage, FLine } from './StoryBoard'
 import { UserContext } from '../providers/AuthContext'
 import { useState, useContext } from 'react'
@@ -42,14 +42,14 @@ const Admin = () => {
   }
 
   function handleGetPassages () {
-    getPassages('aaa').then(passages => {
+    getPassagesByStory('aaa').then(passages => {
       console.log('>> passages', passages)
       setPassages(passages)
     })
   }
 
   if (user && !passages) {
-    getPassages('aaa').then(passages => {
+    getPassagesByStory('aaa').then(passages => {
       console.log('>> passages', passages)
       setPassages(passages)
     })

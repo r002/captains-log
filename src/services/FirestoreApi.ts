@@ -14,12 +14,14 @@ export function deleteVote (passageId: string): void {
     })
 }
 
-export async function getVotingRecord (passageId: string): Promise<TVote> {
+export async function getVotingResults (passageId: string, parentId: string): Promise<TVote> {
   const u = firebase.auth().currentUser
-  if (u && passageId) {
+  if (u && parentId) {
     // console.log('>>>>> path:', `passages/${passageId}/votes`)
-    const qs = await firebase.firestore().collection(`passages/${passageId}/votes`)
-      .where('user.uid', '==', u.uid).get()
+    const qs = await firebase.firestore().collection(`votingResults/${parentId}/votes`)
+      .where('user.uid', '==', u.uid)
+      .where('passageId', '==', passageId)
+      .get()
     const votingRecord = qs.docs.map((doc: any) => {
       const o = Object.assign({}, doc.data())
       o.created = o.created.toDate()
@@ -46,7 +48,7 @@ export function vote (passageId: string, parentId: string, decision: string): vo
       parentId: parentId // Necessary?
     }
 
-    firebase.firestore().collection(`passages/${passageId}/votes`).doc(vote.id)
+    firebase.firestore().collection(`votingResults/${parentId}/votes`).doc(vote.id)
       .set(vote, { merge: true }).then(() => {
         console.log('>> Vote written to Firestore!', vote)
       }).catch((error) => {
@@ -67,7 +69,25 @@ export function addPassage (passage: TPassage): void {
   }
 }
 
-export async function getPassages (storyId: string): Promise<Array<TPassage>> {
+export async function getCandidatesByParent (parentId: string): Promise<Array<TPassage>> {
+  const u = firebase.auth().currentUser
+  // console.log('----------------- fire getPassages!', u)
+  if (u) {
+    const qs = await firebase.firestore().collection('passages')
+      .where('parentId', '==', parentId)
+      .orderBy('created', 'desc').get()
+    const passages = qs.docs.map((doc: any) => {
+      const p = Object.assign({}, doc.data())
+      // console.log('>> p:', p)
+      p.created = p.created.toDate()
+      return p
+    })
+    return passages
+  }
+  return [] as Array<TPassage>
+}
+
+export async function getPassagesByStory (storyId: string): Promise<Array<TPassage>> {
   const u = firebase.auth().currentUser
   // console.log('----------------- fire getPassages!', u)
   if (u) {

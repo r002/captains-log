@@ -15,6 +15,8 @@
 - ✨ Add overall collapsible sidebar to all pages (WIP)
 - 💄 Beautify the sidebar
 - ✨ Impl 'deleteVote' firestore api call (WIP)
+- ♻️ Change how votes are saved/read to/from firestore
+- ✨ Add 'Results' page (WIP)
 - TODO: After deadline passes, show results of the voting
 - TODO: Implement Comments
 

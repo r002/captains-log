@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, MutableRefObject } from 'react'
 // import React, { useState, useContext } from 'react'
 // import { UserContext } from '../providers/AuthContext'
 import { TPassage } from './Shared'
-import { getPassages } from '../services/FirestoreApi'
+import { getPassagesByStory } from '../services/FirestoreApi'
 
 export const FLine = styled.div`
   font-family: Georgia, serif;
@@ -110,7 +110,7 @@ const Write = () => {
   // console.log('>> user:', user)
 
   if (!passages) {
-    getPassages('aaa').then(passages => {
+    getPassagesByStory('aaa').then(passages => {
       console.log('>> passages', passages)
       setPassages(passages)
     })

@@ -55,7 +55,7 @@ const Container = styled.div`
 //   box-sizing: border-box;
 // `
 
-const StoryBoard = () => {
+const Results = () => {
   const { user } = useContext(UserContext)
   const [passages, setPassages] = useState(null as unknown as TPassage[])
   // console.log('>> user:', user)
@@ -88,7 +88,7 @@ const StoryBoard = () => {
   return (
     <>
       <Container>
-        Be part of the story. | What happens next? You decide.
+        Results: Consume mock data and display Coronation results.
       </Container>
       <br /><br />
 
@@ -103,4 +103,4 @@ const StoryBoard = () => {
   )
 }
 
-export default StoryBoard
+export default Results

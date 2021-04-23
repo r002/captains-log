@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import LogEntry from './widgets/LogEntry'
 import StoryBoard from './widgets/StoryBoard'
+import Results from './widgets/Results'
 import Admin from './widgets/Admin'
 import Write from './widgets/Write'
 
@@ -14,6 +15,7 @@ console.log('>>> urlParams p:', page)
 const pages = new Map([
   ['index', <LogEntry />],
   ['storyboard', <StoryBoard />],
+  ['results', <Results />],
   ['write', <Write />],
   ['admin', <Admin />]
 ])

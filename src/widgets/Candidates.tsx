@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { TPassage } from './Shared'
 import { FPassage, FLine } from './StoryBoard'
 import React, { useState } from 'react'
-import { vote, getVotingRecord } from '../services/FirestoreApi'
+import { vote, getVotingResults } from '../services/FirestoreApi'
 
 const Container = styled.div`
   margin-left: 150px;
@@ -86,7 +86,7 @@ const Candidates = (props: TCandidates) => {
     )
 
     if (!voteMap.has(props.candidates[candidateNo].id)) {
-      getVotingRecord(props.candidates[candidateNo].id).then(votingRecord => {
+      getVotingResults(props.candidates[candidateNo].id, props.parentId).then(votingRecord => {
         // console.log('>>>>>>>>>>>>>>> getVotingRecord', votingRecord)
         if (votingRecord) {
           voteMap.set(votingRecord.passageId, votingRecord.decision)
