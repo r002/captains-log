@@ -2,19 +2,50 @@ import firebase from 'firebase/app'
 import { ILog, TPassage, TVote } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
 
-export function deleteVote (passageId: string): void {
+/**
+ * Queries firestore and returns the coronation results (vote tallies).
+ * @returns
+ */
+export async function coronate (parentId: string): Promise<string> {
   const u = firebase.auth().currentUser
-  firebase.firestore().collection(`passages/${passageId}/votes`)
-    .where('user.uid', '==', u!.uid).get().then(qs => {
-      qs.forEach(doc => {
-        doc.ref.delete()
-      })
-    }).catch((error) => {
-      console.error('Error removing document: ', error)
+  if (u && parentId) {
+    // console.log('>>>>> path:', `passages/${passageId}/votes`)
+    const qs = await firebase.firestore().collection(`votingResults/${parentId}/votes`).get()
+    const votingResults = qs.docs.map((doc: any) => {
+      const o = Object.assign({}, doc.data())
+      o.created = o.created.toDate()
+      return o
     })
+    return `Voting Results: ${JSON.stringify(votingResults, null, 2)}`
+  }
+  return 'Voting Results: Error!!'
 }
 
-export async function getVotingResults (passageId: string, parentId: string): Promise<TVote> {
+/**
+ * Deletes all votes that a User has cast for a parentId's candidates.
+ * @param parentId
+ */
+export function deleteVotes (parentId: string): void {
+  const u = firebase.auth().currentUser
+  if (u) {
+    firebase.firestore().collection(`votingResults/${parentId}/votes`)
+      .where('user.uid', '==', u.uid).get().then(qs => {
+        qs.forEach(doc => {
+          doc.ref.delete()
+        })
+      }).catch((error) => {
+        console.error('Error removing document: ', error)
+      })
+  }
+}
+
+/**
+ * Returns a single voting result.
+ * @param passageId
+ * @param parentId
+ * @returns
+ */
+export async function getVotingResult (passageId: string, parentId: string): Promise<TVote> {
   const u = firebase.auth().currentUser
   if (u && parentId) {
     // console.log('>>>>> path:', `passages/${passageId}/votes`)

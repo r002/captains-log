@@ -1,30 +1,17 @@
 import ReactDOM from 'react-dom'
 // import { StrictMode } from 'react'
 import App from './App'
-import LogEntry from './widgets/LogEntry'
-import StoryBoard from './widgets/StoryBoard'
-import Results from './widgets/Results'
-import Admin from './widgets/Admin'
-import Write from './widgets/Write'
 
 // Parse the url and route to the requested page
 const urlParams = new URLSearchParams(window.location.search)
 const page = urlParams.get('p') ?? 'index'
 console.log('>>> urlParams p:', page)
 
-const pages = new Map([
-  ['index', <LogEntry />],
-  ['storyboard', <StoryBoard />],
-  ['results', <Results />],
-  ['write', <Write />],
-  ['admin', <Admin />]
-])
-
 ReactDOM.render(
   // <StrictMode>
   //   <App />
   // </StrictMode>,
-  <App bodyContent={pages.get(page) ?? <>Page not found!</>} />,
+  <App page={page} />,
   document.querySelector('#root')
 )
 

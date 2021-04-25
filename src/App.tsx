@@ -7,6 +7,11 @@ import './style.css'
 import { UserContext } from './providers/AuthContext'
 import { TFlashAlert } from './services/Internal'
 import Sidebar from './widgets/Sidebar'
+import LogEntry from './widgets/LogEntry'
+import StoryBoard from './widgets/StoryBoard'
+import Results from './widgets/Results'
+import Admin from './widgets/Admin'
+import Write from './widgets/Write'
 
 type TMainLayout = {
   readonly collapseSidebar : boolean
@@ -105,17 +110,30 @@ const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert 
   return state
 }
 
+const pages = new Map([
+  ['index', <LogEntry />],
+  ['storyboard', <StoryBoard />],
+  ['results', <Results />],
+  ['write', <Write />],
+  ['admin', <Admin />]
+])
+
 type TApp = {
-  bodyContent: React.ReactNode
+  page: string
 }
 const App = (props: TApp) => {
   const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
   const { initializing, user } = useAuth(setFlashAlert)
   const [collapseSidebar, setCollapseSidebar] = useState(false)
+  const [page, setPage] = useState(props.page)
   const [context, setContext] = useState({
     theme: themes.light,
     toggleTheme: customToggler
   })
+
+  function navigate (page: string): void {
+    setPage(page)
+  }
 
   function customToggler (): void {
     setContext((oldContext) => ({
@@ -131,6 +149,10 @@ const App = (props: TApp) => {
     setFlashAlert(fa)
     console.log('!!!!!!!!!! FlashAlert received!', fa)
   }
+
+  useEffect(() => {
+    history.pushState({ page: page }, page, '/?p=' + page)
+  }, [page])
 
   useEffect(() => {
     document.body.addEventListener('flashAlert', listenForFlashAlert, false)
@@ -152,10 +174,15 @@ const App = (props: TApp) => {
         <ThemeContext.Provider value={context}>
           <UserContext.Provider value={{ user }}>
             <MainLayout collapseSidebar={collapseSidebar}>
-              <Sidebar collapseSidebar={collapseSidebar} setCollapseSidebar={setCollapseSidebar} />
+              <Sidebar navigate={navigate}
+                selectedPage={page}
+                collapseSidebar={collapseSidebar}
+                setCollapseSidebar={setCollapseSidebar} />
               <Navbar flashAlert={flashAlert} />
               <Body>
-                {user === null ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏' : props.bodyContent}
+                {user === null
+                  ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏'
+                  : pages.get(page) ?? <>Page not found!</>}
               </Body>
             </MainLayout>
           </UserContext.Provider>

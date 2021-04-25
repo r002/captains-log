@@ -17,6 +17,8 @@
 - ✨ Impl 'deleteVote' firestore api call (WIP)
 - ♻️ Change how votes are saved/read to/from firestore
 - ✨ Add 'Results' page (WIP)
+- ✨ Change the url in the address bar upon page navigation
+- ✨ In sidebar: Highlight the page the user is currently looking at
 - TODO: After deadline passes, show results of the voting
 - TODO: Implement Comments
 
