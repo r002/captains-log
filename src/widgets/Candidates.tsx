@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { TPassage } from './Shared'
-import { FPassage, FLine } from './StoryBoard'
+import { FPassage, FLine } from '../pages/StoryBoard'
 import React, { useState } from 'react'
 import { vote, getVotingResult } from '../services/FirestoreApi'
 

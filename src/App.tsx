@@ -7,11 +7,11 @@ import './style.css'
 import { UserContext } from './providers/AuthContext'
 import { TFlashAlert } from './services/Internal'
 import Sidebar from './widgets/Sidebar'
-import LogEntry from './widgets/LogEntry'
-import StoryBoard from './widgets/StoryBoard'
-import Results from './widgets/Results'
-import Admin from './widgets/Admin'
-import Write from './widgets/Write'
+import LogEntry from './pages/LogEntry'
+import StoryBoard from './pages/StoryBoard'
+import Results from './pages/Results'
+import Admin from './pages/Admin'
+import Write from './pages/Write'
 
 type TMainLayout = {
   readonly collapseSidebar : boolean

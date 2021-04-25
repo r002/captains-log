@@ -1,4 +1,4 @@
-import { TPassage } from './Shared'
+import { TPassage } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
 import { addPassage, getPassagesByStory } from '../services/FirestoreApi'
 import { FPassage, FLine } from './StoryBoard'

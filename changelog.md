@@ -19,6 +19,9 @@
 - ✨ Add 'Results' page (WIP)
 - ✨ Change the url in the address bar upon page navigation
 - ✨ In sidebar: Highlight the page the user is currently looking at
+- ♻️ Move 'page' widgets into their own 'pages' dir
+- ✨ In sidebar: Add links to 'Admin Console' & 'Write' pages
+- TODO: On 'Vote' page: Display countdown clock until next coronation
 - TODO: After deadline passes, show results of the voting
 - TODO: Implement Comments
 

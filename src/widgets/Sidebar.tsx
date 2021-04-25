@@ -48,6 +48,25 @@ const FMenuItem = styled.div<TFMenuItem>`
   `}
 `
 
+type TMenuItem = {
+  label: string
+  name: string
+  readonly selected: boolean
+  navigate: Function
+}
+
+const MenuItem = (props: TMenuItem) => {
+  function navigate (e: React.MouseEvent<HTMLElement>) {
+    props.navigate(e.currentTarget.dataset.page)
+  }
+
+  return (
+    <FMenuItem data-page={props.name}
+      selected={props.selected}
+      onClick={navigate}>{props.label}</FMenuItem>
+  )
+}
+
 type TSidebar = {
   collapseSidebar: boolean
   setCollapseSidebar: React.Dispatch<React.SetStateAction<boolean>>
@@ -69,15 +88,12 @@ const Sidebar = (props: TSidebar) => {
     })
   }
 
-  function navigate (e: React.MouseEvent<HTMLElement>) {
-    props.navigate(e.currentTarget.dataset.page)
-  }
-
   const content = props.collapseSidebar
     ? <>
         <FLogo>📗</FLogo>
         <hr />
         <FMenuHeader>🛠️</FMenuHeader>
+        <FMenuItem>🧰</FMenuItem>
         <FMenuItem>⏲️</FMenuItem>
         <FMenuItem>📜</FMenuItem>
         <FMenuItem>👑</FMenuItem>
@@ -86,23 +102,37 @@ const Sidebar = (props: TSidebar) => {
         <FMenuHeader>📄</FMenuHeader>
         <FMenuItem>🗳️</FMenuItem>
         <FMenuItem>💠</FMenuItem>
+        <FMenuItem>✍️</FMenuItem>
       </>
     : <>
         <FLogo>📗 Storyline</FLogo>
         <hr />
         <FMenuHeader>Admin Tools</FMenuHeader>
+        <MenuItem name='admin'
+          selected={props.selectedPage === 'admin'}
+          label='🧰 Admin Console'
+          navigate={props.navigate} />
         <FMenuItem>⏲️ Restart Countdown</FMenuItem>
         <FMenuItem>📜 Generate Random Results</FMenuItem>
         <FMenuItem onClick={handleCoronate}>👑 Coronate</FMenuItem>
         <FMenuItem onClick={handleResetVoting}>🧹 Delete User's Votes</FMenuItem>
         <hr />
         <FMenuHeader>Navigation</FMenuHeader>
-        <FMenuItem data-page='storyboard'
+        <MenuItem name='write'
+          selected={props.selectedPage === 'write'}
+          label='✍️ Write'
+          navigate={props.navigate}
+        />
+        <MenuItem name='storyboard'
           selected={props.selectedPage === 'storyboard'}
-          onClick={navigate}>🗳️ Vote for What's Next</FMenuItem>
-        <FMenuItem data-page='results'
+          label="🗳️ Vote for What's Next"
+          navigate={props.navigate}
+        />
+        <MenuItem name='results'
           selected={props.selectedPage === 'results'}
-          onClick={navigate}>💠 Results this Week</FMenuItem>
+          label='💠 Results this Week'
+          navigate={props.navigate}
+        />
       </>
 
   function handleCollapseSidebar () {

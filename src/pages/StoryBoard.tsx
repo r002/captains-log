@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components'
 import { useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
-import { TPassage } from './Shared'
+import { TPassage } from '../widgets/Shared'
 import { getPassagesByStory } from '../services/FirestoreApi'
-import Candidates from './Candidates'
+import Candidates from '../widgets/Candidates'
 
 export const FLine = styled.div`
   font-family: Georgia, serif;
@@ -55,7 +55,7 @@ const Container = styled.div`
 //   box-sizing: border-box;
 // `
 
-const Results = () => {
+const StoryBoard = () => {
   const { user } = useContext(UserContext)
   const [passages, setPassages] = useState(null as unknown as TPassage[])
   // console.log('>> user:', user)
@@ -88,7 +88,7 @@ const Results = () => {
   return (
     <>
       <Container>
-        Results: Consume mock data and display Coronation results.
+        Be part of the story. | What happens next? You decide.
       </Container>
       <br /><br />
 
@@ -103,4 +103,4 @@ const Results = () => {
   )
 }
 
-export default Results
+export default StoryBoard

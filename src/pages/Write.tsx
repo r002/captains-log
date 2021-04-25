@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import React, { useState, useRef, useEffect, MutableRefObject } from 'react'
 // import React, { useState, useContext } from 'react'
 // import { UserContext } from '../providers/AuthContext'
-import { TPassage } from './Shared'
+import { TPassage } from '../widgets/Shared'
 import { getPassagesByStory } from '../services/FirestoreApi'
 
 export const FLine = styled.div`
