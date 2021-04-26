@@ -12,3 +12,26 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.hide {
+  background-color: palegoldenrod;
+  color: black;
+  padding: 5px;
+  opacity:0;
+}
+
+@keyframes flash {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.show {
+  opacity: 0;
+  background-color: palegoldenrod;
+  color: black;
+  padding: 5px;
+  animation: flash 3s linear;
+  /* transition: opacity 2s ease-in-out; */
+}

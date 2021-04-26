@@ -1,11 +1,10 @@
 import styled, { css } from 'styled-components'
 import { ThemeContext } from '../providers/ThemeContext'
 import { UserContext } from '../providers/AuthContext'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import firebase from 'firebase/app'
 import { exportLogs } from '../services/Exporter'
 import { TFlashAlert } from '../services/Internal'
-import { FlashAlert } from './FlashAlert'
 
 type TFButton = {
   readonly theme : boolean
@@ -112,11 +111,8 @@ const NavWrapper = styled.div`
   border-bottom: solid darkgray 1px;
 `
 
-type TNavbar = {
-  flashAlert: TFlashAlert | null
-}
-
-export const Navbar = (props: TNavbar) => {
+export const Navbar = () => {
+  const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
   const { user } = useContext(UserContext)
   const welcomeMsg = user
     ? <>
@@ -124,12 +120,29 @@ export const Navbar = (props: TNavbar) => {
       </>
     : <LoginButton />
 
+  function listenForFlashAlert (event: Event) {
+    const fa = (event as CustomEvent).detail as TFlashAlert
+    setFlashAlert(fa)
+    console.log('!!!!!!!!!! FlashAlert received!', fa)
+    document.getElementById('fadeEl')!.className = 'show'
+    setTimeout(() => {
+      document.getElementById('fadeEl')!.className = 'hide'
+    }, 3000)
+  }
+
+  useEffect(() => {
+    document.body.addEventListener('flashAlert', listenForFlashAlert, false)
+    return () => {
+      document.body.removeEventListener('flashAlert', listenForFlashAlert)
+    }
+  }, [])
+
   return (
     <NavWrapper>
       <div id="justifyLeft">
-        {props.flashAlert &&
-          <FlashAlert key={new Date().toString()} {...props.flashAlert} />
-        }
+        <div id='fadeEl' className='hide'>
+          {flashAlert?.alert}: {flashAlert?.content}
+        </div>
       </div>
       <div id="justifyRight">
         <ThemeToggler />

@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components'
 import firebase from 'firebase/app'
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
 import { ThemeContext, themes } from './providers/ThemeContext'
 import './style.css'
 import { UserContext } from './providers/AuthContext'
-import { TFlashAlert } from './services/Internal'
+import { TFlashAlert, sendFlashAlert } from './services/Internal'
 import Sidebar from './widgets/Sidebar'
 import LogEntry from './pages/LogEntry'
 import StoryBoard from './pages/StoryBoard'
@@ -53,7 +53,7 @@ type TUserAuth = {
   initializing: boolean
   user: firebase.User | null
 }
-const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert | null>>) => {
+const useAuth = () => {
   const [state, setState] = useState(() => {
     // const user = firebase.auth().currentUser
     return {
@@ -91,7 +91,7 @@ const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert 
             logId: '' // TODO: Such a hack. Fix this later. 4/10/21
           }
         } as TFlashAlert
-        setFlashAlert(flashAlert)
+        sendFlashAlert(flashAlert)
         firebase.auth().signOut()
       })
     } else {
@@ -127,8 +127,7 @@ type TApp = {
   page: string
 }
 const App = (props: TApp) => {
-  const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
-  const { initializing, user } = useAuth(setFlashAlert)
+  const { initializing, user } = useAuth()
   const [collapseSidebar, setCollapseSidebar] = useState(false)
   const [page, setPage] = useState(props.page)
   const [context, setContext] = useState({
@@ -153,26 +152,9 @@ const App = (props: TApp) => {
     }))
   }
 
-  function listenForFlashAlert (event: Event) {
-    const fa = (event as CustomEvent).detail as TFlashAlert
-    setFlashAlert(fa)
-    console.log('!!!!!!!!!! FlashAlert received!', fa)
-  }
-
   useEffect(() => {
     history.pushState({ page: page }, page, '/?p=' + page)
   }, [page])
-
-  useEffect(() => {
-    document.body.addEventListener('flashAlert', listenForFlashAlert, false)
-    return () => {
-      document.body.removeEventListener('flashAlert', listenForFlashAlert)
-    }
-  }, [])
-
-  useEffect(() => {
-    setFlashAlert(null) // Reset the Flash Alert every time. This is hacky; fix later 3/28/21
-  }, [user, context])
 
   let appWrapper = <></>
   if (initializing) {
@@ -190,7 +172,7 @@ const App = (props: TApp) => {
                   collapseSidebar={collapseSidebar}
                   setCollapseSidebar={setCollapseSidebar} />
               }
-              <Navbar flashAlert={flashAlert} />
+              <Navbar />
               <Body>
                 {user === null
                   ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏'

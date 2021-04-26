@@ -1,3 +1,7 @@
+// Note: Currently unused as of Mon - 4/26/21.
+// Am keeping this file here because I do hope to properly
+// implement flashAlert one day this way though.
+
 import styled, { keyframes } from 'styled-components'
 import { TFlashAlert } from '../services/Internal'
 

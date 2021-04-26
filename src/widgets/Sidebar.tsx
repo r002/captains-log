@@ -15,6 +15,7 @@ const FLogo = styled.div`
   font-weight: 400;
   color: white;
   font-size: 21px;
+  cursor: pointer;
 `
 
 const FMenuHeader = styled.div`
@@ -88,6 +89,10 @@ const Sidebar = (props: TSidebar) => {
     })
   }
 
+  function goHome () {
+    props.navigate('index')
+  }
+
   const content = props.collapseSidebar
     ? <>
         <FLogo>📗</FLogo>
@@ -108,7 +113,7 @@ const Sidebar = (props: TSidebar) => {
         <FMenuItem>🔺</FMenuItem>
       </>
     : <>
-        <FLogo>📗 Storyline</FLogo>
+        <FLogo onClick={goHome}>📗 Storyline</FLogo>
         <hr />
         <FMenuHeader>Admin Tools</FMenuHeader>
         <MenuItem dest='admin'

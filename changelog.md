@@ -1,5 +1,13 @@
 # Changelog
 
+## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- ♻️ Change how `flashAlert` is implemented (refactor this one day to make correct 🤦‍♂️)
+- 🍇 Begin Sprint Grape
+- TODO: Setup a listener to a firestore collection: `realtimeNotifications`
+- TODO: Set `deadline` from admin console which pushes to all client endpoints in real-time
+- TODO: After deadline passes, show results of the voting
+- TODO: Implement Comments
+
 ## [Sat - 4/10/21 | Sprint Fig 🥝](https://github.com/r002/captains-log/pull/41)
 - ✨ Begin Sprint Fig
 - ✨ Add basic Admin tools
@@ -25,8 +33,6 @@
 - ✨ Sidebar: Add external link to 'Changelog'
 - ✨ Sidebar: Don't render when user is logged out
 - ✨ 'Vote' page: Display a giant countdown clock until next coronation
-- TODO: After deadline passes, show results of the voting
-- TODO: Implement Comments
 
 ## [Fri - 4/9/21 | Sprint Elderberry 🍒](https://github.com/r002/captains-log/pull/40)
 - ✨ Begin adding Wattpad POC page. Add new 'Wattpad' entrypoint to webpack
