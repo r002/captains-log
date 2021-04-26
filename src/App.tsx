@@ -14,20 +14,25 @@ import Admin from './pages/Admin'
 import Write from './pages/Write'
 
 type TMainLayout = {
-  readonly collapseSidebar : boolean
+  readonly collapseSidebar: boolean
+  readonly userLoggedIn: boolean
 }
 
 const MainLayout = styled.div<TMainLayout>`
   height: 100vh;
   display: grid;
   grid-gap: 0;
-  grid-template-columns: 250px  1fr;
+  grid-template-columns: 0  1fr;
   grid-template-rows: 52px  1fr;
   grid-template-areas:
     "sidebar navbar"
     "sidebar content";
   background-color: transparent;
   color: #444;
+
+  ${props => props.userLoggedIn && css`
+  grid-template-columns: 250px  1fr;
+  `}
 
   ${props => props.collapseSidebar && css`
   grid-template-columns: 50px  1fr;
@@ -132,7 +137,11 @@ const App = (props: TApp) => {
   })
 
   function navigate (page: string): void {
-    setPage(page)
+    if (page.includes('https://')) {
+      window.location.href = page
+    } else {
+      setPage(page)
+    }
   }
 
   function customToggler (): void {
@@ -173,11 +182,14 @@ const App = (props: TApp) => {
       <>
         <ThemeContext.Provider value={context}>
           <UserContext.Provider value={{ user }}>
-            <MainLayout collapseSidebar={collapseSidebar}>
-              <Sidebar navigate={navigate}
-                selectedPage={page}
-                collapseSidebar={collapseSidebar}
-                setCollapseSidebar={setCollapseSidebar} />
+            <MainLayout collapseSidebar={collapseSidebar}
+              userLoggedIn={user !== null}>
+              {user &&
+                <Sidebar navigate={navigate}
+                  selectedPage={page}
+                  collapseSidebar={collapseSidebar}
+                  setCollapseSidebar={setCollapseSidebar} />
+              }
               <Navbar flashAlert={flashAlert} />
               <Body>
                 {user === null

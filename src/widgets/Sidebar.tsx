@@ -50,7 +50,7 @@ const FMenuItem = styled.div<TFMenuItem>`
 
 type TMenuItem = {
   label: string
-  name: string
+  dest: string
   readonly selected: boolean
   navigate: Function
 }
@@ -61,7 +61,7 @@ const MenuItem = (props: TMenuItem) => {
   }
 
   return (
-    <FMenuItem data-page={props.name}
+    <FMenuItem data-page={props.dest}
       selected={props.selected}
       onClick={navigate}>{props.label}</FMenuItem>
   )
@@ -99,16 +99,19 @@ const Sidebar = (props: TSidebar) => {
         <FMenuItem>👑</FMenuItem>
         <FMenuItem>🧹</FMenuItem>
         <hr />
-        <FMenuHeader>📄</FMenuHeader>
+        <FMenuHeader>🗺️</FMenuHeader>
+        <FMenuItem>✍️</FMenuItem>
         <FMenuItem>🗳️</FMenuItem>
         <FMenuItem>💠</FMenuItem>
-        <FMenuItem>✍️</FMenuItem>
+        <hr />
+        <FMenuHeader>🛸</FMenuHeader>
+        <FMenuItem>🔺</FMenuItem>
       </>
     : <>
         <FLogo>📗 Storyline</FLogo>
         <hr />
         <FMenuHeader>Admin Tools</FMenuHeader>
-        <MenuItem name='admin'
+        <MenuItem dest='admin'
           selected={props.selectedPage === 'admin'}
           label='🧰 Admin Console'
           navigate={props.navigate} />
@@ -118,19 +121,26 @@ const Sidebar = (props: TSidebar) => {
         <FMenuItem onClick={handleResetVoting}>🧹 Delete User's Votes</FMenuItem>
         <hr />
         <FMenuHeader>Navigation</FMenuHeader>
-        <MenuItem name='write'
+        <MenuItem dest='write'
           selected={props.selectedPage === 'write'}
           label='✍️ Write'
           navigate={props.navigate}
         />
-        <MenuItem name='storyboard'
+        <MenuItem dest='storyboard'
           selected={props.selectedPage === 'storyboard'}
           label="🗳️ Vote for What's Next"
           navigate={props.navigate}
         />
-        <MenuItem name='results'
+        <MenuItem dest='results'
           selected={props.selectedPage === 'results'}
           label='💠 Results this Week'
+          navigate={props.navigate}
+        />
+        <hr />
+        <FMenuHeader>Misc</FMenuHeader>
+        <MenuItem dest='https://github.com/r002/captains-log/blob/sprint-fig/changelog.md'
+          selected={props.selectedPage === 'NA'}
+          label='🔺 Changelog'
           navigate={props.navigate}
         />
       </>

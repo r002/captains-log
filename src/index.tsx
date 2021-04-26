@@ -9,7 +9,7 @@ console.log('>>> urlParams p:', page)
 
 ReactDOM.render(
   // <StrictMode>
-  //   <App />
+  //   <App page={page} />
   // </StrictMode>,
   <App page={page} />,
   document.querySelector('#root')
@@ -31,9 +31,9 @@ if (module.hot) {
 
   //   ReactDOM.render(
   //     // <StrictMode>
-  //     //   <App />
+  //     //   <App page={page} />
   //     // </StrictMode>,
-  //     <App bodyContent={bc} />,
+  //     <App page={page} />,
   //     document.querySelector('#root')
   //   )
   // })
