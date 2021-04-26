@@ -31,3 +31,22 @@ export type ILog = {
   vidTitle? : string
   vid? : string
 }
+
+export type TPassage = {
+  id: string
+  storyId: string
+  content: string
+  created: Date
+  branch: string
+}
+
+export type TVote = {
+  passageId: string,
+  decision: string
+  // created: Date
+}
+
+// export type TVotingRecord = {
+//   parentId: string,
+//   votes: TVote[]
+// }

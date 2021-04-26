@@ -101,6 +101,8 @@ const ExportButton = () => {
 }
 
 const NavWrapper = styled.div`
+  height: 52px;
+  grid-area: navbar;
   padding: 10px 20px;
   width: 100%;
   background: lightslategray;
@@ -110,11 +112,11 @@ const NavWrapper = styled.div`
   border-bottom: solid darkgray 1px;
 `
 
-type TNavBar = {
+type TNavbar = {
   flashAlert: TFlashAlert | null
 }
 
-export const Navbar = (props: TNavBar) => {
+export const Navbar = (props: TNavbar) => {
   const { user } = useContext(UserContext)
   const welcomeMsg = user
     ? <>

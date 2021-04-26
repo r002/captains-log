@@ -2,12 +2,12 @@ import styled from 'styled-components'
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
 import { getLogs, writeLog, deleteLog } from '../services/FirestoreApi'
-import { FormattedDt, ILog } from './Shared'
-import { LogViewer } from './LogViewer'
+import { FormattedDt, ILog } from '../widgets/Shared'
+import { LogViewer } from '../widgets/LogViewer'
 import { parseInput } from '../services/InputEngine'
 import { DataContext, TActivityUpdate, TDateUpdate } from '../providers/DataContext'
-import YoutubePane from './DetailPanes/YoutubePane'
-import SummaryPane from './DetailPanes/SummaryPane'
+import YoutubePane from '../widgets/DetailPanes/YoutubePane'
+import SummaryPane from '../widgets/DetailPanes/SummaryPane'
 
 const Box = styled.div`
   padding: 20px;
