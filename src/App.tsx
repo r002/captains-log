@@ -12,6 +12,7 @@ import StoryBoard from './pages/StoryBoard'
 import Results from './pages/Results'
 import Admin from './pages/Admin'
 import Write from './pages/Write'
+import Secure from './pages/Secure'
 
 type TMainLayout = {
   readonly collapseSidebar: boolean
@@ -120,7 +121,8 @@ const pages = new Map([
   ['storyboard', <StoryBoard />],
   ['results', <Results />],
   ['write', <Write />],
-  ['admin', <Admin />]
+  ['admin', <Admin />],
+  ['secure', <Secure />]
 ])
 
 type TApp = {

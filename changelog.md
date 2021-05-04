@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- ✨ Add 'Secure' page-- add ability to read protected assets from Firebase Storage
 - ♻️ Change how `flashAlert` is implemented (refactor this one day to make correct 🤦‍♂️)
 - 🍇 Begin Sprint Grape
 - TODO: Setup a listener to a firestore collection: `realtimeNotifications`

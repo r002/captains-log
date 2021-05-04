@@ -143,9 +143,14 @@ const Sidebar = (props: TSidebar) => {
         />
         <hr />
         <FMenuHeader>Misc</FMenuHeader>
-        <MenuItem dest='https://github.com/r002/captains-log/blob/sprint-fig/changelog.md'
+        <MenuItem dest='https://github.com/r002/captains-log/blob/main/changelog.md'
           selected={props.selectedPage === 'NA'}
           label='🔺 Changelog'
+          navigate={props.navigate}
+        />
+        <MenuItem dest='secure'
+          selected={props.selectedPage === 'secure'}
+          label='🔒 Secure Asset Test'
           navigate={props.navigate}
         />
       </>
