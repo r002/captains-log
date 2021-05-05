@@ -2,6 +2,7 @@ import { createContext } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/firestore'
+import 'firebase/functions'
 import CONFIG from '../config'
 
 // These settings are meant to be public!
@@ -19,11 +20,10 @@ if (firebase.apps.length === 0) {
 
   firebase.initializeApp(firebaseConfig) // Must happen first!
 
-  const db = firebase.firestore()
-  // const auth = firebase.auth()
   if (location.hostname === 'localhost') {
-    db.useEmulator('localhost', 8080)
-    // auth.useEmulator('http://localhost:9099')
+    firebase.firestore().useEmulator('localhost', 8080)
+    firebase.functions().useEmulator('localhost', 5001)
+    // firebase.auth().useEmulator('http://localhost:9099')
   }
 }
 

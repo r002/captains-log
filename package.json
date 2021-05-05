@@ -43,7 +43,7 @@
     "build": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
-    "db": "firebase emulators:start --only \"auth,firestore\" --import=data\\multi-users --export-on-exit=data\\saved_data",
+    "db": "firebase emulators:start --only \"firestore,functions\" --import=data\\multi-users --export-on-exit=data\\saved_data",
     "dbdump": "firebase emulators:export data\\multi-users"
   },
   "repository": {
