@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- 💄 Beautify the 'Secure Asset' page to show a nice message if user is unauthorized to view asset
 - ✨ Add Cloud Function to deliver secure assets to authorized users
 - ✨ Add 'Secure' page-- add ability to read protected assets from Firebase Storage
 - ♻️ Change how `flashAlert` is implemented (refactor this one day to make correct 🤦‍♂️)

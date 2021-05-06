@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import * as util from 'util'
 
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
@@ -55,25 +54,25 @@ export const helloWorld = functions.https.onRequest((request, response) => {
   response.send('Hello there!!! Today is 5/4/21!')
 })
 
-export const testCloudFunction_v0 = functions.https.onRequest(async (request, response) => {
-  const userId = request.query.uid
-  if (userId) {
-    response.send(`>> request from uid: ${userId}`)
-    const snapshot = await firestore.collection('passages').limit(1).get()
-    snapshot.forEach((doc) => {
-      console.log(util.inspect(doc.data()))
-    })
-    return
-  }
-  response.send('Invalid! No user id!')
-})
+// export const testCloudFunction_v0 = functions.https.onRequest(async (request, response) => {
+//   const userId = request.query.uid
+//   if (userId) {
+//     response.send(`>> request from uid: ${userId}`)
+//     const snapshot = await firestore.collection('passages').limit(1).get()
+//     snapshot.forEach((doc) => {
+//       console.log(util.inspect(doc.data()))
+//     })
+//     return
+//   }
+//   response.send('Invalid! No user id!')
+// })
 
-export const getSecureAsset_v0 = functions.https.onCall((data, context) => {
-  const bucket = admin.storage().bucket('r002-cloud.appspot.com')
-  const stream = bucket.file('protected/topgun2.jpg')
-  // // pipe stream on 'end' event to the response
-  // stream
-  //     .on('end', (data: any) => {})
-  //     .pipe(response)
-  return stream
-})
+// export const getSecureAsset_v0 = functions.https.onCall((data, context) => {
+//   const bucket = admin.storage().bucket('r002-cloud.appspot.com')
+//   const stream = bucket.file('protected/topgun2.jpg')
+//   // // pipe stream on 'end' event to the response
+//   // stream
+//   //     .on('end', (data: any) => {})
+//   //     .pipe(response)
+//   return stream
+// })
