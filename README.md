@@ -25,6 +25,7 @@ git remote -v
 firebase emulators:start --only "auth,firestore" --import=data\multi-users --export-on-exit=data\saved_data \
 firebase emulators:start --only hosting \
 firebase deploy --only hosting \
+firebase deploy --only functions \
 firebase emulators:export data\multi-users
 
 - https://stackoverflow.com/questions/1125968/how-do-i-force-git-pull-to-overwrite-local-files

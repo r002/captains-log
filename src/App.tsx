@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import firebase from 'firebase/app'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navbar } from './widgets/Navbar'
 import { ThemeContext, themes } from './providers/ThemeContext'
 import './style.css'
@@ -12,7 +12,7 @@ import StoryBoard from './pages/StoryBoard'
 import Results from './pages/Results'
 import Admin from './pages/Admin'
 import Write from './pages/Write'
-import Secure from './pages/Secure'
+import FileViewer from './pages/FileViewer'
 
 type TMainLayout = {
   readonly collapseSidebar: boolean
@@ -116,14 +116,31 @@ const useAuth = () => {
   return state
 }
 
-const pages = new Map([
-  ['index', <LogEntry />],
-  ['storyboard', <StoryBoard />],
-  ['results', <Results />],
-  ['write', <Write />],
-  ['admin', <Admin />],
-  ['secure', <Secure />]
+const pages = new Map<String, any>([ // TODO: Fix this `any` later. Hacky! 5/7/21
+  ['index', LogEntry],
+  ['storyboard', StoryBoard],
+  ['results', Results],
+  ['write', Write],
+  ['admin', Admin],
+  ['fileviewer', FileViewer]
 ])
+
+function constructPage (pageQueryStr: string): JSX.Element {
+  // console.log('>> Construct page widget from this qstring:', pageQueryStr)
+  // Parse the pageQueryStr to extract the target page dest and page params
+  const pageDest = pageQueryStr.split('&')[0]
+
+  // Only applicable to Secure.tsx right now! 5/7/21
+  const pageParam = pageQueryStr.split('&')[1] ?? 'bg2003.pdf'
+  // console.log('>> pageParam:', pageParam)
+  const re = pageParam.match(/^asset=(.*)$/)
+  // console.log('>> re', re)
+  const p = re?.[1] ?? 'bg2003.pdf'
+  // console.log('>> p:', p)
+
+  const page = pages.get(pageDest) ?? <>Page not found!</>
+  return React.createElement(page, { asset: p }, null)
+}
 
 type TApp = {
   page: string
@@ -137,11 +154,11 @@ const App = (props: TApp) => {
     toggleTheme: customToggler
   })
 
-  function navigate (page: string): void {
-    if (page.includes('https://')) {
-      window.location.href = page
+  function navigate (dest: string): void {
+    if (dest.includes('https://')) {
+      window.location.href = dest
     } else {
-      setPage(page)
+      setPage(dest)
     }
   }
 
@@ -155,7 +172,8 @@ const App = (props: TApp) => {
   }
 
   useEffect(() => {
-    history.pushState({ page: page }, page, '/?p=' + page)
+    // console.log('>> pushState:', page)
+    history.pushState({}, '', '/?p=' + page)
   }, [page])
 
   let appWrapper = <></>
@@ -178,7 +196,7 @@ const App = (props: TApp) => {
               <Body>
                 {user === null
                   ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏'
-                  : pages.get(page) ?? <>Page not found!</>}
+                  : constructPage(page)}
               </Body>
             </MainLayout>
           </UserContext.Provider>

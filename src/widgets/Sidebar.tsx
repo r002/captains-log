@@ -111,6 +111,10 @@ const Sidebar = (props: TSidebar) => {
         <hr />
         <FMenuHeader>🛸</FMenuHeader>
         <FMenuItem>🔺</FMenuItem>
+        <FMenuItem>🌎</FMenuItem>
+        <hr />
+        <FMenuHeader>🏫</FMenuHeader>
+        <FMenuItem>🔒</FMenuItem>
       </>
     : <>
         <FLogo onClick={goHome}>📗 Storyline</FLogo>
@@ -148,9 +152,16 @@ const Sidebar = (props: TSidebar) => {
           label='🔺 Changelog'
           navigate={props.navigate}
         />
-        <MenuItem dest='secure'
-          selected={props.selectedPage === 'secure'}
-          label='🔒 Secure Asset Test'
+        <MenuItem dest='fileviewer&asset=GTx__ISYE6501/Timeline1-11Summer__1_.pdf'
+          selected={props.selectedPage === 'fileviewer&asset=GTx__ISYE6501/Timeline1-11Summer__1_.pdf'}
+          label='🌎 Open Asset Test'
+          navigate={props.navigate}
+        />
+        <hr />
+        <FMenuHeader>GTx: ISYE 6501</FMenuHeader>
+        <MenuItem dest='fileviewer&asset=secure/gtx/isye6501/week_1_solutions-summer.pdf'
+          selected={props.selectedPage === 'fileviewer&asset=secure/gtx/isye6501/week_1_solutions-summer.pdf'}
+          label='🔒 Week #1 Solutions'
           navigate={props.navigate}
         />
       </>

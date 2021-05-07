@@ -11,42 +11,46 @@ const firestore = app.firestore()
 /**
  * A secure cloud function that shows the protected asset only to authorized users.
  */
-export const showPic_v0 = functions.https.onRequest((request, response) => {
+export const getAsset_v0 = functions.https.onRequest((request, response) => {
   // console.log('>> token:', request.query.token)
-  if (request.query.token && '' !== request.query.token) {
-    const userToken = request.query.token.toString()
-    admin
-        .auth()
-        .verifyIdToken(userToken)
-        .then((decodedToken) => {
-          const uid = decodedToken.uid
-          console.log('>> uid verified from token:', uid)
-          // console.log('>> decoded token:', decodedToken)
-
-          // Now check if this uid is authorized to access the image
-          const user = firestore.collection('authorized').doc(uid)
-          user.get().then((doc) => {
-            // console.log('>> doc.data():', doc.data())
-            if (doc.data()!.role === 'admin') {
-              const bucket = admin.storage().bucket('r002-cloud.appspot.com')
-              // const stream = bucket.file('protected/Course_Certificate.pdf').createReadStream()
-              const stream = bucket.file('protected/topgun2.jpg').createReadStream()
-              // pipe stream on 'end' event to the response
-              stream
-                  .on('end', (data: any) => {})
-                  .pipe(response)
-            } else {
-              response.send('You\'re not authorized to access this asset.')
-            }
-          })
-        })
-        .catch((error) => {
-          console.log('>> server token verification error:', error)
-          response.send('Invalid user token!')
-        })
-  } else {
-    response.send('Invalid user token!')
+  if (request.query.asset === undefined || '' === request.query.asset) {
+    response.send('Error: Asset unspecified.')
+    return
   }
+  if (request.query.token === undefined || '' === request.query.token) {
+    response.send('Error: Token unspecified.')
+    return
+  }
+  const asset = request.query.asset.toString()
+  const userToken = request.query.token.toString()
+  admin
+      .auth()
+      .verifyIdToken(userToken)
+      .then((decodedToken) => {
+        const uid = decodedToken.uid
+        console.log('>> uid verified from token:', uid)
+        // console.log('>> decoded token:', decodedToken)
+
+        // Now check if this uid is authorized to access the asset
+        const user = firestore.collection('authorized').doc(uid)
+        user.get().then((doc) => {
+          // console.log('>> doc.data():', doc.data())
+          if (doc.data()!.role === 'admin') {
+            const bucket = admin.storage().bucket('r002-cloud.appspot.com')
+            const stream = bucket.file(`protected/${asset}`).createReadStream()
+            // pipe stream on 'end' event to the response
+            stream
+                .on('end', (data: any) => {})
+                .pipe(response)
+          } else {
+            response.send('You\'re not authorized to access this asset.')
+          }
+        })
+      })
+      .catch((error) => {
+        console.log('>> server token verification error:', error)
+        response.send('Invalid user token!')
+      })
 })
 
 export const helloWorld = functions.https.onRequest((request, response) => {
