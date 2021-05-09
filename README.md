@@ -35,6 +35,7 @@ firebase emulators:export data\multi-users
 ```shell
 $> netstat -ano | findstr :8080
 $> taskkill /PID <PID> /F
+$> dir env:
 ```
 
 ### Misc Links

@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom'
 import App from './App'
 
 // Parse the url and route to the requested page
-console.log('>> window.location:', window.location)
+// console.log('>> window.location:', window.location)
 const re = window.location.href.match(/^.*p=(.*)$/)
 const dest = re?.[1] ?? 'index'
-console.log('>> dest:', dest)
+// console.log('>> dest:', dest)
 
 ReactDOM.render(
   // <StrictMode>

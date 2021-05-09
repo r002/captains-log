@@ -132,11 +132,8 @@ function constructPage (pageQueryStr: string): JSX.Element {
 
   // Only applicable to Secure.tsx right now! 5/7/21
   const pageParam = pageQueryStr.split('&')[1] ?? 'bg2003.pdf'
-  // console.log('>> pageParam:', pageParam)
   const re = pageParam.match(/^asset=(.*)$/)
-  // console.log('>> re', re)
   const p = re?.[1] ?? 'bg2003.pdf'
-  // console.log('>> p:', p)
 
   const page = pages.get(pageDest) ?? <>Page not found!</>
   return React.createElement(page, { asset: p }, null)

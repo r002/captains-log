@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- ✨ Add '/scripts' and 'firebase-admin' in order to easily populate Firestore
 - ♻️ Rename `Secure.tsx` to `FileViewer.tsx`. Properly implement `FileViewer.tsx`
 - 💄 Beautify the 'Secure Asset' page to show a nice message if user is unauthorized to view asset
 - ✨ Add Cloud Function to deliver secure assets to authorized users

@@ -21,7 +21,7 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(firebaseConfig) // Must happen first!
 
   if (location.hostname === 'localhost') {
-    firebase.firestore().useEmulator('localhost', 8080)
+    // firebase.firestore().useEmulator('localhost', 8080)
     firebase.functions().useEmulator('localhost', 5001)
     // firebase.auth().useEmulator('http://localhost:9099')
   }

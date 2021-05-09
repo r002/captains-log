@@ -3,6 +3,14 @@ import { ILog, TPassage, TVote } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
 
 /**
+ * Queries firestore to get menu items.
+ */
+export async function getMenuItems (menuId: string): Promise<any> {
+  const doc = await firebase.firestore().collection('menus').doc(menuId).get()
+  return doc.data()
+}
+
+/**
  * Queries firestore and returns the coronation results (vote tallies).
  * @returns
  */

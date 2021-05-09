@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
-import React from 'react'
-import { deleteVotes, coronate } from '../services/FirestoreApi'
+import React, { useEffect } from 'react'
+import { deleteVotes, coronate, getMenuItems } from '../services/FirestoreApi'
 
 const FSidebar = styled.div`
   grid-area: sidebar;
@@ -92,6 +92,12 @@ const Sidebar = (props: TSidebar) => {
   function goHome () {
     props.navigate('index')
   }
+
+  useEffect(() => {
+    getMenuItems('gtx_isye6501').then(rs => {
+      console.log('>> rs.menu:', rs.menu)
+    })
+  }, [])
 
   const content = props.collapseSidebar
     ? <>
