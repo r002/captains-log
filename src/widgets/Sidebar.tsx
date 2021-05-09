@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import { deleteVotes, coronate, getMenuItems } from '../services/FirestoreApi'
 
 const FSidebar = styled.div`
@@ -76,6 +76,8 @@ type TSidebar = {
 }
 
 const Sidebar = (props: TSidebar) => {
+  const [menuItems, setMenuItems] = useState([])
+
   function handleResetVoting () {
     const parentId = 't7XqvCIszaUUrHAm1RLs' // TODO: Actually impl this! 4/22/21
     deleteVotes(parentId)
@@ -93,11 +95,13 @@ const Sidebar = (props: TSidebar) => {
     props.navigate('index')
   }
 
-  useEffect(() => {
+  if (menuItems.length === 0) {
     getMenuItems('gtx_isye6501').then(rs => {
-      console.log('>> rs.menu:', rs.menu)
+      rs.menu.sort((a: any, b: any) => (a.order > b.order) ? 1 : -1)
+      console.log('>> GET rs.menu:', rs.menu)
+      setMenuItems(rs.menu)
     })
-  }, [])
+  }
 
   const content = props.collapseSidebar
     ? <>
@@ -158,18 +162,28 @@ const Sidebar = (props: TSidebar) => {
           label='🔺 Changelog'
           navigate={props.navigate}
         />
-        <MenuItem dest='fileviewer&asset=GTx__ISYE6501/Timeline1-11Summer__1_.pdf'
-          selected={props.selectedPage === 'fileviewer&asset=GTx__ISYE6501/Timeline1-11Summer__1_.pdf'}
+        <MenuItem dest='fileviewer&asset=bg2003.pdf'
+          selected={props.selectedPage === 'fileviewer&asset=bg2003.pdf'}
           label='🌎 Open Asset Test'
           navigate={props.navigate}
         />
         <hr />
         <FMenuHeader>GTx: ISYE 6501</FMenuHeader>
-        <MenuItem dest='fileviewer&asset=secure/gtx/isye6501/week_1_solutions-summer.pdf'
-          selected={props.selectedPage === 'fileviewer&asset=secure/gtx/isye6501/week_1_solutions-summer.pdf'}
-          label='🔒 Week #1 Solutions'
-          navigate={props.navigate}
-        />
+        {
+          menuItems.map((item: any) => {
+            const dest = item.asset.includes('https://')
+              ? item.asset
+              : 'fileviewer&asset=' + item.asset
+            return (
+              <MenuItem dest={dest}
+                key={item.order}
+                selected={props.selectedPage === dest}
+                label={item.title}
+                navigate={props.navigate}
+              />
+            )
+          })
+        }
       </>
 
   function handleCollapseSidebar () {
