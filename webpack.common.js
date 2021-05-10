@@ -10,15 +10,15 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'Home',
       filename: 'index.html',
-      template: './src/index.html',
-      favicon: './src/favicon.ico',
+      template: './public/index.html',
+      favicon: './public/favicon.ico',
       chunks: ['app']
     }),
     new HtmlWebpackPlugin({
       title: 'Wattpad POC',
       filename: 'wattpad.html',
-      template: './src/wattpad.html',
-      favicon: './src/favicon.ico',
+      template: './public/wattpad.html',
+      favicon: './public/favicon.ico',
       chunks: ['wattpad']
     })
   ],

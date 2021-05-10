@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- ✨ Add feature to make `Sidebar.tsx` menu items collapsible
+- ♻️ Move static `.html` entry points into `/public` dir
 - ✨ Impl populating the sidebar ('GTx ISYE6501' menu items) from Firestore
 - ✨ Add '/scripts' and 'firebase-admin' in order to easily populate Firestore
 - ♻️ Rename `Secure.tsx` to `FileViewer.tsx`. Properly implement `FileViewer.tsx`
