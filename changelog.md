@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- ✨ Add `StudyGroup` entry point and POC
 - ✨ Add feature to make `Sidebar.tsx` menu items collapsible
 - ♻️ Move static `.html` entry points into `/public` dir
 - ✨ Impl populating the sidebar ('GTx ISYE6501' menu items) from Firestore

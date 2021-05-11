@@ -149,12 +149,12 @@ db.collection('menus').doc('gtx_isye6501').get().then(items => {
 //     {
 //       asset: 'GTx__ISYE6501/ISyE_6501_Project.pdf',
 //       order: 27,
-//       title: '📄 Final Course Project (July 16, 2020)'
+//       title: '📄 Final Course Project'
 //     },
 //     {
 //       asset: 'secure/gtx/isye6501/project_subB.pdf',
 //       order: 28,
-//       title: '🔒 Final Project: Eprimo GmbH’s Chat Bot'
+//       title: '🔒 Final Project: Eprimo GmbH’s Chat Bot (July 16, 2020)'
 //     },
 //     {
 //       asset: 'https://credentials.edx.org/records/programs/shared/5e01b7235a294e56bfef1c2f0f3bd3b4/',
