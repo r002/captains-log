@@ -6,13 +6,22 @@ import React from 'react'
 const uri = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
 // const uri = 'https://api.github.com/repos/r002/codenewbie/issues?creator=r002&since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
 
-// const cards = new Map<string, TCard[]>()
 const upDb = new UserProgressDb()
 
 fetch(uri)
   .then(response => response.json())
   .then(items => {
     for (const item of items) {
+      // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
+      // This is a total hack. Write a proper `updateCard(...)` method later
+      if (item.number === 16) {
+        item.created_at = '2021-05-08T04:38:08Z'
+      } else if (item.number === 19) {
+        item.created_at = '2021-05-09T04:38:08Z'
+      } else if (item.number === 22) {
+        item.created_at = '2021-05-10T04:38:08Z'
+      }
+
       const cardInput = {
         title: item.title,
         userHandle: item.user.login,
@@ -22,10 +31,10 @@ fetch(uri)
       upDb.addCard(cardInput)
     }
 
-    // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
-    upDb.updateCard('anitabe404', '5/9/2021', '5/8/2021')
-    upDb.updateCard('anitabe404', '5/10/2021', '5/9/2021')
-    upDb.updateCard('anitabe404', '5/11/2021', '5/10/2021')
+    // // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
+    // upDb.updateCard('anitabe404', '5/9/2021', '5/8/2021')
+    // upDb.updateCard('anitabe404', '5/10/2021', '5/9/2021')
+    // upDb.updateCard('anitabe404', '5/11/2021', '5/10/2021')
 
     ReactDOM.render(
       <StudyGroup />,
