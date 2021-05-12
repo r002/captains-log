@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](#)
+- ✨ Add `progress column` for Matt and study group member photos
+- ♻️ Refactor `Map<string, Map<string, Card>>` into a proper `UserProgress.ts` model
 - ✨ Add `StudyGroup` entry point and POC
 - ✨ Add feature to make `Sidebar.tsx` menu items collapsible
 - ♻️ Move static `.html` entry points into `/public` dir
