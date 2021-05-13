@@ -2,11 +2,30 @@ import ReactDOM from 'react-dom'
 import styled, { css } from 'styled-components'
 import { UserProgressDb } from './models/UserProgress'
 import React from 'react'
+import CountdownClock from './widgets/CountdownClock'
 
 const uri = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
 // const uri = 'https://api.github.com/repos/r002/codenewbie/issues?creator=r002&since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
 
+const r002 = {
+  userFullname: 'Robert Lin',
+  userHandle: 'r002',
+  startDateStr: '2021-05-03T04:00:00Z'
+}
+const anitabe404 = {
+  userFullname: 'Anita Beauchamp',
+  userHandle: 'anitabe404',
+  startDateStr: '2021-05-04T04:00:00Z'
+}
+const mccurcio = {
+  userFullname: 'Matthew Curcio',
+  userHandle: 'mccurcio',
+  startDateStr: '2021-05-10T04:00:00Z'
+}
 const upDb = new UserProgressDb()
+upDb.addUser(r002)
+upDb.addUser(anitabe404)
+upDb.addUser(mccurcio)
 
 fetch(uri)
   .then(response => response.json())
@@ -15,11 +34,11 @@ fetch(uri)
       // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
       // This is a total hack. Write a proper `updateCard(...)` method later
       if (item.number === 16) {
-        item.created_at = '2021-05-08T04:38:08Z'
+        item.created_at = '2021-05-08T04:00:00Z'
       } else if (item.number === 19) {
-        item.created_at = '2021-05-09T04:38:08Z'
+        item.created_at = '2021-05-09T04:00:00Z'
       } else if (item.number === 22) {
-        item.created_at = '2021-05-10T04:38:08Z'
+        item.created_at = '2021-05-10T04:00:00Z'
       }
 
       const cardInput = {
@@ -28,13 +47,8 @@ fetch(uri)
         number: item.number,
         createdAt: item.created_at
       }
-      upDb.addCard(cardInput)
+      upDb.getUser(cardInput.userHandle)!.addCard(cardInput)
     }
-
-    // // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
-    // upDb.updateCard('anitabe404', '5/9/2021', '5/8/2021')
-    // upDb.updateCard('anitabe404', '5/10/2021', '5/9/2021')
-    // upDb.updateCard('anitabe404', '5/11/2021', '5/10/2021')
 
     ReactDOM.render(
       <StudyGroup />,
@@ -55,6 +69,7 @@ const FVertical = styled.div`
 type TFCard = {
   readonly empty? : boolean
   readonly missedDay? : boolean
+  readonly today? : boolean
 }
 const FCard = styled.div<TFCard>`
   margin: 4px;
@@ -72,6 +87,10 @@ const FCard = styled.div<TFCard>`
 
   ${props => props.missedDay && css`
     background-color: #300101;
+  `}
+
+  ${props => props.today && css`
+    background-color: #01210a;
   `}
 `
 
@@ -122,7 +141,16 @@ const EmptyCard: React.VFC = () => {
   )
 }
 
-const MissedDayCard: React.VFC = () => {
+const MissedDayCard: React.FC<{dateStr: string}> = (props) => {
+  const today = new Date()
+  if (today.toLocaleDateString() === props.dateStr) {
+    return (
+      <FCard today={true}>
+        Today's contribution pending!<br />
+        😀😁😄
+      </FCard>
+    )
+  }
   return (
     <FCard missedDay={true}>
       No contribution today!<br />
@@ -133,7 +161,7 @@ const MissedDayCard: React.VFC = () => {
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const dateCursor = new Date() // Start on today
-const startDate = new Date('2021-05-03') // First day of our strudy group! 🥳
+const startDate = new Date('2021-05-03T04:00:00Z') // First day of our strudy group! 🥳
 
 // Generate the date range we're interested in
 type TDay = {
@@ -141,32 +169,39 @@ type TDay = {
   dateStr: string
 }
 const dateRange = [] as TDay[]
-while (dateCursor.getDate() > startDate.getDate()) {
+while (dateCursor.getTime() >= startDate.getTime()) {
   dateRange.push({
     dayNo: dateCursor.getDay(),
     dateStr: dateCursor.toLocaleDateString()
   })
-  dateCursor.setDate(dateCursor.getDate() - 1) // Iterate backwards until we get to the start date
+  dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // Step one day backwards until we get to the start date
 }
-// console.log('>> dateRange:', dateRange)
+// console.log('$$ dateRange:', dateRange)
 
 const StudyGroup = () => {
   // const [cards, setCards] = useState([])
   return (
     <>
-      <h2>Study Group 00</h2>
+      <br />
+      <div style={{ textAlign: 'center' }}>
+        <CountdownClock color='white' />
+      </div>
+      <h2>Study Group 00:</h2>
       {
         ['r002', 'anitabe404', 'mccurcio'].map((handle: string, i: number) => {
-          const streak = upDb.getCurrentStreak(handle)
+          const streak = upDb.getUser(handle)?.CurrentStreak
+          const missedDays = upDb.getUser(handle)?.MissedDays
           return (
             <div key={'member' + i}>
-              Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> | Current Streak: {streak} consecutive days | Strikes: 0<br />
+              Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
+              Current Streak: {streak} consecutive days |
+              Missed Days: {missedDays}<br />
             </div>
           )
         })
       }
-      <br /><br />
-      <h2>Study Group 00 | Progress:</h2>
+      <br />
+      <h2>Progress:</h2>
       <FHorizontal>
         <FVertical>
           <FCard empty={true}>
@@ -189,12 +224,12 @@ const StudyGroup = () => {
           <MemberCard name='Robert Lin' userHandle='r002' uid='45280066' />
           {
             dateRange.map((day: TDay, i: number) => {
-              const card = upDb.getCard('r002', day.dateStr)
+              const card = upDb.getUser('r002')!.getCard(day.dateStr)
               if (card) {
                 return <CardComp key={card.title + i} title={card.title} userHandle={card.userHandle} number={card.number}
                   created={card.created} />
               }
-              return <MissedDayCard key={'r002' + i} />
+              return <MissedDayCard key={'r002' + i} dateStr={day.dateStr} />
             })
           }
         </FVertical>
@@ -202,12 +237,12 @@ const StudyGroup = () => {
           <MemberCard name='Anita Beauchamp' userHandle='anitabe404' uid='9167395' />
           {
             dateRange.map((day: TDay, i: number) => {
-              const card = upDb.getCard('anitabe404', day.dateStr)
+              const card = upDb.getUser('anitabe404')!.getCard(day.dateStr)
               if (card) {
                 return <CardComp key={card.title + i} title={card.title} userHandle={card.userHandle} number={card.number}
                   created={card.created} />
               } else if (Date.parse(day.dateStr) > Date.parse('2021-05-04')) {
-                return <MissedDayCard key={'anitabe404' + i} />
+                return <MissedDayCard key={'anitabe404' + i} dateStr={day.dateStr} />
               }
               return <EmptyCard key={'anitabe404' + i} />
             })
@@ -217,12 +252,12 @@ const StudyGroup = () => {
           <MemberCard name='Matthew Curcio' userHandle='mccurcio' uid='1915749' />
           {
             dateRange.map((day: TDay, i: number) => {
-              const card = upDb.getCard('mccurcio', day.dateStr)
+              const card = upDb.getUser('mccurcio')!.getCard(day.dateStr)
               if (card) {
                 return <CardComp key={card.title + i} title={card.title} userHandle={card.userHandle} number={card.number}
                   created={card.created} />
               } else if (Date.parse(day.dateStr) > Date.parse('2021-05-10')) {
-                return <MissedDayCard key={'mccurcio' + i} />
+                return <MissedDayCard key={'mccurcio' + i} dateStr={day.dateStr} />
               }
               return <EmptyCard key={'mccurcio' + i} />
             })

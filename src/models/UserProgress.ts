@@ -1,3 +1,9 @@
+type TCardInput = {
+  title: string
+  userHandle: string
+  number: number
+  createdAt: string
+}
 class Card {
   title: string
   userHandle: string
@@ -16,47 +22,78 @@ class Card {
   }
 }
 
-type TCardInput = {
-  title: string
+type TUserInput = {
+  userFullname: string
   userHandle: string
-  number: number
-  createdAt: string
+  startDateStr: string
 }
 
-export class UserProgressDb {
-  #db = new Map<string, Map<string, Card>>()
+class UserProgress {
+  userFullname: string
+  userHandle: string
+  startDate: Date
+  #cards = new Map<string, Card>()
+  #streakCurrent = 0
+  #missedDays = 0
+
+  constructor (props: TUserInput) {
+    this.userFullname = props.userFullname
+    this.userHandle = props.userHandle
+    this.startDate = new Date(props.startDateStr)
+  }
 
   addCard (cardInput: TCardInput) {
     const card = new Card(cardInput)
-    if (this.#db.has(card.userHandle)) {
-      this.#db.get(card.userHandle)!.set(card.dateStr, card) // Why is TSC demanding I assert here? 5/11/21 🤔
-    } else {
-      const userCards = new Map<string, Card>()
-      userCards.set(card.dateStr, card)
-      this.#db.set(card.userHandle, userCards)
+    this.#cards.set(card.dateStr, card)
+  }
+
+  getCard (dateStr: string) {
+    return this.#cards.get(dateStr)
+  }
+
+  calculateStreak () {
+    // console.log('>> Calculate streak for:', this.userHandle)
+    const dateCursor = new Date() // Start on today
+    // Generate the date range we're interested in
+    const dateRange = [] as string[]
+    while (dateCursor.getTime() >= this.startDate.getTime()) {
+      dateRange.push(dateCursor.toLocaleDateString())
+      dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // Step one day backwards until we get to the start date
+    }
+    // console.log('>> dateRange:', this.startDate.getDate(), dateRange)
+    for (const dateStr of dateRange) {
+      if (this.#cards.has(dateStr)) {
+        this.#streakCurrent++
+      } else {
+        const today = new Date()
+        if (today.toLocaleDateString() !== dateStr) { // Don't do anything if user hasn't yet contributed today
+          this.#streakCurrent = 0 // Reset the streak
+          this.#missedDays++
+        }
+      }
     }
   }
 
-  getCurrentStreak (userHandle: string): number {
-    const userCards = this.#db.get(userHandle)
-    return userCards?.size ?? 0
-  }
-
-  getCards (userHandle: string): Card[] {
-    if (this.#db.has(userHandle)) {
-      return Array.from(this.#db.get(userHandle)!.values()) // Why is TSC demanding I assert here? 5/11/21 🤔
+  get CurrentStreak () {
+    if (this.#streakCurrent === 0) {
+      this.calculateStreak()
     }
-    return []
+    return this.#streakCurrent
   }
 
-  getCard (userHandle: string, dateStr: string): Card | null {
-    return this.#db.get(userHandle)?.get(dateStr) ?? null
+  get MissedDays () {
+    return this.#missedDays
+  }
+}
+
+export class UserProgressDb {
+  #db = new Map<string, UserProgress>()
+
+  addUser (userInput: TUserInput) {
+    this.#db.set(userInput.userHandle, new UserProgress(userInput))
   }
 
-  updateCard (userHandle: string, oldDateStr: string, newDateStr: string) {
-    const card = this.#db.get(userHandle)?.get(oldDateStr)
-    card!.created = new Date(newDateStr)
-    this.#db.get(userHandle)?.set(newDateStr, card!)
-    this.#db.get(userHandle)?.delete(oldDateStr)
+  getUser (userHandle: string) {
+    return this.#db.get(userHandle)
   }
 }
