@@ -190,11 +190,62 @@ while (dateCursor.getTime() >= startDate.getTime()) {
 }
 // console.log('$$ dateRange:', dateRange)
 
-const StudyGroup = () => {
-  // const [cards, setCards] = useState([])
+const FLine = styled.div`
+  width: 100%;
+  border: 0;
+  background-color: #30363d;
+  height: 3px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+`
+
+const FTopbar = styled.div`
+  width: 100%;
+  border: 0;
+  background-color: #161b22;
+  height: 60px;
+  margin-top: 0;
+  margin-bottom: 18px;
+  padding: 19px 20px 25px 20px;
+  box-sizing: border-box;
+`
+
+const FTopbarLinks = styled(FTopbar)`
+  a {
+    font-size: 18px;
+  }
+  a:link {
+    color: #f0f6fc;
+    text-decoration: none;
+  }
+
+  a:visited {
+    color: #f0f6fc;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: #a5b5bb;
+    text-decoration: none;
+  }
+
+  a:active {
+    color: red;
+  }
+`
+
+const StudyGroup: React.VFC = () => {
+  // console.log('>> render Study Group')
   return (
     <>
-      <br />
+      <FTopbarLinks>
+        <a href='https://github.com/r002/codenewbie/discussions/30'>Specs</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'>Raw Data</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/codenewbie/projects/1?fullscreen=true'>Project Board</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/codenewbie/issues'>All Cards</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/codenewbie/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/captains-log/blob/sprint-grape/changelog.md'>Changelog</a>
+      </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
         <CountdownClock color='white' />
       </div>
@@ -225,10 +276,15 @@ const StudyGroup = () => {
             dateRange.map((day: TDay, i: number) => {
               dateCursor.setDate(dateCursor.getDate() - 1)
               return (
-                <FCard key={'day' + i}>
-                  {days[day.dayNo]}<br />
-                  {day.dateStr.replace('/2021', '/21')}
-                </FCard>
+                <div key={'dayDiv' + i}>
+                  {day.dayNo === 6 &&
+                    <FLine key={'dayHr' + i} />
+                  }
+                  <FCard key={'dayCard' + i}>
+                    {days[day.dayNo]}<br />
+                    {day.dateStr.replace('/2021', '/21')}
+                  </FCard>
+                </div>
               )
             })
           }
@@ -238,21 +294,35 @@ const StudyGroup = () => {
             <FVertical key={'vertical' + i}>
               <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
               {
-                dateRange.map((day: TDay, i: number) => {
-                  const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
-                  if (card) {
-                    return <CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle} number={card.number}
-                      created={card.created} />
-                  } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
-                    return <MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />
-                  }
-                  return <EmptyCard key={m.userHandle + i} />
-                })
+                dateRange.map((day: TDay, i: number) => renderCard(m, day, i))
               }
             </FVertical>
           )
         }
       </FHorizontal>
     </>
+  )
+}
+
+function renderCard (m:StudyMember, day: TDay, i: number) {
+  const rs = []
+  const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
+  if (day.dayNo === 6 && card) {
+    rs.push(
+      <FLine key={'hr' + m.userHandle + i} />
+    )
+  }
+  if (card) {
+    rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle}
+      number={card.number} created={card.created} />)
+  } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
+    rs.push(<MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />)
+  } else {
+    rs.push(<EmptyCard key={m.userHandle + i} />)
+  }
+  return (
+    <div key={'container' + m.userHandle + i}>
+      {rs}
+    </div>
   )
 }

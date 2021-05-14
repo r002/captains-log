@@ -67,7 +67,7 @@ class UserProgress {
       } else {
         const today = new Date()
         if (today.toLocaleDateString() !== dateStr) { // Don't do anything if user hasn't yet contributed today
-          this.#streakCurrent = 0 // Reset the streak
+          this.#streakCurrent = 1 // Reset the streak
           this.#missedDays++
         }
       }
