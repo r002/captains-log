@@ -2,11 +2,6 @@ import styled from 'styled-components'
 import React, { useEffect, useState } from 'react'
 import { msToTime } from '../lib/util'
 
-const today = new Date()
-// today.setTime(today.getTime() + 86400 * 1000) // Set to tomorrow
-// console.log('>> Today:', today.toDateString())
-const deadline = new Date(`${today.toDateString()} 23:59:59`)
-
 const FCountdownClock = styled.div<{color?: string}>`
   color: ${p => p.color};
 `
@@ -25,7 +20,13 @@ const FH1 = styled.div`
   margin-bottom: 10px;
 `
 
+// Setting these vars outside more performant? 5/13/21
+let today = new Date()
+let deadline = new Date(`${today.toDateString()} 23:59:59`)
 const CountdownClock: React.FC<{color?: string}> = (props) => {
+  today = new Date()
+  deadline = new Date(`${today.toDateString()} 23:59:59`)
+
   const [timeRemaining, setTimeRemaining] = useState(deadline.getTime() - Date.now())
 
   function tick () {

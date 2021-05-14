@@ -7,25 +7,37 @@ import CountdownClock from './widgets/CountdownClock'
 const uri = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
 // const uri = 'https://api.github.com/repos/r002/codenewbie/issues?creator=r002&since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
 
-const r002 = {
-  userFullname: 'Robert Lin',
-  userHandle: 'r002',
-  startDateStr: '2021-05-03T04:00:00Z'
+type StudyMember = {
+  userFullname: string
+  userHandle: string
+  startDateStr: string
+  uid: string
 }
-const anitabe404 = {
-  userFullname: 'Anita Beauchamp',
-  userHandle: 'anitabe404',
-  startDateStr: '2021-05-04T04:00:00Z'
-}
-const mccurcio = {
-  userFullname: 'Matthew Curcio',
-  userHandle: 'mccurcio',
-  startDateStr: '2021-05-10T04:00:00Z'
-}
+
+const studyMembers: StudyMember[] = [
+  {
+    userFullname: 'Robert Lin',
+    userHandle: 'r002',
+    startDateStr: '2021-05-03T04:00:00Z',
+    uid: '45280066'
+  },
+  {
+    userFullname: 'Anita Beauchamp',
+    userHandle: 'anitabe404',
+    startDateStr: '2021-05-04T04:00:00Z',
+    uid: '9167395'
+  },
+  {
+    userFullname: 'Matthew Curcio',
+    userHandle: 'mccurcio',
+    startDateStr: '2021-05-10T04:00:00Z',
+    uid: '1915749'
+  }
+]
 const upDb = new UserProgressDb()
-upDb.addUser(r002)
-upDb.addUser(anitabe404)
-upDb.addUser(mccurcio)
+for (const member of studyMembers) {
+  upDb.addUser(member)
+}
 
 fetch(uri)
   .then(response => response.json())
@@ -104,7 +116,7 @@ const CardComp: React.FC<TCard> = (props) => {
   const title = props.title.length > 67 ? props.title.substr(0, 64) + '...' : props.title
   return (
     <FCard>
-      <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a><br />
+      <a href={'https://github.com/r002/codenewbie/issues/' + props.number} title={props.created.toString()}>{title}</a><br />
       {props.userHandle} {props.created.toDateString()} (#{props.number})
     </FCard>
   )
@@ -188,7 +200,8 @@ const StudyGroup = () => {
       </div>
       <h2>Study Group 00:</h2>
       {
-        ['r002', 'anitabe404', 'mccurcio'].map((handle: string, i: number) => {
+        studyMembers.map((member: StudyMember, i: number) => {
+          const handle = member.userHandle
           const streak = upDb.getUser(handle)?.CurrentStreak
           const missedDays = upDb.getUser(handle)?.MissedDays
           return (
@@ -214,55 +227,31 @@ const StudyGroup = () => {
               return (
                 <FCard key={'day' + i}>
                   {days[day.dayNo]}<br />
-                  {day.dateStr}
+                  {day.dateStr.replace('/2021', '/21')}
                 </FCard>
               )
             })
           }
         </FVertical>
-        <FVertical>
-          <MemberCard name='Robert Lin' userHandle='r002' uid='45280066' />
-          {
-            dateRange.map((day: TDay, i: number) => {
-              const card = upDb.getUser('r002')!.getCard(day.dateStr)
-              if (card) {
-                return <CardComp key={card.title + i} title={card.title} userHandle={card.userHandle} number={card.number}
-                  created={card.created} />
+        {
+          studyMembers.map((m: StudyMember, i: number) =>
+            <FVertical key={'vertical' + i}>
+              <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
+              {
+                dateRange.map((day: TDay, i: number) => {
+                  const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
+                  if (card) {
+                    return <CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle} number={card.number}
+                      created={card.created} />
+                  } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
+                    return <MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />
+                  }
+                  return <EmptyCard key={m.userHandle + i} />
+                })
               }
-              return <MissedDayCard key={'r002' + i} dateStr={day.dateStr} />
-            })
-          }
-        </FVertical>
-        <FVertical>
-          <MemberCard name='Anita Beauchamp' userHandle='anitabe404' uid='9167395' />
-          {
-            dateRange.map((day: TDay, i: number) => {
-              const card = upDb.getUser('anitabe404')!.getCard(day.dateStr)
-              if (card) {
-                return <CardComp key={card.title + i} title={card.title} userHandle={card.userHandle} number={card.number}
-                  created={card.created} />
-              } else if (Date.parse(day.dateStr) > Date.parse('2021-05-04')) {
-                return <MissedDayCard key={'anitabe404' + i} dateStr={day.dateStr} />
-              }
-              return <EmptyCard key={'anitabe404' + i} />
-            })
-          }
-        </FVertical>
-        <FVertical>
-          <MemberCard name='Matthew Curcio' userHandle='mccurcio' uid='1915749' />
-          {
-            dateRange.map((day: TDay, i: number) => {
-              const card = upDb.getUser('mccurcio')!.getCard(day.dateStr)
-              if (card) {
-                return <CardComp key={card.title + i} title={card.title} userHandle={card.userHandle} number={card.number}
-                  created={card.created} />
-              } else if (Date.parse(day.dateStr) > Date.parse('2021-05-10')) {
-                return <MissedDayCard key={'mccurcio' + i} dateStr={day.dateStr} />
-              }
-              return <EmptyCard key={'mccurcio' + i} />
-            })
-          }
-        </FVertical>
+            </FVertical>
+          )
+        }
       </FHorizontal>
     </>
   )

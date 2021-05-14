@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](https://github.com/r002/captains-log/pull/45)
+- 💄♻️ Make minor cosmetic fixes and code optimizations
 - ✨ Add giant `Countdown Clock` and impl `Streak Counter` + minor cosmetic fixes
 - ♻️ Fix the ad-hoc code that adjusts Anita's card dates for #16, #19, #22
 - ✨ Add `progress column` for Matt and study group member photos
