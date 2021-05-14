@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](https://github.com/r002/captains-log/pull/45)
+- ✨ Add `CodeNewbie` link in `Topbar` navigation
 - ✨ Add `Topbar` navigation
 - 🐞 Fix `Streak Counter` bug
 - 💄♻️ Make minor cosmetic fixes and code optimizations
