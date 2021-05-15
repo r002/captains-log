@@ -119,10 +119,11 @@ const CardComp: React.FC<TCard> = (props) => {
   return (
     <FCard>
       <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a><br />
-      <span title={props.created.toString()} style={{ cursor: 'pointer' }}>{props.created.toDateString()}</span> (#{props.number})
+      <span title={'Created: ' + props.created.toString()} style={{ cursor: 'pointer' }}>{props.created.toDateString()}</span>&nbsp;
+      <span title={'Last updated: ' + props.updated.toString()} style={{ cursor: 'pointer' }}>(#{props.number})</span>
       {
         Date.now() - props.updated.getTime() < 3600 * 1000 &&
-          <span title={props.updated.toString()} style={{ cursor: 'pointer' }}> | 🍿</span>
+          <span title={'Last updated: ' + props.updated.toString()} style={{ cursor: 'pointer' }}> | 🍿</span>
       }
     </FCard>
   )
@@ -201,8 +202,8 @@ const FLine = styled.div`
   border: 0;
   background-color: #30363d;
   height: 3px;
-  margin-top: 4px;
-  margin-bottom: 8px;
+  margin-top: 8px;
+  margin-bottom: 4px;
 `
 
 const FTopbar = styled.div`
@@ -284,13 +285,13 @@ const StudyGroup: React.VFC = () => {
               dateCursor.setDate(dateCursor.getDate() - 1)
               return (
                 <div key={'dayDiv' + i}>
-                  {day.dayNo === 6 &&
-                    <FLine key={'dayHr' + i} />
-                  }
                   <FCard key={'dayCard' + i}>
                     {days[day.dayNo]}<br />
                     {day.dateStr.replace('/2021', '/21')}
                   </FCard>
+                  {day.dayNo === 0 &&
+                    <FLine key={'dayHr' + i} />
+                  }
                 </div>
               )
             })
@@ -314,11 +315,6 @@ const StudyGroup: React.VFC = () => {
 function renderCard (m:StudyMember, day: TDay, i: number) {
   const rs = []
   const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
-  if (day.dayNo === 6 && card) {
-    rs.push(
-      <FLine key={'hr' + m.userHandle + i} />
-    )
-  }
   if (card) {
     rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle}
       number={card.number} created={card.created} updated={card.updated} />)
@@ -327,6 +323,13 @@ function renderCard (m:StudyMember, day: TDay, i: number) {
   } else {
     rs.push(<EmptyCard key={m.userHandle + i} />)
   }
+
+  if (day.dayNo === 0 && card) {
+    rs.push(
+      <FLine key={'hr' + m.userHandle + i} />
+    )
+  }
+
   return (
     <div key={'container' + m.userHandle + i}>
       {rs}
