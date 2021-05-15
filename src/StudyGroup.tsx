@@ -4,8 +4,8 @@ import { UserProgressDb } from './models/UserProgress'
 import React from 'react'
 import CountdownClock from './widgets/CountdownClock'
 
-const uri = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
-// const uri = 'https://api.github.com/repos/r002/codenewbie/issues?creator=r002&since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
+const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
+const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
 
 type StudyMember = {
   userFullname: string
@@ -39,10 +39,25 @@ for (const member of studyMembers) {
   upDb.addUser(member)
 }
 
-fetch(uri)
-  .then(response => response.json())
-  .then(items => {
-    for (const item of items) {
+type Commit = {
+  message: string
+  date: Date
+}
+
+const fetchAllCards = fetch(uriAllCards)
+const fetchVersion = fetch(uriVersion)
+Promise.all([fetchAllCards, fetchVersion]).then(responses => {
+  const jsonAllCards = responses[0].json()
+  const jsonVersion = responses[1].json()
+  Promise.all([jsonAllCards, jsonVersion]).then(jsonPayloads => {
+    const allCards = jsonPayloads[0]
+    const allCommits = jsonPayloads[1]
+    const latestCommit = {
+      message: allCommits[0].commit.message,
+      date: new Date(allCommits[0].commit.committer.date)
+    }
+
+    for (const item of allCards) {
       // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
       // This is a total hack. Write a proper `updateCard(...)` method later
       if (item.number === 16) {
@@ -64,10 +79,11 @@ fetch(uri)
     }
 
     ReactDOM.render(
-      <StudyGroup />,
+      <StudyGroup commit={latestCommit} />,
       document.querySelector('#root')
     )
   })
+})
 
 const FHorizontal = styled.div`
   display: flex;
@@ -241,10 +257,36 @@ const FTopbarLinks = styled(FTopbar)`
   }
 `
 
-const StudyGroup: React.VFC = () => {
+const FFooter = styled.div`
+  position: fixed;
+  width: 100%;
+  border: 0;
+  background-color: #161b22;
+  height: 60px;
+  bottom: 0;
+  padding: 9px 15px;
+  /* padding-top: 10px;
+  padding-bottom: 8px; */
+  box-sizing: border-box;
+  text-align: right;
+  color: #f0f6fc;
+  font-size: 12px;
+`
+
+const FStudyGroup = styled.div`
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+`
+
+type TStudyGroup = {
+  commit: Commit
+}
+const StudyGroup: React.FC<TStudyGroup> = (props) => {
   // console.log('>> render Study Group')
   return (
-    <>
+    <FStudyGroup>
       <FTopbarLinks>
         <a href='https://github.com/r002/codenewbie/discussions/30'>Specs</a>&nbsp;&nbsp;&nbsp;
         <a href='https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'>Raw Data</a>&nbsp;&nbsp;&nbsp;
@@ -308,7 +350,11 @@ const StudyGroup: React.VFC = () => {
           )
         }
       </FHorizontal>
-    </>
+      <FFooter>
+        {props.commit.message}<br />
+        👷‍♂️ {props.commit.date.toString()}
+      </FFooter>
+    </FStudyGroup>
   )
 }
 

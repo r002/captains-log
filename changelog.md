@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](https://github.com/r002/captains-log/pull/45)
+- 🔖 0.6.16: ✨ Add `footer` that shows the build's `version number` & `build date`
 - 🐞 Fix `Line Break Separator` GUI bug
 - ✨ Show an `🍿` icon on card if the card's been updated in the past `1 hour`
 - ✨ Add `CodeNewbie` link in `Topbar` navigation
@@ -21,7 +22,7 @@
 - ✨ Add Cloud Function to deliver secure assets to authorized users
 - ✨ Add 'Secure' page-- add ability to read protected assets from Firebase Storage
 - ♻️ Change how `flashAlert` is implemented (refactor this one day to make correct 🤦‍♂️)
-- 🍇 Begin Sprint Grape
+- 0.6.0: 🍇 Begin Sprint Grape
 - TODO: Setup a listener to a firestore collection: `realtimeNotifications`
 - TODO: Set `deadline` from admin console which pushes to all client endpoints in real-time
 - TODO: After deadline passes, show results of the voting
@@ -106,3 +107,16 @@
 - ✨ Impl 'FlashAlert' modal. Invalid DtInput now flashes alert & fails gracefully</li>
 - ♻️ Refactor 'sendLogDelete' into `/services/Internal.ts`</li>
 - 🐞 Fix 'FlashAlert' bug. Reset every time user signs in/out</li>
+
+---
+
+## Versioning Schema:
+- 0.0.x - 🍎 Apple
+- 0.1.x - 🍌 Banana
+- 0.2.x - 🍊 Clementine
+- 0.3.x - 🍈 Durian
+- 0.4.x - 🍒 Elderberry
+- 0.5.x - 🥝 Fig
+- 0.6.x - 🍇 Grape
+- 0.7.x - 🍍 [Hala](https://www.atlasobscura.com/foods/hala-fruit)
+- 0.8.x - 🥭 [Imbe](https://miamifruit.org/products/imbe-african-mangosteen)
