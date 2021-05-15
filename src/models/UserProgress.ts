@@ -3,22 +3,29 @@ type TCardInput = {
   userHandle: string
   number: number
   createdAt: string
+  updatedAt: string
 }
 class Card {
   title: string
   userHandle: string
   number: number
   created: Date
+  updated: Date
 
   constructor (props: TCardInput) {
     this.title = props.title
     this.userHandle = props.userHandle
     this.number = props.number
     this.created = new Date(props.createdAt)
+    this.updated = new Date(props.updatedAt)
   }
 
-  get dateStr () {
+  get createdStr () {
     return this.created.toLocaleDateString()
+  }
+
+  get updatedStr () {
+    return this.updated.toLocaleDateString()
   }
 }
 
@@ -44,7 +51,7 @@ class UserProgress {
 
   addCard (cardInput: TCardInput) {
     const card = new Card(cardInput)
-    this.#cards.set(card.dateStr, card)
+    this.#cards.set(card.createdStr, card)
   }
 
   getCard (dateStr: string) {

@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](https://github.com/r002/captains-log/pull/45)
+- ✨ Show an `🍿` icon on card if the card's been updated in the past `1 hour`
 - ✨ Add `CodeNewbie` link in `Topbar` navigation
 - ✨ Add `Topbar` navigation
 - 🐞 Fix `Streak Counter` bug

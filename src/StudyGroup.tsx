@@ -57,7 +57,8 @@ fetch(uri)
         title: item.title,
         userHandle: item.user.login,
         number: item.number,
-        createdAt: item.created_at
+        createdAt: item.created_at,
+        updatedAt: item.updated_at
       }
       upDb.getUser(cardInput.userHandle)!.addCard(cardInput)
     }
@@ -111,13 +112,18 @@ type TCard = {
   userHandle: string
   number: number
   created: Date
+  updated: Date
 }
 const CardComp: React.FC<TCard> = (props) => {
   const title = props.title.length > 67 ? props.title.substr(0, 64) + '...' : props.title
   return (
     <FCard>
-      <a href={'https://github.com/r002/codenewbie/issues/' + props.number} title={props.created.toString()}>{title}</a><br />
-      {props.userHandle} {props.created.toDateString()} (#{props.number})
+      <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a><br />
+      <span title={props.created.toString()} style={{ cursor: 'pointer' }}>{props.created.toDateString()}</span> (#{props.number})
+      {
+        Date.now() - props.updated.getTime() < 3600 * 1000 &&
+          <span title={props.updated.toString()} style={{ cursor: 'pointer' }}> | 🍿</span>
+      }
     </FCard>
   )
 }
@@ -315,7 +321,7 @@ function renderCard (m:StudyMember, day: TDay, i: number) {
   }
   if (card) {
     rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle}
-      number={card.number} created={card.created} />)
+      number={card.number} created={card.created} updated={card.updated} />)
   } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
     rs.push(<MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />)
   } else {
