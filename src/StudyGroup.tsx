@@ -4,7 +4,7 @@ import { UserProgressDb } from './models/UserProgress'
 import React from 'react'
 import CountdownClock from './widgets/CountdownClock'
 
-const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'
+const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc&per_page=100'
 const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
 
 type StudyMember = {
@@ -269,7 +269,7 @@ const FFooter = styled.div`
   padding-bottom: 8px; */
   box-sizing: border-box;
   text-align: right;
-  color: #f0f6fc;
+  color: #a5b5bb;
   font-size: 12px;
 `
 
@@ -370,7 +370,8 @@ function renderCard (m:StudyMember, day: TDay, i: number) {
     rs.push(<EmptyCard key={m.userHandle + i} />)
   }
 
-  if (day.dayNo === 0 && card) {
+  const today = new Date()
+  if (day.dayNo === 0 && (card || today.toLocaleDateString() === day.dateStr)) {
     rs.push(
       <FLine key={'hr' + m.userHandle + i} />
     )

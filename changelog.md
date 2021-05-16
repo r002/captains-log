@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Sun - 4/25/21 | Sprint Grape 🍇](https://github.com/r002/captains-log/pull/45)
+- 🔖 0.6.17: 🐞 Fix another `Line Break Separator` GUI bug
 - 🔖 0.6.16: ✨ Add `footer` that shows the build's `version number` & `build date`
 - 🐞 Fix `Line Break Separator` GUI bug
 - ✨ Show an `🍿` icon on card if the card's been updated in the past `1 hour`
