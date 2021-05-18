@@ -3,9 +3,10 @@ import styled, { css } from 'styled-components'
 import { UserProgressDb } from './models/UserProgress'
 import React from 'react'
 import CountdownClock from './widgets/CountdownClock'
+import changelogUri from './data/changelog.json'
 
 const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc&per_page=100'
-const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
+// const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
 
 type StudyMember = {
   userFullname: string
@@ -40,12 +41,13 @@ for (const member of studyMembers) {
 }
 
 type Commit = {
+  version: string
   message: string
-  date: Date
+  built: Date
 }
 
 const fetchAllCards = fetch(uriAllCards)
-const fetchVersion = fetch(uriVersion)
+const fetchVersion = fetch(changelogUri)
 Promise.all([fetchAllCards, fetchVersion]).then(responses => {
   const jsonAllCards = responses[0].json()
   const jsonVersion = responses[1].json()
@@ -53,8 +55,9 @@ Promise.all([fetchAllCards, fetchVersion]).then(responses => {
     const allCards = jsonPayloads[0]
     const allCommits = jsonPayloads[1]
     const latestCommit = {
-      message: allCommits[0].commit.message,
-      date: new Date(allCommits[0].commit.committer.date)
+      version: allCommits[0].version,
+      message: allCommits[0].message,
+      built: new Date(allCommits[0].built)
     }
 
     for (const item of allCards) {
@@ -351,8 +354,8 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         }
       </FHorizontal>
       <FFooter>
-        {props.commit.message}<br />
-        👷‍♂️ {props.commit.date.toString()}
+        🔖 {props.commit.version} | {props.commit.message}<br />
+        👷‍♂️ {props.commit.built.toString()}
       </FFooter>
     </FStudyGroup>
   )

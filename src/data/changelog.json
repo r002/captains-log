@@ -1,0 +1,17 @@
+[
+  {
+    "version": "0.6.18",
+    "message": "✨ Add proper 'Changelog' page",
+    "built": "Tue, 18 May 2021 11:54:24 EDT"
+  },
+  {
+    "version": "0.6.17",
+    "message": "🐞 Fix another 'Line Break Separator' GUI bug",
+    "built": "Sun May 16 2021 00:40:15 GMT-0400 (Eastern Daylight Time)"
+  },
+  {
+    "version": "0.6.16",
+    "message": "✨ Add 'footer' that shows the build's 'version number' \u0026 'build date'",
+    "built": "Sat May 15 2021 14:00:00 GMT-0400 (Eastern Daylight Time)"
+  }
+]

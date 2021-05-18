@@ -33,6 +33,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(jpg|json)$/,
+        type: 'asset/resource'
+      },
+      {
         test: /\.tsx?$/,
         use: 'ts-loader',
         include: path.resolve(__dirname, 'src'),
