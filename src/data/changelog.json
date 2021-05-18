@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.6.19",
+    "message": "📄 Update the 'Changelog' link in the top navbar",
+    "built": "Tue, 18 May 2021 12:03:38 EDT"
+  },
+  {
     "version": "0.6.18",
     "message": "✨ Add proper 'Changelog' page",
     "built": "Tue, 18 May 2021 11:54:24 EDT"
