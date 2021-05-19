@@ -44,7 +44,8 @@
     "start": "webpack serve --config webpack.dev.js",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "local": "firebase emulators:start --only \"functions\" --import=data\\multi-users --export-on-exit=data\\saved_data",
-    "dbdump": "firebase emulators:export data\\multi-users"
+    "dbdump": "firebase emulators:export data\\multi-users",
+    "pushall": "go run .\\precommit-scripts\\createChangelog.go"
   },
   "repository": {
     "type": "git",

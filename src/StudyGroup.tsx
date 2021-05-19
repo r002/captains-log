@@ -1,8 +1,9 @@
 import ReactDOM from 'react-dom'
 import styled, { css } from 'styled-components'
-import { UserProgressDb } from './models/UserProgress'
+import { UserProgressDb, Tag } from './models/UserProgress'
 import React from 'react'
 import CountdownClock from './widgets/CountdownClock'
+import { formatTime } from './lib/util'
 import changelogUri from './data/changelog.json'
 
 const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc&per_page=100'
@@ -71,12 +72,43 @@ Promise.all([fetchAllCards, fetchVersion]).then(responses => {
         item.created_at = '2021-05-10T04:00:00Z'
       }
 
+      const tags = [] as Tag[]
+      for (const label of item.labels) {
+        switch (label.name) {
+          case 'movie trailer':
+            tags.push({
+              name: 'movie trailer',
+              icon: '🎬'
+            })
+            break
+          case 'tv show':
+            tags.push({
+              name: 'tv show',
+              icon: '📺'
+            })
+            break
+          case 'reading':
+            tags.push({
+              name: 'reading',
+              icon: '📖'
+            })
+            break
+          case 'life':
+            tags.push({
+              name: 'life',
+              icon: '🌳'
+            })
+            break
+        }
+      }
+
       const cardInput = {
         title: item.title,
         userHandle: item.user.login,
         number: item.number,
         createdAt: item.created_at,
-        updatedAt: item.updated_at
+        updatedAt: item.updated_at,
+        tags: tags
       }
       upDb.getUser(cardInput.userHandle)!.addCard(cardInput)
     }
@@ -126,24 +158,30 @@ const FCard = styled.div<TFCard>`
   `}
 `
 
+const PtrSpan = styled.span`
+  cursor: pointer;
+`
+
 type TCard = {
   title: string
   userHandle: string
   number: number
   created: Date
   updated: Date
+  tags: Tag[]
 }
 const CardComp: React.FC<TCard> = (props) => {
-  const title = props.title.length > 67 ? props.title.substr(0, 64) + '...' : props.title
+  const title = props.title.length > 51 ? props.title.substr(0, 48) + '...' : props.title
   return (
     <FCard>
       <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a><br />
-      <span title={'Created: ' + props.created.toString()} style={{ cursor: 'pointer' }}>{props.created.toDateString()}</span>&nbsp;
-      <span title={'Last updated: ' + props.updated.toString()} style={{ cursor: 'pointer' }}>(#{props.number})</span>
-      {
+      <PtrSpan title={'Created: ' + props.created.toString()}>{formatTime(props.created)}</PtrSpan>&nbsp;
+      <PtrSpan title={'Last updated: ' + props.updated.toString()}>(#{props.number})</PtrSpan>&nbsp;
+      {props.tags.map((tag: Tag) => <PtrSpan key={tag.name + props.number} title={tag.name}>{tag.icon}</PtrSpan>)}
+      {/* {
         Date.now() - props.updated.getTime() < 3600 * 1000 &&
           <span title={'Last updated: ' + props.updated.toString()} style={{ cursor: 'pointer' }}> | 🍿</span>
-      }
+      } */}
     </FCard>
   )
 }
@@ -292,7 +330,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
     <FStudyGroup>
       <FTopbarLinks>
         <a href='https://github.com/r002/codenewbie/discussions/30'>Specs</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc'>Raw Data</a>&nbsp;&nbsp;&nbsp;
+        <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/projects/1?fullscreen=true'>Project Board</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/issues'>All Cards</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
@@ -366,7 +404,7 @@ function renderCard (m:StudyMember, day: TDay, i: number) {
   const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
   if (card) {
     rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle}
-      number={card.number} created={card.created} updated={card.updated} />)
+      number={card.number} created={card.created} updated={card.updated} tags={card.tags} />)
   } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
     rs.push(<MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />)
   } else {

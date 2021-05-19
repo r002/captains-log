@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.6.20",
+    "message": "✨ Add 'Category Emojis' (📺🎬📖🌳) to cards",
+    "built": "Wed, 19 May 2021 16:37:42 EDT"
+  },
+  {
     "version": "0.6.19",
     "message": "📄 Update the 'Changelog' link in the top navbar",
     "built": "Tue, 18 May 2021 12:03:38 EDT"

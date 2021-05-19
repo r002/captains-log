@@ -1,9 +1,15 @@
+export type Tag = {
+  name: string
+  icon: string
+}
+
 type TCardInput = {
   title: string
   userHandle: string
   number: number
   createdAt: string
   updatedAt: string
+  tags: Tag[]
 }
 class Card {
   title: string
@@ -11,6 +17,7 @@ class Card {
   number: number
   created: Date
   updated: Date
+  tags: Tag[]
 
   constructor (props: TCardInput) {
     this.title = props.title
@@ -18,10 +25,11 @@ class Card {
     this.number = props.number
     this.created = new Date(props.createdAt)
     this.updated = new Date(props.updatedAt)
+    this.tags = props.tags
   }
 
   get createdStr () {
-    return this.created.toLocaleDateString()
+    return this.created.toLocaleDateString() // Eg. Tue May 18 2021 12:03:38 GMT-0400 (Eastern Daylight Time)
   }
 
   get updatedStr () {
