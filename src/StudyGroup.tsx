@@ -47,6 +47,28 @@ type Commit = {
   built: Date
 }
 
+const tagMap = new Map<string, Tag>()
+tagMap.set('movie trailer', {
+  name: 'movie trailer',
+  icon: '🎬'
+})
+tagMap.set('tv show', {
+  name: 'tv show',
+  icon: '📺'
+})
+tagMap.set('youtube', {
+  name: 'youtube',
+  icon: '▶'
+})
+tagMap.set('reading', {
+  name: 'reading',
+  icon: '📖'
+})
+tagMap.set('life', {
+  name: 'life',
+  icon: '🌳'
+})
+
 const fetchAllCards = fetch(uriAllCards)
 const fetchVersion = fetch(changelogUri)
 Promise.all([fetchAllCards, fetchVersion]).then(responses => {
@@ -74,31 +96,8 @@ Promise.all([fetchAllCards, fetchVersion]).then(responses => {
 
       const tags = [] as Tag[]
       for (const label of item.labels) {
-        switch (label.name) {
-          case 'movie trailer':
-            tags.push({
-              name: 'movie trailer',
-              icon: '🎬'
-            })
-            break
-          case 'tv show':
-            tags.push({
-              name: 'tv show',
-              icon: '📺'
-            })
-            break
-          case 'reading':
-            tags.push({
-              name: 'reading',
-              icon: '📖'
-            })
-            break
-          case 'life':
-            tags.push({
-              name: 'life',
-              icon: '🌳'
-            })
-            break
+        if (tagMap.has(label.name)) {
+          tags.push(tagMap.get(label.name)!) // Why is assertion required here? 5/20/21
         }
       }
 
@@ -237,7 +236,7 @@ const MissedDayCard: React.FC<{dateStr: string}> = (props) => {
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const dateCursor = new Date() // Start on today
-const startDate = new Date('2021-05-03T04:00:00Z') // First day of our strudy group! 🥳
+const startDate = new Date('2021-05-03T04:00:00Z') // First day of our study group! 🥳
 
 // Generate the date range we're interested in
 type TDay = {

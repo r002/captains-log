@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.6.21",
+    "message": "🐞 Fix 'Streak Counter' bug \u0026 add 'Youtube' (▶) icon",
+    "built": "Thu, 20 May 2021 08:23:29 EDT"
+  },
+  {
     "version": "0.6.20",
     "message": "✨ Add 'Category Emojis' (📺🎬📖🌳) to cards",
     "built": "Wed, 19 May 2021 16:37:42 EDT"
