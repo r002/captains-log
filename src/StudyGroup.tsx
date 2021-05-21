@@ -175,12 +175,13 @@ const CardComp: React.FC<TCard> = (props) => {
     <FCard>
       <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a><br />
       <PtrSpan title={'Created: ' + props.created.toString()}>{formatTime(props.created)}</PtrSpan>&nbsp;
-      <PtrSpan title={'Last updated: ' + props.updated.toString()}>(#{props.number})</PtrSpan>&nbsp;
+      <PtrSpan title={'Last updated: ' + props.updated.toString()}>(#{props.number})</PtrSpan>
+      {props.tags.length > 0 && <>&nbsp;</>}
       {props.tags.map((tag: Tag) => <PtrSpan key={tag.name + props.number} title={tag.name}>{tag.icon}</PtrSpan>)}
-      {/* {
+      {
         Date.now() - props.updated.getTime() < 3600 * 1000 &&
-          <span title={'Last updated: ' + props.updated.toString()} style={{ cursor: 'pointer' }}> | 🍿</span>
-      } */}
+          <span title={'Updated within the past hour!'} style={{ cursor: 'pointer' }}> | 🍿</span>
+      }
     </FCard>
   )
 }
@@ -348,7 +349,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
           return (
             <div key={'member' + i}>
               Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
-              Current Streak: {streak} consecutive days |
+              Streak: {streak} consecutive days |
               Missed Days: {missedDays}<br />
             </div>
           )

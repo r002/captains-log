@@ -77,11 +77,13 @@ class UserProgress {
     }
     // console.log('>> dateRange:', this.startDate.getDate(), dateRange)
     for (const dateStr of dateRange) {
+      // console.log('>> dateStr:', dateStr)
       if (this.#cards.has(dateStr)) {
         this.#streakCurrent++
       } else {
         const today = new Date()
         if (today.toLocaleDateString() !== dateStr) { // Don't do anything if user hasn't yet contributed today
+          // console.log('>> Resetting streak!')
           this.#streakCurrent = 0 // Reset the streak
           this.#missedDays++
         }
@@ -90,9 +92,7 @@ class UserProgress {
   }
 
   get CurrentStreak () {
-    if (this.#streakCurrent === 0) {
-      this.calculateStreak()
-    }
+    this.calculateStreak()
     return this.#streakCurrent
   }
 
