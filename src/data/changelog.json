@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.6.24",
+    "message": "✨ Add 'podcast notes' (🎙) tag",
+    "built": "Sat, 29 May 2021 13:50:06 EDT"
+  },
+  {
     "version": "0.6.23",
     "message": "🐞 Fix '\u003chr /'\u003e alignment bug + add 'travel' (🛸) tag",
     "built": "Sat, 29 May 2021 13:39:20 EDT"

@@ -72,6 +72,10 @@ tagMap.set('travel', {
   name: 'travel',
   icon: '🛸'
 })
+tagMap.set('podcast notes', {
+  name: 'podcast notes',
+  icon: '🎙'
+})
 
 const fetchAllCards = fetch(uriAllCards)
 const fetchVersion = fetch(changelogUri)
