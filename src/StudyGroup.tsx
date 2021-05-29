@@ -68,6 +68,10 @@ tagMap.set('life', {
   name: 'life',
   icon: '🌳'
 })
+tagMap.set('travel', {
+  name: 'travel',
+  icon: '🛸'
+})
 
 const fetchAllCards = fetch(uriAllCards)
 const fetchVersion = fetch(changelogUri)
@@ -302,6 +306,7 @@ const FFooter = styled.div`
   position: fixed;
   width: 100%;
   border: 0;
+  border-top: 1px solid #30363d;
   background-color: #161b22;
   height: 60px;
   bottom: 0;
@@ -411,8 +416,7 @@ function renderCard (m:StudyMember, day: TDay, i: number) {
     rs.push(<EmptyCard key={m.userHandle + i} />)
   }
 
-  const today = new Date()
-  if (day.dayNo === 0 && (card || today.toLocaleDateString() === day.dateStr)) {
+  if (day.dayNo === 0 && Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
     rs.push(
       <FLine key={'hr' + m.userHandle + i} />
     )
