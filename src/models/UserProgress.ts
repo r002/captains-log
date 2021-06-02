@@ -10,6 +10,7 @@ type TCardInput = {
   createdAt: string
   updatedAt: string
   tags: Tag[]
+  comments: number
 }
 class Card {
   title: string
@@ -18,6 +19,7 @@ class Card {
   created: Date
   updated: Date
   tags: Tag[]
+  comments: number
 
   constructor (props: TCardInput) {
     this.title = props.title
@@ -26,10 +28,11 @@ class Card {
     this.created = new Date(props.createdAt)
     this.updated = new Date(props.updatedAt)
     this.tags = props.tags
+    this.comments = props.comments
   }
 
   get createdStr () {
-    return this.created.toLocaleDateString() // Eg. Tue May 18 2021 12:03:38 GMT-0400 (Eastern Daylight Time)
+    return this.created.toLocaleDateString() // Eg. 5/31/2021
   }
 
   get updatedStr () {
@@ -57,7 +60,7 @@ class UserProgress {
     this.startDate = new Date(props.startDateStr)
   }
 
-  addCard (cardInput: TCardInput) {
+  setCard (cardInput: TCardInput) {
     const card = new Card(cardInput)
     this.#cards.set(card.createdStr, card)
   }
@@ -92,6 +95,7 @@ class UserProgress {
   }
 
   get CurrentStreak () {
+    this.#streakCurrent = this.#missedDays = 0
     this.calculateStreak()
     return this.#streakCurrent
   }

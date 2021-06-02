@@ -1,10 +1,12 @@
 import ReactDOM from 'react-dom'
+import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { UserProgressDb, Tag } from './models/UserProgress'
-import React from 'react'
 import CountdownClock from './widgets/CountdownClock'
 import { formatTime } from './lib/util'
 import changelogUri from './data/changelog.json'
+import './providers/AuthContext'
+import firebase from 'firebase/app'
 
 const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc&per_page=100'
 // const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
@@ -115,13 +117,14 @@ Promise.all([fetchAllCards, fetchVersion]).then(responses => {
         number: item.number,
         createdAt: item.created_at,
         updatedAt: item.updated_at,
-        tags: tags
+        tags: tags,
+        comments: item.comments
       }
-      upDb.getUser(cardInput.userHandle)!.addCard(cardInput)
+      upDb.getUser(cardInput.userHandle)!.setCard(cardInput)
     }
 
     ReactDOM.render(
-      <StudyGroup commit={latestCommit} />,
+      <StudyGroup commit={latestCommit} userProgressDb={upDb} />,
       document.querySelector('#root')
     )
   })
@@ -176,20 +179,35 @@ type TCard = {
   created: Date
   updated: Date
   tags: Tag[]
+  comments: number
 }
 const CardComp: React.FC<TCard> = (props) => {
   const title = props.title.length > 51 ? props.title.substr(0, 48) + '...' : props.title
   return (
     <FCard>
-      <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a><br />
-      <PtrSpan title={'Created: ' + props.created.toString()}>{formatTime(props.created)}</PtrSpan>&nbsp;
-      <PtrSpan title={'Last updated: ' + props.updated.toString()}>(#{props.number})</PtrSpan>
-      {props.tags.length > 0 && <>&nbsp;</>}
-      {props.tags.map((tag: Tag) => <PtrSpan key={tag.name + props.number} title={tag.name}>{tag.icon}</PtrSpan>)}
-      {
-        Date.now() - props.updated.getTime() < 3600 * 1000 &&
-          <span title={'Updated within the past hour!'} style={{ cursor: 'pointer' }}> | 🍿</span>
-      }
+      <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <div>
+          <PtrSpan title={'Created: ' + props.created.toString()}>{formatTime(props.created)}</PtrSpan>&nbsp;
+          <PtrSpan title={'Last updated: ' + props.updated.toString()}>(#{props.number})</PtrSpan>
+          {props.tags.length > 0 && <>&nbsp;</>}
+          {props.tags.map((tag: Tag) => <PtrSpan key={tag.name + props.number} title={tag.name}>{tag.icon}</PtrSpan>)}
+          {
+            Date.now() - props.updated.getTime() < 3600 * 1000 &&
+              <span title={'Updated within the past hour!'} style={{ cursor: 'pointer' }}> | 🍿</span>
+          }
+        </div>
+        <div>
+          {props.comments !== 0 &&
+            <span title={'Comments'} style={{ cursor: 'pointer', color: '#a5b5bb', fontSize: '13px' }}>
+              {props.comments}
+            </span>
+          }
+          {/* <span title={'Comments'} style={{ cursor: 'pointer' }}> | <svg className="octicon" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
+              <path fillRule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"></path>
+            </svg> {props.comments}</span> */}
+          </div>
+        </div>
     </FCard>
   )
 }
@@ -332,13 +350,79 @@ const FStudyGroup = styled.div`
 
 type TStudyGroup = {
   commit: Commit
+  userProgressDb: UserProgressDb
 }
 const StudyGroup: React.FC<TStudyGroup> = (props) => {
   // console.log('>> render Study Group')
+  // const [upDb, setUpDb] = useState<UserProgressDb>(props.userProgressDb)
+  const [value, setValue] = useState(0)
+
+  function updateDashboard (payload: any) {
+    console.log('>> updateDashboard: ' + value)
+    if (payload.kind === 'issue') {
+      runUpdateIssueFlow(payload)
+    } else if (payload.kind === 'issue_comment') {
+      runUpdateIssueCommentFlow(payload)
+    }
+    setValue(oldVal => oldVal + 1) // Force update hack to repaint React GUI. 5/31/21
+  }
+
+  // Bug with GitHub? Comment count seems buggy. 6/1/21
+  function runUpdateIssueCommentFlow (payload:any) {
+    console.log('>> TODO: runUpdateIssueCommentFlow:', payload.action, payload.kind)
+    // Currently broken - need to reach out to GitHub for guidance. 6/2/21
+    // const dateStr = (new Date(payload.issue.created_at)).toLocaleDateString()
+    // if (payload.action === 'created') {
+    //   upDb.getUser(payload.issue.user.login)!.getCard(dateStr)!.comments++
+    // } else if (payload.action === 'deleted') {
+    //   upDb.getUser(payload.issue.user.login)!.getCard(dateStr)!.comments--
+    // }
+  }
+
+  function runUpdateIssueFlow (payload:any) {
+    // const dateStr = (new Date(payload.issue.created_at)).toLocaleDateString()
+    // // Note: payload.action should never be 'opened' because card isn't milestoned yet.
+    // if (payload.action !== 'opened') {
+    //   // TODO: Test later - If this is an update, sanity check that we're updating the correct card. If multiple cards
+    //   // have been added for the same date, things will break. The dashboard only expects one
+    //   // "Daily Accomplishment" per day. 6/1/21
+    //   if (upDb.getUser(payload.issue.user.login)!.getCard(dateStr)!.number !== payload.issue.number) {
+    //     console.error(">> Card's 'Number' doesn't match! Multiple cards added for the same day?")
+    //     return
+    //   }
+    // }
+    const tags = [] as Tag[]
+    for (const label of payload.issue.labels) {
+      if (tagMap.has(label.name)) {
+        tags.push(tagMap.get(label.name)!)
+      }
+    }
+    const cardInput = {
+      title: payload.issue.title,
+      userHandle: payload.issue.user.login,
+      number: payload.issue.number,
+      createdAt: payload.issue.created_at,
+      updatedAt: payload.issue.updated_at,
+      tags: tags,
+      comments: payload.issue.comments // This number doesn't reflect the latest comment just added!
+    }
+    upDb.getUser(cardInput.userHandle)!.setCard(cardInput)
+  }
+
+  // Listen for latest updates from Firestore
+  useEffect(() => {
+    const unsubscribe = firebase.firestore().collection('ghUpdates').doc('latestUpdate')
+      .onSnapshot((doc) => {
+        // console.log('Data update received: ', doc.data())
+        updateDashboard(doc.data())
+      })
+    return () => unsubscribe()
+  }, [])
+
   return (
     <FStudyGroup>
       <FTopbarLinks>
-        <a href='https://github.com/r002/codenewbie/discussions/30'>Specs</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/codenewbie/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
         <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/projects/1?fullscreen=true'>Project Board</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/issues'>All Cards</a>&nbsp;&nbsp;&nbsp;
@@ -394,7 +478,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
             <FVertical key={'vertical' + i}>
               <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
               {
-                dateRange.map((day: TDay, i: number) => renderCard(m, day, i))
+                dateRange.map((day: TDay, i: number) => renderCard(upDb, m, day, i))
               }
             </FVertical>
           )
@@ -408,12 +492,12 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   )
 }
 
-function renderCard (m:StudyMember, day: TDay, i: number) {
+function renderCard (upDb:UserProgressDb, m:StudyMember, day: TDay, i: number) {
   const rs = []
   const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
   if (card) {
     rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle}
-      number={card.number} created={card.created} updated={card.updated} tags={card.tags} />)
+      number={card.number} created={card.created} updated={card.updated} tags={card.tags} comments={card.comments} />)
   } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
     rs.push(<MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />)
   } else {
