@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.6.26",
+    "message": "🐞 Fix Firefox rendering problem by removing `#private` fields",
+    "built": "Sat, 05 Jun 2021 19:00:40 EDT"
+  },
+  {
     "version": "0.6.25",
     "message": "✨ Subscribe the `Dashboard GUI` to `Firestore` for real-time updates",
     "built": "Wed, 02 Jun 2021 01:59:26 EDT"

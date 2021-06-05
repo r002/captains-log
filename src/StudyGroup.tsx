@@ -424,9 +424,9 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       <FTopbarLinks>
         <a href='https://github.com/r002/codenewbie/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
         <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/codenewbie/projects/1?fullscreen=true'>Project Board</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/issues'>All Cards</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/codenewbie/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/captains-log/blob/sprint-grape/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
         <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>
       </FTopbarLinks>

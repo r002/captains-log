@@ -50,9 +50,9 @@ class UserProgress {
   userFullname: string
   userHandle: string
   startDate: Date
-  #cards = new Map<string, Card>()
-  #streakCurrent = 0
-  #missedDays = 0
+  _cards = new Map<string, Card>()
+  _streakCurrent = 0
+  _missedDays = 0
 
   constructor (props: TUserInput) {
     this.userFullname = props.userFullname
@@ -62,11 +62,11 @@ class UserProgress {
 
   setCard (cardInput: TCardInput) {
     const card = new Card(cardInput)
-    this.#cards.set(card.createdStr, card)
+    this._cards.set(card.createdStr, card)
   }
 
   getCard (dateStr: string) {
-    return this.#cards.get(dateStr)
+    return this._cards.get(dateStr)
   }
 
   calculateStreak () {
@@ -81,38 +81,38 @@ class UserProgress {
     // console.log('>> dateRange:', this.startDate.getDate(), dateRange)
     for (const dateStr of dateRange) {
       // console.log('>> dateStr:', dateStr)
-      if (this.#cards.has(dateStr)) {
-        this.#streakCurrent++
+      if (this._cards.has(dateStr)) {
+        this._streakCurrent++
       } else {
         const today = new Date()
         if (today.toLocaleDateString() !== dateStr) { // Don't do anything if user hasn't yet contributed today
           // console.log('>> Resetting streak!')
-          this.#streakCurrent = 0 // Reset the streak
-          this.#missedDays++
+          this._streakCurrent = 0 // Reset the streak
+          this._missedDays++
         }
       }
     }
   }
 
   get CurrentStreak () {
-    this.#streakCurrent = this.#missedDays = 0
+    this._streakCurrent = this._missedDays = 0
     this.calculateStreak()
-    return this.#streakCurrent
+    return this._streakCurrent
   }
 
   get MissedDays () {
-    return this.#missedDays
+    return this._missedDays
   }
 }
 
 export class UserProgressDb {
-  #db = new Map<string, UserProgress>()
+  _db = new Map<string, UserProgress>()
 
   addUser (userInput: TUserInput) {
-    this.#db.set(userInput.userHandle, new UserProgress(userInput))
+    this._db.set(userInput.userHandle, new UserProgress(userInput))
   }
 
   getUser (userHandle: string) {
-    return this.#db.get(userHandle)
+    return this._db.get(userHandle)
   }
 }
