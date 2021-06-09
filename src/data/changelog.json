@@ -1,5 +1,10 @@
 [
   {
+    "version": "0.6.27",
+    "message": "🔧 Update `All Cards` uri to fetch all cards by `milestone=1`",
+    "built": "Wed, 09 Jun 2021 16:19:35 EDT"
+  },
+  {
     "version": "0.6.26",
     "message": "🐞 Fix Firefox rendering problem by removing `#private` fields",
     "built": "Sat, 05 Jun 2021 19:00:40 EDT"

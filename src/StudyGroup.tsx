@@ -8,7 +8,7 @@ import changelogUri from './data/changelog.json'
 import './providers/AuthContext'
 import firebase from 'firebase/app'
 
-const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&labels=daily%20accomplishment&sort=created&direction=desc&per_page=100'
+const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100'
 // const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
 
 type StudyMember = {
@@ -424,7 +424,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       <FTopbarLinks>
         <a href='https://github.com/r002/codenewbie/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
         <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/codenewbie/issues'>All Cards</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/codenewbie/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/codenewbie/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/captains-log/blob/sprint-grape/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
