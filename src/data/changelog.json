@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.7.0",
+    "message": "🍍 Begin `sprint-hala` (Thu - 6/10/21)",
+    "built": "Thu, 10 Jun 2021 14:52:50 EDT"
+  },
+  {
     "version": "1.6.28",
     "message": "📦 Release `sprint-grape` ➡ PROD: `v1.6.28-grape`",
     "built": "Thu, 10 Jun 2021 14:02:44 EDT"
