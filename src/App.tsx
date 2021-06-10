@@ -5,13 +5,14 @@ import { Navbar } from './widgets/Navbar'
 import { ThemeContext, themes } from './providers/ThemeContext'
 import './style.css'
 import { UserContext } from './providers/AuthContext'
-import { TFlashAlert } from './services/Internal'
+import { TFlashAlert, sendFlashAlert } from './services/Internal'
 import Sidebar from './widgets/Sidebar'
 import LogEntry from './pages/LogEntry'
 import StoryBoard from './pages/StoryBoard'
 import Results from './pages/Results'
 import Admin from './pages/Admin'
 import Write from './pages/Write'
+import FileViewer from './pages/FileViewer'
 
 type TMainLayout = {
   readonly collapseSidebar: boolean
@@ -53,7 +54,7 @@ type TUserAuth = {
   initializing: boolean
   user: firebase.User | null
 }
-const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert | null>>) => {
+const useAuth = () => {
   const [state, setState] = useState(() => {
     // const user = firebase.auth().currentUser
     return {
@@ -91,7 +92,7 @@ const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert 
             logId: '' // TODO: Such a hack. Fix this later. 4/10/21
           }
         } as TFlashAlert
-        setFlashAlert(flashAlert)
+        sendFlashAlert(flashAlert)
         firebase.auth().signOut()
       })
     } else {
@@ -115,20 +116,34 @@ const useAuth = (setFlashAlert: React.Dispatch<React.SetStateAction<TFlashAlert 
   return state
 }
 
-const pages = new Map([
-  ['index', <LogEntry />],
-  ['storyboard', <StoryBoard />],
-  ['results', <Results />],
-  ['write', <Write />],
-  ['admin', <Admin />]
+const pages = new Map<String, any>([ // TODO: Fix this `any` later. Hacky! 5/7/21
+  ['index', LogEntry],
+  ['storyboard', StoryBoard],
+  ['results', Results],
+  ['write', Write],
+  ['admin', Admin],
+  ['fileviewer', FileViewer]
 ])
+
+function constructPage (pageQueryStr: string): JSX.Element {
+  // console.log('>> Construct page widget from this qstring:', pageQueryStr)
+  // Parse the pageQueryStr to extract the target page dest and page params
+  const pageDest = pageQueryStr.split('&')[0]
+
+  // Only applicable to Secure.tsx right now! 5/7/21
+  const pageParam = pageQueryStr.split('&')[1] ?? 'bg2003.pdf'
+  const re = pageParam.match(/^asset=(.*)$/)
+  const p = re?.[1] ?? 'bg2003.pdf'
+
+  const page = pages.get(pageDest) ?? <>Page not found!</>
+  return React.createElement(page, { asset: p }, null)
+}
 
 type TApp = {
   page: string
 }
 const App = (props: TApp) => {
-  const [flashAlert, setFlashAlert] = useState<TFlashAlert | null>(null)
-  const { initializing, user } = useAuth(setFlashAlert)
+  const { initializing, user } = useAuth()
   const [collapseSidebar, setCollapseSidebar] = useState(false)
   const [page, setPage] = useState(props.page)
   const [context, setContext] = useState({
@@ -136,11 +151,11 @@ const App = (props: TApp) => {
     toggleTheme: customToggler
   })
 
-  function navigate (page: string): void {
-    if (page.includes('https://')) {
-      window.location.href = page
+  function navigate (dest: string): void {
+    if (dest.includes('https://')) {
+      window.location.href = dest
     } else {
-      setPage(page)
+      setPage(dest)
     }
   }
 
@@ -153,26 +168,10 @@ const App = (props: TApp) => {
     }))
   }
 
-  function listenForFlashAlert (event: Event) {
-    const fa = (event as CustomEvent).detail as TFlashAlert
-    setFlashAlert(fa)
-    console.log('!!!!!!!!!! FlashAlert received!', fa)
-  }
-
   useEffect(() => {
-    history.pushState({ page: page }, page, '/?p=' + page)
+    // console.log('>> pushState:', page)
+    history.pushState({}, '', '/?p=' + page)
   }, [page])
-
-  useEffect(() => {
-    document.body.addEventListener('flashAlert', listenForFlashAlert, false)
-    return () => {
-      document.body.removeEventListener('flashAlert', listenForFlashAlert)
-    }
-  }, [])
-
-  useEffect(() => {
-    setFlashAlert(null) // Reset the Flash Alert every time. This is hacky; fix later 3/28/21
-  }, [user, context])
 
   let appWrapper = <></>
   if (initializing) {
@@ -190,11 +189,11 @@ const App = (props: TApp) => {
                   collapseSidebar={collapseSidebar}
                   setCollapseSidebar={setCollapseSidebar} />
               }
-              <Navbar flashAlert={flashAlert} />
+              <Navbar />
               <Body>
                 {user === null
                   ? '👋 Hello! 🙋‍♂️ Please login to proceed. 🙏'
-                  : pages.get(page) ?? <>Page not found!</>}
+                  : constructPage(page)}
               </Body>
             </MainLayout>
           </UserContext.Provider>

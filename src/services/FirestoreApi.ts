@@ -1,6 +1,17 @@
 import firebase from 'firebase/app'
 import { ILog, TPassage, TVote } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
+import MMenuItem from '../models/MMenuItem'
+
+/**
+ * Queries firestore to get menu items.
+ */
+export async function getMenuItems (menuId: string): Promise<Array<MMenuItem>> {
+  const doc = await firebase.firestore().collection('menus').doc(menuId).get()
+  const menu = doc.data()!.menu as Array<MMenuItem>
+  menu.sort((a: any, b: any) => (a.order > b.order) ? 1 : -1)
+  return menu
+}
 
 /**
  * Queries firestore and returns the coronation results (vote tallies).

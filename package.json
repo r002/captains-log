@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "firebase": "^8.2.9",
+    "firebase-admin": "^9.7.0",
     "html-webpack-plugin": "^5.3.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -16,8 +17,8 @@
     "@types/react-dom": "^17.0.1",
     "@types/styled-components": "^5.1.9",
     "@types/webpack-env": "^1.16.0",
-    "@typescript-eslint/eslint-plugin": "^4.14.0",
-    "@typescript-eslint/parser": "^4.14.0",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
     "css-loader": "^5.1.1",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
@@ -27,13 +28,12 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "html-webpack-plugin": "^5.3.1",
     "lodash": "^4.17.21",
     "prettier": "^2.2.1",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.17",
-    "typescript": "^4.1.3",
-    "webpack": "^5.24.2",
+    "typescript": "^4.2.4",
+    "webpack": "^5.35.1",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3"
@@ -43,8 +43,9 @@
     "build": "webpack --config webpack.prod.js",
     "start": "webpack serve --config webpack.dev.js",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
-    "db": "firebase emulators:start --only \"auth,firestore\" --import=data\\multi-users --export-on-exit=data\\saved_data",
-    "dbdump": "firebase emulators:export data\\multi-users"
+    "local": "firebase emulators:start --only \"functions\" --import=data\\multi-users --export-on-exit=data\\saved_data",
+    "dbdump": "firebase emulators:export data\\multi-users",
+    "pushall": "go run .\\precommit-scripts\\createChangelog.go"
   },
   "repository": {
     "type": "git",

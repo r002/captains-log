@@ -25,6 +25,15 @@ export function msToTime (ms: number): TDuration {
   }
 }
 
+export function formatTime (d: Date): string {
+  const options = {
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZoneName: 'short'
+  }
+  return new Intl.DateTimeFormat('en-US', options as any).format(d)
+}
+
 // https://stackoverflow.com/questions/53301344/generate-unique-id-like-firebase-firestore
 // https://github.com/firebase/firebase-js-sdk/blob/6abd6484730971e2390b2b9acbb61800852fb350/packages/firestore/src/util/misc.ts#L36
 export class AutoId {

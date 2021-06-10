@@ -1,10 +1,10 @@
 import styled, { css } from 'styled-components'
-import { useEffect, useState, useContext } from 'react'
+import { useState, useContext } from 'react'
 import { UserContext } from '../providers/AuthContext'
 import { TPassage } from '../widgets/Shared'
-import { msToTime } from '../lib/util'
 import { getPassagesByStory } from '../services/FirestoreApi'
 import Candidates from '../widgets/Candidates'
+import CountdownClock from '../widgets/CountdownClock'
 
 export const FLine = styled.div`
   font-family: Georgia, serif;
@@ -41,32 +41,6 @@ const Container = styled.div`
   margin-right: 150px;
   text-align: center;
 `
-
-const CountdownClock = () => {
-  const deadline = new Date('May 2, 2021 12:00:00')
-  const [timeRemaining, setTimeRemaining] = useState(deadline.getTime() - Date.now())
-
-  function tick () {
-    setTimeRemaining(deadline.getTime() - Date.now())
-  }
-
-  useEffect(() => {
-    const interval = setInterval(() => tick(), 1000) // (* 60) Update every minute
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
-
-  const d = msToTime(timeRemaining)
-  return (
-    <>
-      Deadline:
-      <h1>{deadline.toString()}</h1>
-      Time remaining:
-      <h1>{d.days} days {d.hours} hours {d.minutes} minutes {d.seconds} seconds</h1>
-    </>
-  )
-}
 
 const StoryBoard = () => {
   const { user } = useContext(UserContext)

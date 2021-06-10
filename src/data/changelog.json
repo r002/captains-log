@@ -1,0 +1,67 @@
+[
+  {
+    "version": "1.6.28",
+    "message": "📦 Release `sprint-grape` ➡ PROD: `v1.6.28-grape`",
+    "built": "Thu, 10 Jun 2021 14:02:44 EDT"
+  },
+  {
+    "version": "0.6.27",
+    "message": "🔧 Update `All Cards` uri to fetch all cards by `milestone=1`",
+    "built": "Wed, 09 Jun 2021 16:19:35 EDT"
+  },
+  {
+    "version": "0.6.26",
+    "message": "🐞 Fix Firefox rendering problem by removing `#private` fields",
+    "built": "Sat, 05 Jun 2021 19:00:40 EDT"
+  },
+  {
+    "version": "0.6.25",
+    "message": "✨ Subscribe the `Dashboard GUI` to `Firestore` for real-time updates",
+    "built": "Wed, 02 Jun 2021 01:59:26 EDT"
+  },
+  {
+    "version": "0.6.24",
+    "message": "✨ Add 'podcast notes' (🎙) tag",
+    "built": "Sat, 29 May 2021 13:50:06 EDT"
+  },
+  {
+    "version": "0.6.23",
+    "message": "🐞 Fix '\u003chr /'\u003e alignment bug + add 'travel' (🛸) tag",
+    "built": "Sat, 29 May 2021 13:39:20 EDT"
+  },
+  {
+    "version": "0.6.22",
+    "message": "🐞 Obviate 'Streak Counter' bug + restore 🍿 indicator",
+    "built": "Thu, 20 May 2021 21:17:45 EDT"
+  },
+  {
+    "version": "0.6.21",
+    "message": "🐞 Fix 'Streak Counter' bug \u0026 add 'Youtube' (▶) icon",
+    "built": "Thu, 20 May 2021 08:23:29 EDT"
+  },
+  {
+    "version": "0.6.20",
+    "message": "✨ Add 'Category Emojis' (📺🎬📖🌳) to cards",
+    "built": "Wed, 19 May 2021 16:37:42 EDT"
+  },
+  {
+    "version": "0.6.19",
+    "message": "📄 Update the 'Changelog' link in the top navbar",
+    "built": "Tue, 18 May 2021 12:03:38 EDT"
+  },
+  {
+    "version": "0.6.18",
+    "message": "✨ Add proper 'Changelog' page",
+    "built": "Tue, 18 May 2021 11:54:24 EDT"
+  },
+  {
+    "version": "0.6.17",
+    "message": "🐞 Fix another 'Line Break Separator' GUI bug",
+    "built": "Sun May 16 2021 00:40:15 GMT-0400 (Eastern Daylight Time)"
+  },
+  {
+    "version": "0.6.16",
+    "message": "✨ Add 'footer' that shows the build's 'version number' \u0026 'build date'",
+    "built": "Sat May 15 2021 14:00:00 GMT-0400 (Eastern Daylight Time)"
+  }
+]

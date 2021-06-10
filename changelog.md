@@ -1,5 +1,34 @@
 # Changelog
 
+## [Sun - 4/25/21 | Sprint Grape 🍇](https://github.com/r002/captains-log/pull/45)
+- 🔖 0.6.17: 🐞 Fix another `Line Break Separator` GUI bug
+- 🔖 0.6.16: ✨ Add `footer` that shows the build's `version number` & `build date`
+- 🐞 Fix `Line Break Separator` GUI bug
+- ✨ Show an `🍿` icon on card if the card's been updated in the past `1 hour`
+- ✨ Add `CodeNewbie` link in `Topbar` navigation
+- ✨ Add `Topbar` navigation
+- 🐞 Fix `Streak Counter` bug
+- 💄♻️ Make minor cosmetic fixes and code optimizations
+- ✨ Add giant `Countdown Clock` and impl `Streak Counter` + minor cosmetic fixes
+- ♻️ Fix the ad-hoc code that adjusts Anita's card dates for #16, #19, #22
+- ✨ Add `progress column` for Matt and study group member photos
+- ♻️ Refactor `Map<string, Map<string, Card>>` into a proper `UserProgress.ts` model
+- ✨ Add `StudyGroup` entry point and POC
+- ✨ Add feature to make `Sidebar.tsx` menu items collapsible
+- ♻️ Move static `.html` entry points into `/public` dir
+- ✨ Impl populating the sidebar ('GTx ISYE6501' menu items) from Firestore
+- ✨ Add '/scripts' and 'firebase-admin' in order to easily populate Firestore
+- ♻️ Rename `Secure.tsx` to `FileViewer.tsx`. Properly implement `FileViewer.tsx`
+- 💄 Beautify the 'Secure Asset' page to show a nice message if user is unauthorized to view asset
+- ✨ Add Cloud Function to deliver secure assets to authorized users
+- ✨ Add 'Secure' page-- add ability to read protected assets from Firebase Storage
+- ♻️ Change how `flashAlert` is implemented (refactor this one day to make correct 🤦‍♂️)
+- 0.6.0: 🍇 Begin Sprint Grape
+- TODO: Setup a listener to a firestore collection: `realtimeNotifications`
+- TODO: Set `deadline` from admin console which pushes to all client endpoints in real-time
+- TODO: After deadline passes, show results of the voting
+- TODO: Implement Comments
+
 ## [Sat - 4/10/21 | Sprint Fig 🥝](https://github.com/r002/captains-log/pull/41)
 - ✨ Begin Sprint Fig
 - ✨ Add basic Admin tools
@@ -25,8 +54,6 @@
 - ✨ Sidebar: Add external link to 'Changelog'
 - ✨ Sidebar: Don't render when user is logged out
 - ✨ 'Vote' page: Display a giant countdown clock until next coronation
-- TODO: After deadline passes, show results of the voting
-- TODO: Implement Comments
 
 ## [Fri - 4/9/21 | Sprint Elderberry 🍒](https://github.com/r002/captains-log/pull/40)
 - ✨ Begin adding Wattpad POC page. Add new 'Wattpad' entrypoint to webpack
@@ -81,3 +108,16 @@
 - ✨ Impl 'FlashAlert' modal. Invalid DtInput now flashes alert & fails gracefully</li>
 - ♻️ Refactor 'sendLogDelete' into `/services/Internal.ts`</li>
 - 🐞 Fix 'FlashAlert' bug. Reset every time user signs in/out</li>
+
+---
+
+## Versioning Schema:
+- 0.0.x - 🍎 Apple
+- 0.1.x - 🍌 Banana
+- 0.2.x - 🍊 Clementine
+- 0.3.x - 🍈 Durian
+- 0.4.x - 🍒 Elderberry
+- 0.5.x - 🥝 Fig
+- 0.6.x - 🍇 Grape
+- 0.7.x - 🍍 [Hala](https://www.atlasobscura.com/foods/hala-fruit)
+- 0.8.x - 🥭 [Imbe](https://miamifruit.org/products/imbe-african-mangosteen)

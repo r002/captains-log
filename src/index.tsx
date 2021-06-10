@@ -3,15 +3,16 @@ import ReactDOM from 'react-dom'
 import App from './App'
 
 // Parse the url and route to the requested page
-const urlParams = new URLSearchParams(window.location.search)
-const page = urlParams.get('p') ?? 'index'
-console.log('>>> urlParams p:', page)
+// console.log('>> window.location:', window.location)
+const re = window.location.href.match(/^.*p=(.*)$/)
+const dest = re?.[1] ?? 'index'
+// console.log('>> dest:', dest)
 
 ReactDOM.render(
   // <StrictMode>
   //   <App page={page} />
   // </StrictMode>,
-  <App page={page} />,
+  <App page={dest} />,
   document.querySelector('#root')
 )
 

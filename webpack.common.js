@@ -4,26 +4,38 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   entry: {
     app: './src/index.tsx',
-    wattpad: './src/wattpad.tsx'
+    wattpad: './src/wattpad.tsx',
+    StudyGroup: './src/StudyGroup.tsx'
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Home',
       filename: 'index.html',
-      template: './src/index.html',
-      favicon: './src/favicon.ico',
+      template: './public/index.html',
+      favicon: './public/favicon.ico',
       chunks: ['app']
     }),
     new HtmlWebpackPlugin({
       title: 'Wattpad POC',
       filename: 'wattpad.html',
-      template: './src/wattpad.html',
-      favicon: './src/favicon.ico',
+      template: './public/wattpad.html',
+      favicon: './public/favicon.ico',
       chunks: ['wattpad']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Study Group 00',
+      filename: 'study-group.html',
+      template: './public/study-group.html',
+      favicon: './public/favicon.ico',
+      chunks: ['StudyGroup']
     })
   ],
   module: {
     rules: [
+      {
+        test: /\.(jpg|json)$/,
+        type: 'asset/resource'
+      },
       {
         test: /\.tsx?$/,
         use: 'ts-loader',

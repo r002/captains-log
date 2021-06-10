@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
-import React from 'react'
-import { deleteVotes, coronate } from '../services/FirestoreApi'
+import React, { useState } from 'react'
+import { deleteVotes, coronate, getMenuItems } from '../services/FirestoreApi'
+import MMenuItem from '../models/MMenuItem'
 
 const FSidebar = styled.div`
   grid-area: sidebar;
@@ -15,6 +16,7 @@ const FLogo = styled.div`
   font-weight: 400;
   color: white;
   font-size: 21px;
+  cursor: pointer;
 `
 
 const FMenuHeader = styled.div`
@@ -25,6 +27,7 @@ const FMenuHeader = styled.div`
   font-weight: 500;
   background-color: #122c44;
   color: white;
+  cursor: pointer;
 `
 
 type TFMenuItem = {
@@ -54,7 +57,6 @@ type TMenuItem = {
   readonly selected: boolean
   navigate: Function
 }
-
 const MenuItem = (props: TMenuItem) => {
   function navigate (e: React.MouseEvent<HTMLElement>) {
     props.navigate(e.currentTarget.dataset.page)
@@ -67,13 +69,56 @@ const MenuItem = (props: TMenuItem) => {
   )
 }
 
+type TMenuSection = {
+  menuTitle: string
+  isCollapsed: boolean
+  selectedPage: string
+  navigate: Function
+}
+const MenuSection = (props: TMenuSection) => {
+  const [menuItems, setMenuItems] = useState([] as MMenuItem[])
+  const [isCollapsed, setIsCollapsed] = useState(props.isCollapsed)
+
+  if (menuItems.length === 0 && !isCollapsed) {
+    getMenuItems('gtx_isye6501').then(menu => {
+      console.log('>> GET menu:', menu)
+      setMenuItems(menu)
+    })
+  }
+
+  function toggleHeader () {
+    setIsCollapsed(!isCollapsed)
+  }
+
+  return (
+    <>
+      <FMenuHeader onClick={toggleHeader}>{props.menuTitle}</FMenuHeader>
+      {
+        !isCollapsed &&
+          menuItems.map((item: MMenuItem) => {
+            const dest = item.asset.includes('https://')
+              ? item.asset
+              : 'fileviewer&asset=' + item.asset
+            return (
+              <MenuItem dest={dest}
+                key={item.order}
+                selected={props.selectedPage === dest}
+                label={item.title}
+                navigate={props.navigate}
+              />
+            )
+          })
+      }
+    </>
+  )
+}
+
 type TSidebar = {
   collapseSidebar: boolean
   setCollapseSidebar: React.Dispatch<React.SetStateAction<boolean>>
   navigate: Function
   selectedPage: string
 }
-
 const Sidebar = (props: TSidebar) => {
   function handleResetVoting () {
     const parentId = 't7XqvCIszaUUrHAm1RLs' // TODO: Actually impl this! 4/22/21
@@ -86,6 +131,10 @@ const Sidebar = (props: TSidebar) => {
     coronate(parentId).then(rs => {
       console.log('>> Coronate!', rs)
     })
+  }
+
+  function goHome () {
+    props.navigate('index')
   }
 
   const content = props.collapseSidebar
@@ -106,9 +155,13 @@ const Sidebar = (props: TSidebar) => {
         <hr />
         <FMenuHeader>🛸</FMenuHeader>
         <FMenuItem>🔺</FMenuItem>
+        <FMenuItem>🌎</FMenuItem>
+        <hr />
+        <FMenuHeader>🏫</FMenuHeader>
+        <FMenuItem>🔒</FMenuItem>
       </>
     : <>
-        <FLogo>📗 Storyline</FLogo>
+        <FLogo onClick={goHome}>📗 Storyline</FLogo>
         <hr />
         <FMenuHeader>Admin Tools</FMenuHeader>
         <MenuItem dest='admin'
@@ -138,10 +191,21 @@ const Sidebar = (props: TSidebar) => {
         />
         <hr />
         <FMenuHeader>Misc</FMenuHeader>
-        <MenuItem dest='https://github.com/r002/captains-log/blob/sprint-fig/changelog.md'
+        <MenuItem dest='https://github.com/r002/captains-log/blob/main/changelog.md'
           selected={props.selectedPage === 'NA'}
           label='🔺 Changelog'
           navigate={props.navigate}
+        />
+        <MenuItem dest='fileviewer&asset=bg2003.pdf'
+          selected={props.selectedPage === 'fileviewer&asset=bg2003.pdf'}
+          label='🌎 Open Asset Test'
+          navigate={props.navigate}
+        />
+        <hr />
+        <MenuSection menuTitle='GTx: ISYE 6501'
+          selectedPage={props.selectedPage}
+          navigate={props.navigate}
+          isCollapsed={true}
         />
       </>
 
