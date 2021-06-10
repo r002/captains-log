@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.7.1",
+    "message": "✨ Add `start dates` to member profiles in GUI",
+    "built": "Thu, 10 Jun 2021 16:47:54 EDT"
+  },
+  {
     "version": "1.7.0",
     "message": "🍍 Begin `sprint-hala` (Thu - 6/10/21)",
     "built": "Thu, 10 Jun 2021 14:52:50 EDT"

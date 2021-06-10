@@ -443,6 +443,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
             <div key={'member' + i}>
               Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
               Streak: {streak} consecutive days |
+              Start: {(new Date(member.startDateStr)).toDateString()} |
               Missed Days: {missedDays}<br />
             </div>
           )
