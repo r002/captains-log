@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.6.28",
+    "message": "📦 Release `sprint-grape` ➡ PROD: `v1.6.28-grape`",
+    "built": "Thu, 10 Jun 2021 14:02:44 EDT"
+  },
+  {
     "version": "0.6.27",
     "message": "🔧 Update `All Cards` uri to fetch all cards by `milestone=1`",
     "built": "Wed, 09 Jun 2021 16:19:35 EDT"
