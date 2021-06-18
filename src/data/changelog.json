@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.7.2",
+    "message": "🔧 Modify `dashboard` to return 200 cards per each study member",
+    "built": "Fri, 18 Jun 2021 01:13:49 EDT"
+  },
+  {
     "version": "1.7.1",
     "message": "✨ Add `start dates` to member profiles in GUI",
     "built": "Thu, 10 Jun 2021 16:47:54 EDT"

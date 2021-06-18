@@ -9,6 +9,8 @@ import './providers/AuthContext'
 import firebase from 'firebase/app'
 
 const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100'
+const uriAllCards0 = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100&creator=r002'
+const uriAllCards1 = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
 // const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
 
 type StudyMember = {
@@ -79,21 +81,24 @@ tagMap.set('podcast notes', {
   icon: '🎙'
 })
 
-const fetchAllCards = fetch(uriAllCards)
+const fetchAllCards0 = fetch(uriAllCards0)
+const fetchAllCards1 = fetch(uriAllCards1)
 const fetchVersion = fetch(changelogUri)
-Promise.all([fetchAllCards, fetchVersion]).then(responses => {
-  const jsonAllCards = responses[0].json()
-  const jsonVersion = responses[1].json()
-  Promise.all([jsonAllCards, jsonVersion]).then(jsonPayloads => {
-    const allCards = jsonPayloads[0]
-    const allCommits = jsonPayloads[1]
+Promise.all([fetchAllCards0, fetchAllCards1, fetchVersion]).then(responses => {
+  const jsonAllCards0 = responses[0].json()
+  const jsonAllCards1 = responses[1].json()
+  const jsonVersion = responses[2].json()
+  Promise.all([jsonAllCards0, jsonAllCards1, jsonVersion]).then(jsonPayloads => {
+    const allCards0 = jsonPayloads[0]
+    const allCards1 = jsonPayloads[1]
+    const allCommits = jsonPayloads[2]
     const latestCommit = {
       version: allCommits[0].version,
       message: allCommits[0].message,
       built: new Date(allCommits[0].built)
     }
 
-    for (const item of allCards) {
+    for (const item of allCards0.concat(allCards1)) {
       // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
       // This is a total hack. Write a proper `updateCard(...)` method later
       if (item.number === 16) {
