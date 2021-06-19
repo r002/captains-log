@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.7.3",
+    "message": "🦸‍♀️ Add Shaza as newest StudyDash `Member #3`!",
+    "built": "Sat, 19 Jun 2021 18:06:41 EDT"
+  },
+  {
     "version": "1.7.2",
     "message": "🔧 Modify `dashboard` to return 200 cards per each study member",
     "built": "Fri, 18 Jun 2021 01:13:49 EDT"

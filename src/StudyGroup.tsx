@@ -11,13 +11,15 @@ import firebase from 'firebase/app'
 const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100'
 const uriAllCards0 = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100&creator=r002'
 const uriAllCards1 = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
-// const uriVersion = 'https://api.github.com/repos/r002/captains-log/commits?sha=sprint-grape'
+const uriAllCards2 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=shazahuang'
 
 type StudyMember = {
   userFullname: string
   userHandle: string
   startDateStr: string
   uid: string
+  repo: string
+  active: boolean
 }
 
 const studyMembers: StudyMember[] = [
@@ -25,19 +27,33 @@ const studyMembers: StudyMember[] = [
     userFullname: 'Robert Lin',
     userHandle: 'r002',
     startDateStr: '2021-05-03T04:00:00Z',
-    uid: '45280066'
+    uid: '45280066',
+    repo: 'https://github.com/r002/codenewbie',
+    active: true
   },
   {
     userFullname: 'Anita Beauchamp',
     userHandle: 'anitabe404',
     startDateStr: '2021-05-04T04:00:00Z',
-    uid: '9167395'
+    uid: '9167395',
+    repo: 'https://github.com/r002/codenewbie',
+    active: true
   },
   {
     userFullname: 'Matthew Curcio',
     userHandle: 'mccurcio',
     startDateStr: '2021-05-10T04:00:00Z',
-    uid: '1915749'
+    uid: '1915749',
+    repo: 'https://github.com/r002/codenewbie',
+    active: false
+  },
+  {
+    userFullname: 'Shaza Huang',
+    userHandle: 'shazahuang',
+    startDateStr: '2021-06-18T04:00:00Z',
+    uid: '85973779',
+    repo: 'https://github.com/studydash/cards',
+    active: true
   }
 ]
 const upDb = new UserProgressDb()
@@ -81,24 +97,27 @@ tagMap.set('podcast notes', {
   icon: '🎙'
 })
 
+const fetchVersion = fetch(changelogUri)
 const fetchAllCards0 = fetch(uriAllCards0)
 const fetchAllCards1 = fetch(uriAllCards1)
-const fetchVersion = fetch(changelogUri)
-Promise.all([fetchAllCards0, fetchAllCards1, fetchVersion]).then(responses => {
-  const jsonAllCards0 = responses[0].json()
-  const jsonAllCards1 = responses[1].json()
-  const jsonVersion = responses[2].json()
-  Promise.all([jsonAllCards0, jsonAllCards1, jsonVersion]).then(jsonPayloads => {
-    const allCards0 = jsonPayloads[0]
-    const allCards1 = jsonPayloads[1]
-    const allCommits = jsonPayloads[2]
+const fetchAllCards2 = fetch(uriAllCards2)
+Promise.all([fetchVersion, fetchAllCards0, fetchAllCards1, fetchAllCards2]).then(responses => {
+  const jsonVersion = responses[0].json()
+  const jsonAllCards0 = responses[1].json()
+  const jsonAllCards1 = responses[2].json()
+  const jsonAllCards2 = responses[3].json()
+  Promise.all([jsonVersion, jsonAllCards0, jsonAllCards1, jsonAllCards2]).then(jsonPayloads => {
+    const allCommits = jsonPayloads[0]
+    const allCards0 = jsonPayloads[1]
+    const allCards1 = jsonPayloads[2]
+    const allCards2 = jsonPayloads[3]
     const latestCommit = {
       version: allCommits[0].version,
       message: allCommits[0].message,
       built: new Date(allCommits[0].built)
     }
 
-    for (const item of allCards0.concat(allCards1)) {
+    for (const item of allCards0.concat(allCards1).concat(allCards2)) {
       // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
       // This is a total hack. Write a proper `updateCard(...)` method later
       if (item.number === 16) {
@@ -185,12 +204,13 @@ type TCard = {
   updated: Date
   tags: Tag[]
   comments: number
+  repo: string
 }
 const CardComp: React.FC<TCard> = (props) => {
   const title = props.title.length > 51 ? props.title.substr(0, 48) + '...' : props.title
   return (
     <FCard>
-      <a href={'https://github.com/r002/codenewbie/issues/' + props.number}>{title}</a>
+      <a href={props.repo + '/issues/' + props.number}>{title}</a>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <div>
           <PtrSpan title={'Created: ' + props.created.toString()}>{formatTime(props.created)}</PtrSpan>&nbsp;
@@ -444,14 +464,20 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
           const handle = member.userHandle
           const streak = upDb.getUser(handle)?.CurrentStreak
           const missedDays = upDb.getUser(handle)?.MissedDays
-          return (
+          const rs = []
+          const content =
             <div key={'member' + i}>
               Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
               Streak: {streak} consecutive days |
               Start: {(new Date(member.startDateStr)).toDateString()} |
               Missed Days: {missedDays}<br />
             </div>
-          )
+          if (member.active) {
+            rs.push(content)
+          } else {
+            rs.push(<s key={'member' + i}>{content}</s>)
+          }
+          return (rs)
         })
       }
       <br />
@@ -481,12 +507,14 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         </FVertical>
         {
           studyMembers.map((m: StudyMember, i: number) =>
-            <FVertical key={'vertical' + i}>
-              <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
-              {
-                dateRange.map((day: TDay, i: number) => renderCard(upDb, m, day, i))
-              }
-            </FVertical>
+            m.active
+              ? <FVertical key={'vertical' + i}>
+                  <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
+                  {
+                    dateRange.map((day: TDay, i: number) => renderCard(upDb, m, day, i))
+                  }
+                </FVertical>
+              : <span key={'vertical' + i}></span>
           )
         }
       </FHorizontal>
@@ -502,9 +530,9 @@ function renderCard (upDb:UserProgressDb, m:StudyMember, day: TDay, i: number) {
   const rs = []
   const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
   if (card) {
-    rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle}
+    rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle} repo={m.repo}
       number={card.number} created={card.created} updated={card.updated} tags={card.tags} comments={card.comments} />)
-  } else if (Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
+  } else if (Date.parse(day.dateStr) >= Date.parse(m.startDateStr)) {
     rs.push(<MissedDayCard key={m.userHandle + i} dateStr={day.dateStr} />)
   } else {
     rs.push(<EmptyCard key={m.userHandle + i} />)
