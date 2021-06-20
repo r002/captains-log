@@ -1,5 +1,30 @@
 [
   {
+    "version": "1.7.4",
+    "message": "📦 Release `sprint-hala` 🍍 ➡ PROD: `v1.7.4-hala`",
+    "built": "Sun, 20 Jun 2021 15:56:01 EDT"
+  },
+  {
+    "version": "1.7.3",
+    "message": "🦸‍♀️ Add Shaza as newest StudyDash `Member #3`!",
+    "built": "Sat, 19 Jun 2021 18:06:41 EDT"
+  },
+  {
+    "version": "1.7.2",
+    "message": "🔧 Modify `dashboard` to return 200 cards per each study member",
+    "built": "Fri, 18 Jun 2021 01:13:49 EDT"
+  },
+  {
+    "version": "1.7.1",
+    "message": "✨ Add `start dates` to member profiles in GUI",
+    "built": "Thu, 10 Jun 2021 16:47:54 EDT"
+  },
+  {
+    "version": "1.7.0",
+    "message": "🍍 Begin `sprint-hala` (Thu - 6/10/21)",
+    "built": "Thu, 10 Jun 2021 14:52:50 EDT"
+  },
+  {
     "version": "1.6.28",
     "message": "📦 Release `sprint-grape` ➡ PROD: `v1.6.28-grape`",
     "built": "Thu, 10 Jun 2021 14:02:44 EDT"
