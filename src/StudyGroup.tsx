@@ -8,9 +8,9 @@ import changelogUri from './data/changelog.json'
 import './providers/AuthContext'
 import firebase from 'firebase/app'
 
-const uriAllCards = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100'
-const uriAllCards0 = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100&creator=r002'
-const uriAllCards1 = 'https://api.github.com/repos/r002/codenewbie/issues?since=2021-05-03&milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
+const uriAllCards = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100'
+const uriAllCards0 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=r002'
+const uriAllCards1 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
 const uriAllCards2 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=shazahuang'
 
 type StudyMember = {
@@ -28,7 +28,7 @@ const studyMembers: StudyMember[] = [
     userHandle: 'r002',
     startDateStr: '2021-05-03T04:00:00Z',
     uid: '45280066',
-    repo: 'https://github.com/r002/codenewbie',
+    repo: 'https://github.com/studydash/cards',
     active: true
   },
   {
@@ -36,7 +36,7 @@ const studyMembers: StudyMember[] = [
     userHandle: 'anitabe404',
     startDateStr: '2021-05-04T04:00:00Z',
     uid: '9167395',
-    repo: 'https://github.com/r002/codenewbie',
+    repo: 'https://github.com/studydash/cards',
     active: true
   },
   {
@@ -44,7 +44,7 @@ const studyMembers: StudyMember[] = [
     userHandle: 'mccurcio',
     startDateStr: '2021-05-10T04:00:00Z',
     uid: '1915749',
-    repo: 'https://github.com/r002/codenewbie',
+    repo: 'https://github.com/studydash/cards',
     active: false
   },
   {
@@ -447,12 +447,12 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   return (
     <FStudyGroup>
       <FTopbarLinks>
-        <a href='https://github.com/r002/codenewbie/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
         <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/codenewbie/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/codenewbie/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/codenewbie/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/captains-log/blob/sprint-hala/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/captains-log/blob/main/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
         <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>
       </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
