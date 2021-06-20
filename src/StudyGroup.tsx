@@ -452,7 +452,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         <a href='https://github.com/studydash/cards/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/studydash/cards/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/studydash/cards/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/captains-log/blob/main/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/captains-log/blob/sprint-imbe/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
         <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>
       </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
