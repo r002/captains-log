@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.1",
+    "message": "✨ Add `pagination-by-month` to `dashboard GUI`",
+    "built": "Thu, 24 Jun 2021 18:05:57 EDT"
+  },
+  {
     "version": "1.8.0",
     "message": "🥭 Begin `sprint-imbe` (Sun - 6/20/21)",
     "built": "Sun, 20 Jun 2021 16:17:17 EDT"
