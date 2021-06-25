@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.2",
+    "message": "💄 Beautify `pagination controls` on `dashboard GUI`",
+    "built": "Thu, 24 Jun 2021 21:41:24 EDT"
+  },
+  {
     "version": "1.8.1",
     "message": "✨ Add `pagination-by-month` to `dashboard GUI`",
     "built": "Thu, 24 Jun 2021 18:05:57 EDT"

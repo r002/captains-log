@@ -235,6 +235,15 @@ const FStudyGroup = styled.div`
   padding: 0;
 `
 
+const FMonthTitle = styled.span`
+  font-size: 18px;
+  color: black;
+  background: yellow;
+  border: 1px yellow solid;
+  padding: 3px 3px 5px 3px;
+  margin: 10px;
+`
+
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 type TStudyGroup = {
@@ -337,9 +346,10 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/studydash/cards/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/studydash/cards/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/30?sort=new'>Screenshots</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/captains-log/blob/sprint-imbe/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
         <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/110?sort=new'>Tasks</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/studydash/cards/issues/new/choose'>New Card</a>
       </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
@@ -376,7 +386,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         <button onClick={navPrevMonth} disabled={startDate.getTime() > curDate.getTime() }>
           ◀ {util.printMonthYear(util.getPrevMonth(curDate))}
         </button>
-        &nbsp;&nbsp;{util.printMonthYear(curDate)}&nbsp;&nbsp;
+        <FMonthTitle>&nbsp;&nbsp;{util.printMonthYear(curDate)}&nbsp;&nbsp;</FMonthTitle>
         <button onClick={navNextMonth} disabled={util.getNextMonth(curDate).getTime() > Date.now() }>
           {util.printMonthYear(util.getNextMonth(curDate))} ▶
         </button>
