@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { UserProgressDb, Tag } from './models/UserProgress'
 import CountdownClock from './widgets/CountdownClock'
+import MembersPane from './widgets/MembersPane'
 import * as util from './lib/util'
 import changelogUri from './data/changelog.json'
 import './providers/AuthContext'
 import firebase from 'firebase/app'
-import { getUpDb, tagMap, uriAllCards, studyMembers, StudyMember } from './services/GithubApi'
+import { getUpDb, tagMap, uriAllCards, StudyMember } from './services/GithubApi'
 
 type Commit = {
   version: string
@@ -257,6 +258,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   const [upDb, setUpDb] = useState<UserProgressDb>(props.userProgressDb)
   const [value, setValue] = useState(0)
   const [curDate, setCurDate] = useState(props.initialDate)
+  const [members, setMembers] = useState<Array<StudyMember>>([])
 
   // Load cards
   useEffect(() => {
@@ -318,7 +320,32 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
     upDb.getUser(cardInput.userHandle)!.setCard(cardInput)
   }
 
-  // Listen for latest updates from Firestore
+  // Listen for latest member stats updates from Firestore
+  useEffect(() => {
+    const unsubscribe = firebase.firestore().collection('members')
+      .onSnapshot((querySnapshot) => {
+        const members = [] as Array<StudyMember>
+        querySnapshot.forEach((doc) => {
+          const member = doc.data()
+          members.push({
+            userFullname: member.Fullname,
+            userHandle: member.Handle,
+            startDateStr: member.StartDate,
+            uid: member.Uid,
+            repo: member.Repo,
+            active: member.Active,
+            streakCurrent: member.StreakCurrent,
+            streakMax: member.StreakMax,
+            recordCount: member.RecordCount
+          })
+        })
+        setMembers(members.sort((a, b) => Date.parse(a.startDateStr) - Date.parse(b.startDateStr)))
+        console.log('>> member stats update received: ', new Date())
+      })
+    return () => unsubscribe()
+  }, [])
+
+  // Listen for latest card updates from Firestore
   useEffect(() => {
     const unsubscribe = firebase.firestore().collection('ghUpdates').doc('latestUpdate')
       .onSnapshot((doc) => {
@@ -356,30 +383,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         <CountdownClock color='white' />
       </div>
       <h2>Study Group 00:</h2>
-      {
-        studyMembers.map((member: StudyMember, i: number) => {
-          const handle = member.userHandle
-          // const streak = upDb.getUser(handle)?.CurrentStreak
-          // const missedDays = upDb.getUser(handle)?.MissedDays
-          const rs = []
-          const content =
-            <div key={'member' + i}>
-              Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
-              {/* Streak: {streak} consecutive days | */}
-              &nbsp;Streak: NA |
-              Start: {(new Date(member.startDateStr)).toDateString()} |
-              {/* Missed Days: {missedDays} */}
-              &nbsp;Missed Days: NA
-              <br />
-            </div>
-          if (member.active) {
-            rs.push(content)
-          } else {
-            rs.push(<s key={'member' + i}>{content}</s>)
-          }
-          return (rs)
-        })
-      }
+      <MembersPane members={members} />
       <br />
 
       <div style={{ textAlign: 'center' }}>
@@ -414,7 +418,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
           }
         </FVertical>
         {
-          studyMembers.map((m: StudyMember, i: number) =>
+          members.map((m: StudyMember, i: number) =>
             m.active && Date.parse(m.startDateStr) <= util.getMonthLastDay(curDate).getTime()
               ? <FVertical key={'vertical' + i}>
                   <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />

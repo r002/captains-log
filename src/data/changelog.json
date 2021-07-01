@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.3",
+    "message": "✨ Impl live `Current/Max Streak` on `dashboard GUI`",
+    "built": "Thu, 01 Jul 2021 16:07:17 EDT"
+  },
+  {
     "version": "1.8.2",
     "message": "💄 Beautify `pagination controls` on `dashboard GUI`",
     "built": "Thu, 24 Jun 2021 21:41:24 EDT"

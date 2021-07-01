@@ -12,10 +12,13 @@ export type StudyMember = {
   startDateStr: string
   uid: string
   repo: string
-  active: boolean
+  active: boolean,
+  streakCurrent: number,
+  streakMax: number,
+  recordCount: number
 }
 
-export const studyMembers: StudyMember[] = [
+const members = [
   {
     userFullname: 'Robert Lin',
     userHandle: 'r002',
@@ -82,7 +85,7 @@ tagMap.set('podcast notes', {
 
 export async function getUpDb (d: Date): Promise<UserProgressDb> {
   const upDb = new UserProgressDb()
-  for (const member of studyMembers) {
+  for (const member of members) {
     upDb.addUser(member)
   }
 
