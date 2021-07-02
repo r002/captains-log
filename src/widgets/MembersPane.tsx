@@ -1,10 +1,20 @@
 import React from 'react'
-import { StudyMember } from '../services/GithubApi'
+import { StudyMember, Streak } from '../services/GithubApi'
+
+const FStreak: React.FC<Streak> = (streak) => {
+  return (
+    streak.days !== 0
+      ? <span title={streak.startDate + ' to ' + streak.endDate + ' | ' + streak.days + ' days'}
+          style={{ cursor: 'pointer' }}>
+          {streak.days}
+        </span>
+      : <span>{streak.days}</span>
+  )
+}
 
 type TMembersPane = {
   members: Array<StudyMember>
 }
-
 const MembersPane: React.FC<TMembersPane> = (props) => {
   return (
     <>
@@ -16,9 +26,8 @@ const MembersPane: React.FC<TMembersPane> = (props) => {
             <div key={'member' + i}>
               Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
               Start: {(new Date(member.startDateStr)).toDateString()} |
-              Max Streak: {member.streakMax} |
-              Current Streak: {member.streakCurrent} |
-              Total Days: {member.recordCount}
+              Streaks (Max/Current): <FStreak {...member.streakMax} />/<FStreak {...member.streakCurrent} /> |
+              Total Days: {member.recordCount}/{member.daysJoined}
               <br />
             </div>
           if (member.active) {

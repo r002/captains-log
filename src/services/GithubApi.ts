@@ -6,6 +6,12 @@ export const uriAllCards = 'https://api.github.com/repos/studydash/cards/issues?
 // const uriAllCards1 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
 // const uriAllCards2 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=shazahuang'
 
+export type Streak = {
+  days: number,
+  startDate: string,
+  endDate: string
+}
+
 export type StudyMember = {
   userFullname: string
   userHandle: string
@@ -13,9 +19,10 @@ export type StudyMember = {
   uid: string
   repo: string
   active: boolean,
-  streakCurrent: number,
-  streakMax: number,
-  recordCount: number
+  streakCurrent: Streak,
+  streakMax: Streak,
+  recordCount: number,
+  daysJoined: number
 }
 
 const members = [
@@ -92,16 +99,6 @@ export async function getUpDb (d: Date): Promise<UserProgressDb> {
   const fetchCards = await fetch(uriAllCards + '&labels=' + util.getPeriod(d))
   const allCards = await fetchCards.json()
   for (const item of allCards) {
-    // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
-    // This is a total hack. Write a proper `updateCard(...)` method later
-    if (item.number === 16) {
-      item.created_at = '2021-05-08T04:00:00Z'
-    } else if (item.number === 19) {
-      item.created_at = '2021-05-09T04:00:00Z'
-    } else if (item.number === 22) {
-      item.created_at = '2021-05-10T04:00:00Z'
-    }
-
     const tags = [] as Tag[]
     for (const label of item.labels) {
       if (tagMap.has(label.name)) {

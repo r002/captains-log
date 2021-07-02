@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.4",
+    "message": "✨ Add `{StartDate} to {EndDate}` title when hovering over `Streak Numbers`",
+    "built": "Thu, 01 Jul 2021 20:41:52 EDT"
+  },
+  {
     "version": "1.8.3",
     "message": "✨ Impl live `Current/Max Streak` on `dashboard GUI`",
     "built": "Thu, 01 Jul 2021 16:07:17 EDT"

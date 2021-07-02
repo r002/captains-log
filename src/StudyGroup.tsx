@@ -322,21 +322,30 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
 
   // Listen for latest member stats updates from Firestore
   useEffect(() => {
-    const unsubscribe = firebase.firestore().collection('members')
+    const unsubscribe = firebase.firestore().collection('studyMembers')
       .onSnapshot((querySnapshot) => {
         const members = [] as Array<StudyMember>
         querySnapshot.forEach((doc) => {
-          const member = doc.data()
+          const m = doc.data()
           members.push({
-            userFullname: member.Fullname,
-            userHandle: member.Handle,
-            startDateStr: member.StartDate,
-            uid: member.Uid,
-            repo: member.Repo,
-            active: member.Active,
-            streakCurrent: member.StreakCurrent,
-            streakMax: member.StreakMax,
-            recordCount: member.RecordCount
+            userFullname: m.Fullname,
+            userHandle: m.Handle,
+            startDateStr: m.StartDate,
+            uid: m.Uid,
+            repo: m.Repo,
+            active: m.Active,
+            streakCurrent: {
+              days: m.StreakCurrent.Days,
+              startDate: m.StreakCurrent.StartDate,
+              endDate: m.StreakCurrent.EndDate
+            },
+            streakMax: {
+              days: m.StreakMax.Days,
+              startDate: m.StreakMax.StartDate,
+              endDate: m.StreakMax.EndDate
+            },
+            recordCount: m.RecordCount,
+            daysJoined: m.DaysJoined
           })
         })
         setMembers(members.sort((a, b) => Date.parse(a.startDateStr) - Date.parse(b.startDateStr)))
