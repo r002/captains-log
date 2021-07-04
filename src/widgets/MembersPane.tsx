@@ -17,18 +17,24 @@ type TMembersPane = {
 }
 const MembersPane: React.FC<TMembersPane> = (props) => {
   return (
-    <>
+    <dl>
       {
         props.members.map((member: StudyMember, i: number) => {
           const handle = member.userHandle
           const rs = []
           const content =
-            <div key={'member' + i}>
-              Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
-              Start: {(new Date(member.startDateStr)).toDateString()} |
-              Streaks (Max/Current): <FStreak {...member.streakMax} />/<FStreak {...member.streakCurrent} /> |
-              Total Days: {member.recordCount}/{member.daysJoined}
-              <br />
+            <div key={'member' + i} style={{ paddingLeft: '20px' }}>
+              <dt>
+                🧙‍♂️
+                Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
+                Start: {(new Date(member.startDateStr)).toDateString()} |
+                Streak Max: <FStreak {...member.streakMax} /> |
+                Total Days: {member.recordCount}/{member.daysJoined}
+              </dt>
+              <dd>
+                Streak Current: <FStreak {...member.streakCurrent} /> days |
+                Lastest Submission: { member.streakCurrent.endDate !== '' ? member.streakCurrent.endDate : 'N/A'}
+              </dd>
             </div>
           if (member.active) {
             rs.push(content)
@@ -38,7 +44,7 @@ const MembersPane: React.FC<TMembersPane> = (props) => {
           return (rs)
         })
       }
-    </>
+    </dl>
   )
 }
 

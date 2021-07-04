@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.5",
+    "message": "💄 Beautify `MembersPane` to display `Current Streak` details on newline",
+    "built": "Sat, 03 Jul 2021 22:54:32 EDT"
+  },
+  {
     "version": "1.8.4",
     "message": "✨ Add `{StartDate} to {EndDate}` title when hovering over `Streak Numbers`",
     "built": "Thu, 01 Jul 2021 20:41:52 EDT"
