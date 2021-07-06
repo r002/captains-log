@@ -345,7 +345,8 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
               endDate: m.StreakMax.EndDate
             },
             recordCount: m.RecordCount,
-            daysJoined: m.DaysJoined
+            daysJoined: m.DaysJoined,
+            latestCardNo: m.Record[m.StreakCurrent.EndDate]
           })
         })
         setMembers(members.sort((a, b) => Date.parse(a.startDateStr) - Date.parse(b.startDateStr)))

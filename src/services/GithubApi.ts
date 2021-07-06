@@ -22,7 +22,8 @@ export type StudyMember = {
   streakCurrent: Streak,
   streakMax: Streak,
   recordCount: number,
-  daysJoined: number
+  daysJoined: number,
+  latestCardNo: number
 }
 
 const members = [

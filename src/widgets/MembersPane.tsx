@@ -33,7 +33,9 @@ const MembersPane: React.FC<TMembersPane> = (props) => {
               </dt>
               <dd>
                 Streak Current: <FStreak {...member.streakCurrent} /> days |
-                Lastest Submission: { member.streakCurrent.endDate !== '' ? member.streakCurrent.endDate : 'N/A'}
+                Latest Submission: { member.streakCurrent.endDate !== ''
+                ? `#${member.latestCardNo} (${member.streakCurrent.endDate})`
+                : 'N/A'}
               </dd>
             </div>
           if (member.active) {
