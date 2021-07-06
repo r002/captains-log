@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.7",
+    "message": "✨ Support `?d=YYYY-MM` GET {param} in url",
+    "built": "Tue, 06 Jul 2021 17:05:54 EDT"
+  },
+  {
     "version": "1.8.6",
     "message": "✨ Update `MembersPane` to show latest submitted card number",
     "built": "Mon, 05 Jul 2021 21:52:54 EDT"

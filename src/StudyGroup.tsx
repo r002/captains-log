@@ -10,13 +10,16 @@ import './providers/AuthContext'
 import firebase from 'firebase/app'
 import { getUpDb, tagMap, uriAllCards, StudyMember } from './services/GithubApi'
 
+// Display cards for a specific date if passed in; else, display the current month's cards
+const m = window.location.href.match(/^.*d=(\d{4}-\d{2})$/) // d is expected to be YYYY-MM; eg. "2021-06"
+const initialDate = m?.[1] ? new Date(Date.parse(m?.[1] + '-01T04:00:00Z')) : new Date() // Currently assume ET - 7/6/21
+
 type Commit = {
   version: string
   message: string
   built: Date
 }
 
-const initialDate = new Date()
 const fetchVersion = fetch(changelogUri)
 Promise.all([fetchVersion, getUpDb(initialDate)]).then(responses => {
   const jsonVersion = responses[0].json()
@@ -254,11 +257,11 @@ type TStudyGroup = {
 }
 
 const StudyGroup: React.FC<TStudyGroup> = (props) => {
-  // console.log('>> render Study Group')
   const [upDb, setUpDb] = useState<UserProgressDb>(props.userProgressDb)
   const [value, setValue] = useState(0)
   const [curDate, setCurDate] = useState(props.initialDate)
   const [members, setMembers] = useState<Array<StudyMember>>([])
+  // console.log('>> curDate - initial load:', curDate)
 
   // Load cards
   useEffect(() => {
@@ -266,6 +269,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       // console.log('>> Fire sinceDate useEffect', curDate)
       Promise.resolve(getUpDb(curDate)).then(rs => setUpDb(rs))
     }
+    history.pushState({}, '', 'study-group.html?d=' + curDate.toISOString().slice(0, 7))
   }, [curDate])
 
   function updateDashboard (payload: any) {
@@ -386,7 +390,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
         <a href='https://github.com/studydash/cards/discussions/30?sort=new'>Screenshots</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/r002/captains-log/blob/sprint-imbe/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
         <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/discussions/110?sort=new'>Tasks</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/178?sort=new'>Tasks</a>&nbsp;&nbsp;&nbsp;
         <a href='https://github.com/studydash/cards/issues/new/choose'>New Card</a>
       </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
