@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.9",
+    "message": "🐞 Fix bug: Clicking on cards now opens them in `target='_top'`",
+    "built": "Wed, 07 Jul 2021 02:26:35 EDT"
+  },
+  {
     "version": "1.8.8",
     "message": "✨ Change url to `/studydash` \u0026 add support for `Previewer Frame`",
     "built": "Tue, 06 Jul 2021 22:37:58 EDT"

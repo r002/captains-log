@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Studydash - Preview QA</title>
+    <title>StudyDash - Preview QA</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       html, body {
@@ -14,7 +14,7 @@
         display: grid;
         grid-template-rows: 50px 1fr;
         grid-gap: 10px;
-        background-color: red;
+        background: red;
         height: 100%;
         width: 100%;
       }
@@ -27,6 +27,7 @@
       #bodyFrame {
         height: 100%;
         width: 100%;
+        background: black;
       }
     </style>
     <script>
@@ -39,7 +40,7 @@
   <body>
     <div id="wrapper">
       <div id="urlFrame">
-        <strong>URL:</strong> <span id="urlBox">N/A</span>
+        <strong>Latest QA Build:</strong> <span id="urlBox">N/A</span>
       </div>
       <iframe id="bodyFrame" src="https://captains-log--pr47-sprint-imbe-7qvtjsud.web.app/studydash" frameborder="0"></iframe>
     </div>

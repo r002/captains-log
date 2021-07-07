@@ -95,7 +95,7 @@ const CardComp: React.FC<TCard> = (props) => {
   const title = props.title.length > 51 ? props.title.substr(0, 48) + '...' : props.title
   return (
     <FCard>
-      <a href={props.repo + '/issues/' + props.number}>{title}</a>
+      <a href={props.repo + '/issues/' + props.number} target='_top'>{title}</a>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <div>
           <PtrSpan title={'Created: ' + props.created.toString()}>{util.formatTime(props.created)}</PtrSpan>&nbsp;
