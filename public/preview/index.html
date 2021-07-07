@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Studydash - Preview QA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+      
+      #wrapper {
+        display: grid;
+        grid-template-rows: 50px 1fr;
+        grid-gap: 10px;
+        background-color: red;
+        height: 100%;
+        width: 100%;
+      }
+
+      #urlFrame {
+        padding: 16px;
+        background: yellow;
+      }
+
+      #bodyFrame {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <script>
+      window.addEventListener("message", (event) => {
+        // console.log(">> Message received!", event)
+        document.getElementById("urlBox").innerHTML = event.data
+      }, false);
+    </script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="urlFrame">
+        <strong>URL:</strong> <span id="urlBox">N/A</span>
+      </div>
+      <iframe id="bodyFrame" src="https://captains-log--pr47-sprint-imbe-7qvtjsud.web.app/studydash" frameborder="0"></iframe>
+    </div>
+  </body>
+</html>

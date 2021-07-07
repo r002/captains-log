@@ -234,7 +234,6 @@ const FFooter = styled.div`
 
 const FStudyGroup = styled.div`
   height: 100%;
-  min-height: 100vh;
   margin: 0 0 60px 0;
   padding: 0;
 `
@@ -269,7 +268,8 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       // console.log('>> Fire sinceDate useEffect', curDate)
       Promise.resolve(getUpDb(curDate)).then(rs => setUpDb(rs))
     }
-    history.pushState({}, '', 'study-group.html?d=' + curDate.toISOString().slice(0, 7))
+    history.pushState({}, '', '/studydash/?d=' + curDate.toISOString().slice(0, 7))
+    window.parent.postMessage(window.location.href, '*')
   }, [curDate])
 
   function updateDashboard (payload: any) {

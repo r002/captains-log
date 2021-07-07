@@ -17,17 +17,24 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: 'Wattpad POC',
-      filename: 'wattpad.html',
+      filename: './wattpad/index.html',
       template: './public/wattpad.html',
       favicon: './public/favicon.ico',
       chunks: ['wattpad']
     }),
     new HtmlWebpackPlugin({
       title: 'Study Group 00',
-      filename: 'study-group.html',
+      filename: './studydash/index.html',
       template: './public/study-group.html',
       favicon: './public/favicon.ico',
       chunks: ['StudyGroup']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Preview',
+      filename: './preview/index.html',
+      template: './public/preview/index.html',
+      favicon: './public/favicon.ico',
+      chunks: []
     })
   ],
   module: {

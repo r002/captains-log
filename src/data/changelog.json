@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.8",
+    "message": "✨ Change url to `/studydash` \u0026 add support for `Previewer Frame`",
+    "built": "Tue, 06 Jul 2021 22:37:58 EDT"
+  },
+  {
     "version": "1.8.7",
     "message": "✨ Support `?d=YYYY-MM` GET {param} in url",
     "built": "Tue, 06 Jul 2021 17:05:54 EDT"
