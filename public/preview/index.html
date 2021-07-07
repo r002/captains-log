@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>StudyDash - QA [Previewer]</title>
+    <title>StudyDash - QA | Previewer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       html, body {
@@ -20,8 +20,21 @@
       }
 
       #urlFrame {
-        padding: 16px;
+        display: flex;
+        padding: 12px;
         background: yellow;
+        color: black;
+      }
+
+      #urlLabel {
+        font-weight: bold;
+        width: 135px;
+        padding-top: 5px;
+      }
+
+      #urlBox {
+        width: 100%;
+        font-size: 18px;
       }
 
       #bodyFrame {
@@ -31,18 +44,40 @@
       }
     </style>
     <script>
+      function setTopUrl (url) {
+        const m = url.match(/^.*d=(\d{4}-\d{2})$/)
+        if (m?.[1]) { // Eg. m[1] = 2021-06
+          const root = window.location.href.includes("localhost")
+            ? "/preview" 
+            : ""
+          history.pushState({}, '', `${root}/?d=${m[1]}`)
+        }
+      }
+
       window.addEventListener("message", (event) => {
         // console.log(">> Message received!", event)
-        document.getElementById("urlBox").innerHTML = event.data
+        document.getElementById("urlBox").value = event.data
+        setTopUrl(event.data)
       }, false);
+
+      window.onload = () => {
+        // If topUrl has `d?=` set, honor it
+        const m = window.location.href.match(/^.*d=(\d{4}-\d{2})$/)
+        const d = m?.[1] ? `/?d=${m[1]}` : ""
+
+        const s = window.location.href.includes("localhost")
+          ? "http://localhost:3000/studydash" + d 
+          : "https://captains-log--pr47-sprint-imbe-7qvtjsud.web.app/studydash" + d
+        document.getElementById('bodyFrame').setAttribute("src", s)
+      }
     </script>
   </head>
   <body>
     <div id="wrapper">
       <div id="urlFrame">
-        <strong>Latest QA Build:</strong> <span id="urlBox">N/A</span>
+        <div id="urlLabel">Latest QA Build:</div> <input type="text" id="urlBox" readonly />
       </div>
-      <iframe id="bodyFrame" src="https://captains-log--pr47-sprint-imbe-7qvtjsud.web.app/studydash" frameborder="0"></iframe>
+      <iframe id="bodyFrame" frameborder="0"></iframe>
     </div>
   </body>
 </html>

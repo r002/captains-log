@@ -240,9 +240,9 @@ const FStudyGroup = styled.div`
 
 const FMonthTitle = styled.span`
   font-size: 18px;
-  color: black;
-  background: yellow;
-  border: 1px yellow solid;
+  color: white;
+  background: #161b22;
+  border: 1px #30363d solid;
   padding: 3px 3px 5px 3px;
   margin: 10px;
 `
