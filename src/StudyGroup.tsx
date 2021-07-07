@@ -383,15 +383,15 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   return (
     <FStudyGroup>
       <FTopbarLinks>
-        <a href='https://github.com/studydash/cards/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
-        <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/discussions/30?sort=new'>Screenshots</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/captains-log/blob/sprint-imbe/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/discussions/178?sort=new'>Tasks</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/issues/new/choose'>New Card</a>
+        <a href='https://github.com/studydash/cards/issues/75' target='_top'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
+        <a href={uriAllCards} target='_top'>Raw Data</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues' target='_top'>Repo</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues/4' target='_top'>Members</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/30?sort=new' target='_top'>Screenshots</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/captains-log/blob/sprint-imbe/src/data/changelog.json' target='_top'>Changelog</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj' target='_top'>CodeNewbie</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/178?sort=new' target='_top'>Tasks</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues/new/choose' target='_top'>New Card</a>
       </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
         <CountdownClock color='white' />

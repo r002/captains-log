@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.10",
+    "message": "🐞 Fix bug: Clicking on top navbar links now opens them in `target='_top'`",
+    "built": "Wed, 07 Jul 2021 07:40:30 EDT"
+  },
+  {
     "version": "1.8.9",
     "message": "🐞 Fix bug: Clicking on cards now opens them in `target='_top'`",
     "built": "Wed, 07 Jul 2021 02:26:35 EDT"
