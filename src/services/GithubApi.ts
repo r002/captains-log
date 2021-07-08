@@ -91,6 +91,18 @@ tagMap.set('podcast notes', {
   icon: '🎙'
 })
 
+// Experimental; remove this later. Keeping here for future reference. 7/8/21
+// export async function getNumberOfCommentsPerCard (cardNo: number) {
+//   const url = `https://api.github.com/repos/studydash/cards/issues/${cardNo}/comments`
+//   const fetchTimeline = await fetch(url, {
+//     // headers: {
+//     //   Accept: 'application/vnd.github.mockingbird-preview+json'
+//     // }
+//   })
+//   const rs = await fetchTimeline.json()
+//   console.log('>>rs', rs)
+// }
+
 export async function getUpDb (d: Date): Promise<UserProgressDb> {
   const upDb = new UserProgressDb()
   for (const member of members) {

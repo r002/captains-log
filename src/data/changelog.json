@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.12",
+    "message": "✨ Add `octicon comments` icon \u0026 update the GUI in real-time on every new comment +/-",
+    "built": "Thu, 08 Jul 2021 16:50:49 EDT"
+  },
+  {
     "version": "1.8.11",
     "message": "✨ Support `pass-thru` `GET {params}` in `Previewer` top-level url",
     "built": "Wed, 07 Jul 2021 17:24:35 EDT"

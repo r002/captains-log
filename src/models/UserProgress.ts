@@ -50,7 +50,8 @@ class UserProgress {
   userFullname: string
   userHandle: string
   startDate: Date
-  _cards = new Map<string, Card>()
+  _cardsByDate = new Map<string, Card>() // Index key: Eg. '7/8/2021'
+  _cardsByNo = new Map<number, Card>() // Index key: Eg. 185
   _streakCurrent = 0
   _missedDays = 0
 
@@ -62,11 +63,20 @@ class UserProgress {
 
   setCard (cardInput: TCardInput) {
     const card = new Card(cardInput)
-    this._cards.set(card.createdStr, card)
+    this._cardsByDate.set(card.createdStr, card)
+    this._cardsByNo.set(card.number, card)
   }
 
   getCard (dateStr: string) {
-    return this._cards.get(dateStr)
+    return this._cardsByDate.get(dateStr)
+  }
+
+  incrementComments (cardNo: number) {
+    this._cardsByNo.get(cardNo)!.comments++
+  }
+
+  decrementComments (cardNo: number) {
+    this._cardsByNo.get(cardNo)!.comments--
   }
 }
 
