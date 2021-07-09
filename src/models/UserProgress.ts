@@ -76,11 +76,17 @@ class UserProgress {
   }
 
   incrementComments (cardNo: number) {
-    this._cardsByNo.get(cardNo)!.comments++
+    if (this._cardsByNo.has(cardNo)) {
+      this._cardsByNo.get(cardNo)!.comments++
+      // console.log('\t\t>> Comments count++:', this._cardsByNo.get(cardNo)!.comments)
+    }
   }
 
   decrementComments (cardNo: number) {
-    this._cardsByNo.get(cardNo)!.comments--
+    if (this._cardsByNo.has(cardNo)) {
+      this._cardsByNo.get(cardNo)!.comments--
+      // console.log('\t\t>> Comments count--:', this._cardsByNo.get(cardNo)!.comments)
+    }
   }
 }
 

@@ -256,6 +256,7 @@ type TStudyGroup = {
 }
 
 let globalInitialLoad = true // Hack. 7/8/21
+let globalUpDb: UserProgressDb
 
 const StudyGroup: React.FC<TStudyGroup> = (props) => {
   const [upDb, setUpDb] = useState<UserProgressDb>(props.userProgressDb)
@@ -264,10 +265,13 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   const [members, setMembers] = useState<Array<StudyMember>>([])
   // console.log('>> curDate - initial load:', curDate)
 
+  // Set local instance to global instance
+  globalUpDb = upDb
+
   // Load cards
   useEffect(() => {
     if (curDate !== props.initialDate) {
-      // console.log('>> Fire sinceDate useEffect', curDate)
+      console.log('>> Changing date periods', curDate)
       Promise.resolve(getUpDb(curDate)).then(rs => setUpDb(rs))
     }
     history.pushState({}, '', '/studydash/?d=' + curDate.toISOString().slice(0, 7))
@@ -295,11 +299,9 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
     // query the GitHub REST API to refresh the entire GUI to get all up-to-date comment counts. 7/8/21
     console.log('\t>> Run: UpdateIssueCommentFlow:', payload.action, payload.kind, payload.issue.number, payload.issue.user.login)
     if (payload.action === 'created') {
-      upDb.getUser(payload.issue.user.login)?.incrementComments(payload.issue.number)
-      console.log('\t\t>> Comments count++:', upDb.getUser(payload.issue.user.login)?.getCardByNo(payload.issue.number)?.comments)
+      globalUpDb.getUser(payload.issue.user.login)?.incrementComments(payload.issue.number)
     } else if (payload.action === 'deleted') {
-      upDb.getUser(payload.issue.user.login)?.decrementComments(payload.issue.number)
-      console.log('\t\t>> Comments count--:', upDb.getUser(payload.issue.user.login)?.getCardByNo(payload.issue.number)?.comments)
+      globalUpDb.getUser(payload.issue.user.login)?.decrementComments(payload.issue.number)
     }
 
     // Experimental; remove this later. Keeping here for future reference. 7/8/21

@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.14",
+    "message": "🐞 Fix error that was being thrown if comment was +/- to a card not currently in-view",
+    "built": "Thu, 08 Jul 2021 22:27:09 EDT"
+  },
+  {
     "version": "1.8.13",
     "message": "🔊 Add more debug logging to the `+/- comment count` logic",
     "built": "Thu, 08 Jul 2021 21:23:26 EDT"
