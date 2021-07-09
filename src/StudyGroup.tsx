@@ -293,11 +293,13 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   function runUpdateIssueCommentFlow (payload:any) {
     // For now, until GitHub fixes the `comments number payload` bug, just
     // query the GitHub REST API to refresh the entire GUI to get all up-to-date comment counts. 7/8/21
-    console.log('>> Run: UpdateIssueCommentFlow:', payload.action, payload.kind, payload.issue.number, payload.issue.user.login)
+    console.log('\t>> Run: UpdateIssueCommentFlow:', payload.action, payload.kind, payload.issue.number, payload.issue.user.login)
     if (payload.action === 'created') {
       upDb.getUser(payload.issue.user.login)?.incrementComments(payload.issue.number)
+      console.log('\t\t>> Comments count++:', upDb.getUser(payload.issue.user.login)?.getCardByNo(payload.issue.number)?.comments)
     } else if (payload.action === 'deleted') {
       upDb.getUser(payload.issue.user.login)?.decrementComments(payload.issue.number)
+      console.log('\t\t>> Comments count--:', upDb.getUser(payload.issue.user.login)?.getCardByNo(payload.issue.number)?.comments)
     }
 
     // Experimental; remove this later. Keeping here for future reference. 7/8/21
@@ -371,7 +373,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
           })
         })
         setMembers(members.sort((a, b) => Date.parse(a.startDateStr) - Date.parse(b.startDateStr)))
-        console.log('>> member stats update received: ', new Date())
+        console.log('>> member stats update received:', (new Date()).toISOString())
       })
     return () => unsubscribe()
   }, [])
@@ -413,7 +415,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       <div style={{ textAlign: 'center' }}>
         <CountdownClock color='white' />
       </div>
-      <h2>{value.toISOString()} | Study Group 00:</h2>
+      <h2>Study Group 00 | {value.toISOString()}</h2>
       <MembersPane members={members} />
       <br />
 
@@ -471,7 +473,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
 
 function renderCard (upDb:UserProgressDb, m:StudyMember, day: util.TDay, i: number) {
   const rs = []
-  const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
+  const card = upDb.getUser(m.userHandle)!.getCardByDate(day.dateStr)
   if (card) {
     rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle} repo={m.repo}
       number={card.number} created={card.created} updated={card.updated} tags={card.tags} comments={card.comments} />)

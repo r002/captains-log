@@ -67,8 +67,12 @@ class UserProgress {
     this._cardsByNo.set(card.number, card)
   }
 
-  getCard (dateStr: string) {
+  getCardByDate (dateStr: string) {
     return this._cardsByDate.get(dateStr)
+  }
+
+  getCardByNo (cardNo: number) {
+    return this._cardsByNo.get(cardNo)
   }
 
   incrementComments (cardNo: number) {
