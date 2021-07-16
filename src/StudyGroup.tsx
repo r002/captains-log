@@ -371,9 +371,11 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
             },
             recordCount: m.RecordCount,
             daysJoined: m.DaysJoined,
-            latestCardNo: m.Record[m.StreakCurrent.EndDate]
+            latestCardNo: m.Record[m.StreakCurrent.EndDate],
+            record: new Map(Object.entries(m.Record))
           })
         })
+        // console.log('\t>> member[0].record', members[0].record)
         setMembers(members.sort((a, b) => Date.parse(a.startDateStr) - Date.parse(b.startDateStr)))
         console.log('>> member stats update received:', (new Date()).toISOString())
       })

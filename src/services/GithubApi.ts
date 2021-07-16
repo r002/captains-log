@@ -23,7 +23,38 @@ export type StudyMember = {
   streakMax: Streak,
   recordCount: number,
   daysJoined: number,
-  latestCardNo: number
+  latestCardNo: number,
+  record: Map<string, number>
+}
+
+// const dayCodes = ['U', 'M', 'T', 'W', 'H', 'F', 'S']
+
+// Render a member's record for the past 12 weeks * 7 days = 84 times
+export function RenderRecord (record: Map<string, number>, startDate: string): string {
+  const dateCursor = new Date()
+  let s = ''
+  for (let i = 0; i < 7 * 12; i++) {
+    // console.log('\t>> check key:', util.getYearMonthDay(dateCursor))
+    if (dateCursor.getDay() === 6) {
+      s = '|' + s
+    }
+    if (record.has(util.getYearMonthDay(dateCursor))) {
+      s = '*' + s
+      // s = dayCodes[dateCursor.getDay()] + s
+    } else {
+      if (i === 0) { // It is today
+        s = '_' + s
+      } else {
+        s = '❌' + s // a 'missed' day
+      }
+    }
+    dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // 86400 seconds in 24 hours
+
+    if (dateCursor.getTime() < Date.parse(startDate)) {
+      break
+    }
+  }
+  return s
 }
 
 const members = [

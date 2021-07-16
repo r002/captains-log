@@ -105,3 +105,8 @@ export function getDateRange (endDate: Date): TDay[] {
   }
   return dateRange
 }
+
+// Returns "YYYY-MM-DD" => Eg. "2021-07-15"
+export function getYearMonthDay (d: Date): string {
+  return `${d.getFullYear()}-` + `${d.getMonth() + 1}`.padStart(2, '0') + '-' + `${d.getDate()}`.padStart(2, '0')
+}

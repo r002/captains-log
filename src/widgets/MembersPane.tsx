@@ -1,5 +1,18 @@
 import React from 'react'
-import { StudyMember, Streak } from '../services/GithubApi'
+import { StudyMember, Streak, RenderRecord } from '../services/GithubApi'
+import styled from 'styled-components'
+
+const FColor = styled.span`
+  color: orange;
+`
+
+const FGreen = styled.span`
+  color: #5ff708;
+`
+
+const FOrange = styled.span`
+  color: #ec7240;
+`
 
 const FStreak: React.FC<Streak> = (streak) => {
   return (
@@ -27,22 +40,22 @@ const MembersPane: React.FC<TMembersPane> = (props) => {
               <dt>
                 🧙‍♂️
                 Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
-                Start: {(new Date(member.startDateStr)).toDateString()} |
-                Streak Max: <FStreak {...member.streakMax} /> |
-                Total Days: {member.recordCount}/{member.daysJoined}
+                Start: <FColor>{(new Date(member.startDateStr)).toDateString()}</FColor> |
+                Max Streak: <FOrange><FStreak {...member.streakMax} /></FOrange> |
+                Record: <FGreen>{member.recordCount}</FGreen>/<FOrange>{member.daysJoined}</FOrange> |
+                Current Streak: <FColor><FStreak {...member.streakCurrent} /> days</FColor> |
+                Latest Card: <FGreen>#{member.latestCardNo}</FGreen> <FOrange>({member.streakCurrent.endDate})</FOrange>
               </dt>
               <dd>
-                Streak Current: <FStreak {...member.streakCurrent} /> days |
-                Latest Submission: { member.streakCurrent.endDate !== ''
-                ? `#${member.latestCardNo} (${member.streakCurrent.endDate})`
-                : 'N/A'}
+                {RenderRecord(member.record, member.startDateStr)}
               </dd>
             </div>
           if (member.active) {
             rs.push(content)
-          } else {
-            rs.push(<s key={'member' + i}>{content}</s>)
           }
+          // else {
+          //   rs.push(<s key={'member' + i}>{content}</s>)
+          // }
           return (rs)
         })
       }
