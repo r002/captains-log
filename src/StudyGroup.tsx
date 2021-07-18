@@ -138,7 +138,7 @@ const MemberCard: React.FC<TMemberCard> = (props) => {
       }} />
       <div>
         {props.name}<br />
-        <a href={'https://github.com/' + props.userHandle}>{props.userHandle}</a>
+        <a href={'https://github.com/' + props.userHandle} target='_top'>{props.userHandle}</a>
       </div>
     </FCard>
   )

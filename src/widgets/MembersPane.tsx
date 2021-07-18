@@ -39,7 +39,7 @@ const MembersPane: React.FC<TMembersPane> = (props) => {
             <div key={'member' + i} style={{ paddingLeft: '20px' }}>
               <dt>
                 🧙‍♂️
-                Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
+                Member #{i}: <a href={'https://github.com/' + handle} target='_top'>{handle}</a> |
                 Start: <FColor>{(new Date(member.startDateStr)).toDateString()}</FColor> |
                 Max Streak: <FOrange><FStreak {...member.streakMax} /></FOrange> |
                 Record: <FGreen>{member.recordCount}</FGreen>/<FOrange>{member.daysJoined}</FOrange> |

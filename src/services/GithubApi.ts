@@ -34,18 +34,16 @@ export function RenderRecord (record: Map<string, number>, startDate: string): s
   const dateCursor = new Date()
   let s = ''
   for (let i = 0; i < 7 * 12; i++) {
-    // console.log('\t>> check key:', util.getYearMonthDay(dateCursor))
-    if (dateCursor.getDay() === 6) {
-      s = '|' + s
-    }
+    // Demarcate weeks on "Saturday | Sunday"
+    const weekBar = dateCursor.getDay() === 0 ? '|' : '' // Is it Sunday? If so, prefix with '|' to start a new week
     if (record.has(util.getYearMonthDay(dateCursor))) {
-      s = '*' + s
+      s = weekBar + '*' + s
       // s = dayCodes[dateCursor.getDay()] + s
     } else {
       if (i === 0) { // It is today
-        s = '_' + s
+        s = weekBar + '_' + s
       } else {
-        s = '❌' + s // a 'missed' day
+        s = weekBar + '❌' + s // a 'missed' day
       }
     }
     dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // 86400 seconds in 24 hours
