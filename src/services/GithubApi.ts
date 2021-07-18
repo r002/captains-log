@@ -35,7 +35,7 @@ export function RenderRecord (record: Map<string, number>, startDate: string): s
   let s = ''
   for (let i = 0; i < 7 * 12; i++) {
     // Demarcate weeks on "Saturday | Sunday"
-    const weekBar = dateCursor.getDay() === 0 ? '|' : '' // Is it Sunday? If so, prefix with '|' to start a new week
+    const weekBar = i !== 0 && dateCursor.getDay() === 0 ? '|' : '' // Is it Sunday? If so, prefix with '|' to start a new week
     if (record.has(util.getYearMonthDay(dateCursor))) {
       s = weekBar + '*' + s
       // s = dayCodes[dateCursor.getDay()] + s
@@ -85,6 +85,14 @@ const members = [
     userHandle: 'shazahuang',
     startDateStr: '2021-06-18T04:00:00Z',
     uid: '85973779',
+    repo: 'https://github.com/studydash/cards',
+    active: true
+  },
+  {
+    userFullname: 'Jassa Deen',
+    userHandle: 'JazDee',
+    startDateStr: '2021-07-18T04:00:00Z',
+    uid: '87615293',
     repo: 'https://github.com/studydash/cards',
     active: true
   }

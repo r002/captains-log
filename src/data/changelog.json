@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.17",
+    "message": "🧙‍♂️ Add Jassa to the study group!",
+    "built": "Sun, 18 Jul 2021 18:03:54 EDT"
+  },
+  {
     "version": "1.8.16",
     "message": "💄🐞 Tweak `week demarcation` logic in `MembersPane` \u0026 fix `target='_top'` bug in links",
     "built": "Sun, 18 Jul 2021 14:39:16 EDT"

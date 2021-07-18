@@ -129,7 +129,7 @@ type TMemberCard = {
 }
 const MemberCard: React.FC<TMemberCard> = (props) => {
   return (
-    <FCard style={{ display: 'flex' }}>
+    <FCard style={{ display: 'flex', minWidth: '300px' }}>
       <div style={{
         backgroundImage: `url(https://avatars.githubusercontent.com/u/${props.uid}?s=62&v=4)`,
         width: '62px',
@@ -487,7 +487,7 @@ function renderCard (upDb:UserProgressDb, m:StudyMember, day: util.TDay, i: numb
     rs.push(<EmptyCard key={m.userHandle + i} />)
   }
 
-  if (day.dayNo === 0 && Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
+  if (day.dayNo === 0 && Date.parse(day.dateStr) >= Date.parse(m.startDateStr)) {
     rs.push(
       <FLine key={'hr' + m.userHandle + i} />
     )
