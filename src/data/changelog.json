@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.18",
+    "message": "♻ Refactor `dashboard` to fetch `studyMembers` from Firestore",
+    "built": "Tue, 20 Jul 2021 01:16:00 EDT"
+  },
+  {
     "version": "1.8.17",
     "message": "🧙‍♂️ Add Jassa to the study group!",
     "built": "Sun, 18 Jul 2021 18:03:54 EDT"

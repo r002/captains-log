@@ -1,5 +1,6 @@
 import { UserProgressDb, Tag } from '../models/UserProgress'
 import * as util from '../lib/util'
+import { getStudyMembers } from './FirestoreApi'
 
 export const uriAllCards = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100'
 // const uriAllCards0 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=r002'
@@ -35,7 +36,7 @@ export function RenderRecord (record: Map<string, number>, startDate: string): s
   let s = ''
   for (let i = 0; i < 7 * 12; i++) {
     // Demarcate weeks on "Saturday | Sunday"
-    const weekBar = i !== 0 && dateCursor.getDay() === 0 ? '|' : '' // Is it Sunday? If so, prefix with '|' to start a new week
+    const weekBar = dateCursor.getDay() === 0 ? '|' : '' // Is it Sunday? If so, prefix with '|' to start a new week
     if (record.has(util.getYearMonthDay(dateCursor))) {
       s = weekBar + '*' + s
       // s = dayCodes[dateCursor.getDay()] + s
@@ -52,51 +53,8 @@ export function RenderRecord (record: Map<string, number>, startDate: string): s
       break
     }
   }
-  return s
+  return s.replace(/^\|/g, '') // Trim any leading '|' from final output
 }
-
-const members = [
-  {
-    userFullname: 'Robert Lin',
-    userHandle: 'r002',
-    startDateStr: '2021-05-03T04:00:00Z',
-    uid: '45280066',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  },
-  {
-    userFullname: 'Anita Beauchamp',
-    userHandle: 'anitabe404',
-    startDateStr: '2021-05-04T04:00:00Z',
-    uid: '9167395',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  },
-  {
-    userFullname: 'Matthew Curcio',
-    userHandle: 'mccurcio',
-    startDateStr: '2021-05-10T04:00:00Z',
-    uid: '1915749',
-    repo: 'https://github.com/studydash/cards',
-    active: false
-  },
-  {
-    userFullname: 'Shaza Huang',
-    userHandle: 'shazahuang',
-    startDateStr: '2021-06-18T04:00:00Z',
-    uid: '85973779',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  },
-  {
-    userFullname: 'Jassa Deen',
-    userHandle: 'JazDee',
-    startDateStr: '2021-07-18T04:00:00Z',
-    uid: '87615293',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  }
-]
 
 export const tagMap = new Map<string, Tag>()
 tagMap.set('movie trailer', {
@@ -142,6 +100,8 @@ tagMap.set('podcast notes', {
 
 export async function getUpDb (d: Date): Promise<UserProgressDb> {
   const upDb = new UserProgressDb()
+  const members = await getStudyMembers()
+
   for (const member of members) {
     upDb.addUser(member)
   }

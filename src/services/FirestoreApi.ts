@@ -2,6 +2,27 @@ import firebase from 'firebase/app'
 import { ILog, TPassage, TVote } from '../widgets/Shared'
 import { AutoId } from '../lib/util'
 import MMenuItem from '../models/MMenuItem'
+import MStudyMember from '../models/MStudyMember'
+
+/**
+ * @param void
+ * @returns a promise of studyMembers[]
+ */
+export async function getStudyMembers (): Promise<Array<MStudyMember>> {
+  const qs = await firebase.firestore().collection('studyMembers').get()
+  const studyMembers = qs.docs.map((doc: any) => {
+    const o = doc.data()
+    return {
+      userFullname: o.Fullname,
+      userHandle: o.Handle,
+      startDateStr: o.StartDate,
+      uid: o.Uid,
+      repo: o.Repo,
+      active: o.Active
+    }
+  })
+  return studyMembers
+}
 
 /**
  * Queries firestore to get menu items.
