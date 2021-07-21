@@ -1,5 +1,6 @@
 import React from 'react'
-import { StudyMember, Streak, RenderRecord } from '../services/GithubApi'
+import { StudyMember, Streak } from '../models/StudyMember'
+import { RenderRecord } from '../services/GithubApi'
 import styled from 'styled-components'
 
 const FColor = styled.span`
@@ -44,7 +45,7 @@ const MembersPane: React.FC<TMembersPane> = (props) => {
                 Max Streak: <FOrange><FStreak {...member.streakMax} /></FOrange> |
                 Record: <FGreen>{member.recordCount}</FGreen>/<FOrange>{member.daysJoined}</FOrange> |
                 Current Streak: <FColor><FStreak {...member.streakCurrent} /> days</FColor> |
-                Latest Card: <FGreen>#{member.latestCardNo}</FGreen> <FOrange>({member.streakCurrent.endDate})</FOrange>
+                Latest Card: <FGreen>#{member.lastCard.number}</FGreen> <FOrange>({member.lastCard.date})</FOrange>
               </dt>
               <dd>
                 {RenderRecord(member.record, member.startDateStr)}

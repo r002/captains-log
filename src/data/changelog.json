@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.19",
+    "message": "♻ Refactor models + `LastCard` fields in `StudyMember`",
+    "built": "Tue, 20 Jul 2021 22:44:32 EDT"
+  },
+  {
     "version": "1.8.18",
     "message": "♻ Refactor `dashboard` to fetch `studyMembers` from Firestore",
     "built": "Tue, 20 Jul 2021 01:16:00 EDT"

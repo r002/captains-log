@@ -2,13 +2,14 @@ import ReactDOM from 'react-dom'
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { UserProgressDb, Tag } from './models/UserProgress'
+import { StudyMember } from './models/StudyMember'
 import CountdownClock from './widgets/CountdownClock'
 import MembersPane from './widgets/MembersPane'
 import * as util from './lib/util'
 import changelogUri from './data/changelog.json'
 import './providers/AuthContext'
 import firebase from 'firebase/app'
-import { getUpDb, tagMap, uriAllCards, StudyMember } from './services/GithubApi'
+import { getUpDb, tagMap, uriAllCards } from './services/GithubApi'
 
 // Display cards for a specific date if passed in; else, display the current month's cards
 const m = window.location.href.match(/^.*d=(\d{4}-\d{2})$/) // d is expected to be YYYY-MM; eg. "2021-06"
@@ -371,7 +372,10 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
             },
             recordCount: m.RecordCount,
             daysJoined: m.DaysJoined,
-            latestCardNo: m.Record[m.StreakCurrent.EndDate],
+            lastCard: {
+              date: m.LastCard.Date,
+              number: m.LastCard.Number
+            },
             record: new Map(Object.entries(m.Record))
           })
         })

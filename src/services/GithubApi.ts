@@ -7,27 +7,6 @@ export const uriAllCards = 'https://api.github.com/repos/studydash/cards/issues?
 // const uriAllCards1 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
 // const uriAllCards2 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=shazahuang'
 
-export type Streak = {
-  days: number,
-  startDate: string,
-  endDate: string
-}
-
-export type StudyMember = {
-  userFullname: string
-  userHandle: string
-  startDateStr: string
-  uid: string
-  repo: string
-  active: boolean,
-  streakCurrent: Streak,
-  streakMax: Streak,
-  recordCount: number,
-  daysJoined: number,
-  latestCardNo: number,
-  record: Map<string, number>
-}
-
 // const dayCodes = ['U', 'M', 'T', 'W', 'H', 'F', 'S']
 
 // Render a member's record for the past 12 weeks * 7 days = 84 times
