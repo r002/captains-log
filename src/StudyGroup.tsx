@@ -2,64 +2,18 @@ import ReactDOM from 'react-dom'
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { UserProgressDb, Tag } from './models/UserProgress'
+import { StudyMember } from './models/StudyMember'
 import CountdownClock from './widgets/CountdownClock'
-import { formatTime } from './lib/util'
+import MembersPane from './widgets/MembersPane'
+import * as util from './lib/util'
 import changelogUri from './data/changelog.json'
 import './providers/AuthContext'
 import firebase from 'firebase/app'
+import { getUpDb, tagMap, uriAllCards } from './services/GithubApi'
 
-const uriAllCards = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100'
-const uriAllCards0 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=r002'
-const uriAllCards1 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=anitabe404'
-const uriAllCards2 = 'https://api.github.com/repos/studydash/cards/issues?milestone=1&sort=created&direction=desc&per_page=100&creator=shazahuang'
-
-type StudyMember = {
-  userFullname: string
-  userHandle: string
-  startDateStr: string
-  uid: string
-  repo: string
-  active: boolean
-}
-
-const studyMembers: StudyMember[] = [
-  {
-    userFullname: 'Robert Lin',
-    userHandle: 'r002',
-    startDateStr: '2021-05-03T04:00:00Z',
-    uid: '45280066',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  },
-  {
-    userFullname: 'Anita Beauchamp',
-    userHandle: 'anitabe404',
-    startDateStr: '2021-05-04T04:00:00Z',
-    uid: '9167395',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  },
-  {
-    userFullname: 'Matthew Curcio',
-    userHandle: 'mccurcio',
-    startDateStr: '2021-05-10T04:00:00Z',
-    uid: '1915749',
-    repo: 'https://github.com/studydash/cards',
-    active: false
-  },
-  {
-    userFullname: 'Shaza Huang',
-    userHandle: 'shazahuang',
-    startDateStr: '2021-06-18T04:00:00Z',
-    uid: '85973779',
-    repo: 'https://github.com/studydash/cards',
-    active: true
-  }
-]
-const upDb = new UserProgressDb()
-for (const member of studyMembers) {
-  upDb.addUser(member)
-}
+// Display cards for a specific date if passed in; else, display the current month's cards
+const m = window.location.href.match(/^.*d=(\d{4}-\d{2})$/) // d is expected to be YYYY-MM; eg. "2021-06"
+const initialDate = m?.[1] ? new Date(Date.parse(m?.[1] + '-01T04:00:00Z')) : new Date() // Currently assume ET - 7/6/21
 
 type Commit = {
   version: string
@@ -67,88 +21,20 @@ type Commit = {
   built: Date
 }
 
-const tagMap = new Map<string, Tag>()
-tagMap.set('movie trailer', {
-  name: 'movie trailer',
-  icon: '🎬'
-})
-tagMap.set('tv show', {
-  name: 'tv show',
-  icon: '📺'
-})
-tagMap.set('youtube', {
-  name: 'youtube',
-  icon: '▶'
-})
-tagMap.set('reading', {
-  name: 'reading',
-  icon: '📖'
-})
-tagMap.set('life', {
-  name: 'life',
-  icon: '🌳'
-})
-tagMap.set('travel', {
-  name: 'travel',
-  icon: '🛸'
-})
-tagMap.set('podcast notes', {
-  name: 'podcast notes',
-  icon: '🎙'
-})
-
 const fetchVersion = fetch(changelogUri)
-const fetchAllCards0 = fetch(uriAllCards0)
-const fetchAllCards1 = fetch(uriAllCards1)
-const fetchAllCards2 = fetch(uriAllCards2)
-Promise.all([fetchVersion, fetchAllCards0, fetchAllCards1, fetchAllCards2]).then(responses => {
+Promise.all([fetchVersion, getUpDb(initialDate)]).then(responses => {
   const jsonVersion = responses[0].json()
-  const jsonAllCards0 = responses[1].json()
-  const jsonAllCards1 = responses[2].json()
-  const jsonAllCards2 = responses[3].json()
-  Promise.all([jsonVersion, jsonAllCards0, jsonAllCards1, jsonAllCards2]).then(jsonPayloads => {
+  const initialUpDb = responses[1]
+  Promise.all([jsonVersion]).then(jsonPayloads => {
     const allCommits = jsonPayloads[0]
-    const allCards0 = jsonPayloads[1]
-    const allCards1 = jsonPayloads[2]
-    const allCards2 = jsonPayloads[3]
     const latestCommit = {
       version: allCommits[0].version,
       message: allCommits[0].message,
       built: new Date(allCommits[0].built)
     }
 
-    for (const item of allCards0.concat(allCards1).concat(allCards2)) {
-      // Ad-hoc code to adjust dates of Anita's cards - 5/11/21
-      // This is a total hack. Write a proper `updateCard(...)` method later
-      if (item.number === 16) {
-        item.created_at = '2021-05-08T04:00:00Z'
-      } else if (item.number === 19) {
-        item.created_at = '2021-05-09T04:00:00Z'
-      } else if (item.number === 22) {
-        item.created_at = '2021-05-10T04:00:00Z'
-      }
-
-      const tags = [] as Tag[]
-      for (const label of item.labels) {
-        if (tagMap.has(label.name)) {
-          tags.push(tagMap.get(label.name)!) // Why is assertion required here? 5/20/21
-        }
-      }
-
-      const cardInput = {
-        title: item.title,
-        userHandle: item.user.login,
-        number: item.number,
-        createdAt: item.created_at,
-        updatedAt: item.updated_at,
-        tags: tags,
-        comments: item.comments
-      }
-      upDb.getUser(cardInput.userHandle)!.setCard(cardInput)
-    }
-
     ReactDOM.render(
-      <StudyGroup commit={latestCommit} userProgressDb={upDb} />,
+      <StudyGroup commit={latestCommit} userProgressDb={initialUpDb} initialDate={initialDate} />,
       document.querySelector('#root')
     )
   })
@@ -210,10 +96,10 @@ const CardComp: React.FC<TCard> = (props) => {
   const title = props.title.length > 51 ? props.title.substr(0, 48) + '...' : props.title
   return (
     <FCard>
-      <a href={props.repo + '/issues/' + props.number}>{title}</a>
+      <a href={props.repo + '/issues/' + props.number} target='_top'>{title}</a>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <div>
-          <PtrSpan title={'Created: ' + props.created.toString()}>{formatTime(props.created)}</PtrSpan>&nbsp;
+          <PtrSpan title={'Created: ' + props.created.toString()}>{util.formatTime(props.created)}</PtrSpan>&nbsp;
           <PtrSpan title={'Last updated: ' + props.updated.toString()}>(#{props.number})</PtrSpan>
           {props.tags.length > 0 && <>&nbsp;</>}
           {props.tags.map((tag: Tag) => <PtrSpan key={tag.name + props.number} title={tag.name}>{tag.icon}</PtrSpan>)}
@@ -222,15 +108,15 @@ const CardComp: React.FC<TCard> = (props) => {
               <span title={'Updated within the past hour!'} style={{ cursor: 'pointer' }}> | 🍿</span>
           }
         </div>
-        <div>
+        <div style ={{ marginTop: '5px', marginBottom: '-6px', marginRight: '-2px' }}>
           {props.comments !== 0 &&
-            <span title={'Comments'} style={{ cursor: 'pointer', color: '#a5b5bb', fontSize: '13px' }}>
-              {props.comments}
+            <span title={'Comments'} style={{ cursor: 'pointer', fontSize: '14px' }}>
+              <svg className="octicon" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
+                <path fillRule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"></path>
+              </svg>
+              <span className="commentNo">{props.comments}</span>
             </span>
           }
-          {/* <span title={'Comments'} style={{ cursor: 'pointer' }}> | <svg className="octicon" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">
-              <path fillRule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"></path>
-            </svg> {props.comments}</span> */}
           </div>
         </div>
     </FCard>
@@ -244,7 +130,7 @@ type TMemberCard = {
 }
 const MemberCard: React.FC<TMemberCard> = (props) => {
   return (
-    <FCard style={{ display: 'flex' }}>
+    <FCard style={{ display: 'flex', minWidth: '300px' }}>
       <div style={{
         backgroundImage: `url(https://avatars.githubusercontent.com/u/${props.uid}?s=62&v=4)`,
         width: '62px',
@@ -253,7 +139,7 @@ const MemberCard: React.FC<TMemberCard> = (props) => {
       }} />
       <div>
         {props.name}<br />
-        <a href={'https://github.com/' + props.userHandle}>{props.userHandle}</a>
+        <a href={'https://github.com/' + props.userHandle} target='_top'>{props.userHandle}</a>
       </div>
     </FCard>
   )
@@ -285,25 +171,6 @@ const MissedDayCard: React.FC<{dateStr: string}> = (props) => {
     </FCard>
   )
 }
-
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-const dateCursor = new Date() // Start on today
-const startDate = new Date('2021-05-03T04:00:00Z') // First day of our study group! 🥳
-
-// Generate the date range we're interested in
-type TDay = {
-  dayNo: number
-  dateStr: string
-}
-const dateRange = [] as TDay[]
-while (dateCursor.getTime() >= startDate.getTime()) {
-  dateRange.push({
-    dayNo: dateCursor.getDay(),
-    dateStr: dateCursor.toLocaleDateString()
-  })
-  dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // Step one day backwards until we get to the start date
-}
-// console.log('$$ dateRange:', dateRange)
 
 const FLine = styled.div`
   width: 100%;
@@ -368,40 +235,85 @@ const FFooter = styled.div`
 
 const FStudyGroup = styled.div`
   height: 100%;
-  min-height: 100vh;
-  margin: 0;
+  margin: 0 0 60px 0;
   padding: 0;
 `
+
+const FMonthTitle = styled.span`
+  font-size: 18px;
+  color: white;
+  background: #161b22;
+  border: 1px #30363d solid;
+  padding: 3px 3px 5px 3px;
+  margin: 10px;
+`
+
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 type TStudyGroup = {
   commit: Commit
   userProgressDb: UserProgressDb
+  initialDate: Date
 }
-const StudyGroup: React.FC<TStudyGroup> = (props) => {
-  // console.log('>> render Study Group')
-  // const [upDb, setUpDb] = useState<UserProgressDb>(props.userProgressDb)
-  const [value, setValue] = useState(0)
 
-  function updateDashboard (payload: any) {
-    console.log('>> updateDashboard: ' + value)
-    if (payload.kind === 'issue') {
-      runUpdateIssueFlow(payload)
-    } else if (payload.kind === 'issue_comment') {
-      runUpdateIssueCommentFlow(payload)
+let globalInitialLoad = true // Hack. 7/8/21
+let globalUpDb: UserProgressDb
+
+const StudyGroup: React.FC<TStudyGroup> = (props) => {
+  const [upDb, setUpDb] = useState<UserProgressDb>(props.userProgressDb)
+  const [value, setValue] = useState(new Date())
+  const [curDate, setCurDate] = useState(props.initialDate)
+  const [members, setMembers] = useState<Array<StudyMember>>([])
+  // console.log('>> curDate - initial load:', curDate)
+
+  // Set local instance to global instance
+  globalUpDb = upDb
+
+  // Load cards
+  useEffect(() => {
+    if (curDate !== props.initialDate) {
+      console.log('>> Changing date periods', curDate)
+      Promise.resolve(getUpDb(curDate)).then(rs => setUpDb(rs))
     }
-    setValue(oldVal => oldVal + 1) // Force update hack to repaint React GUI. 5/31/21
+    history.pushState({}, '', '/studydash/?d=' + curDate.toISOString().slice(0, 7))
+    window.parent.postMessage(window.location.href, '*')
+  }, [curDate])
+
+  // This should NOT run on initial load. 7/8/21
+  function updateDashboard (payload: any) {
+    if (globalInitialLoad) {
+      console.log('>> Initial load detected. Skipping dashboard refresh')
+      globalInitialLoad = false // Flip the one-time flag. Hack. 7/8/21
+    } else {
+      console.log('>> updateDashboard:', payload.dt.toDate().toISOString(), payload.issue.number, payload.issue.title, payload.kind)
+      if (payload.kind === 'issue') {
+        runUpdateIssueFlow(payload)
+      } else if (payload.kind === 'issue_comment') {
+        runUpdateIssueCommentFlow(payload)
+      }
+      setValue(new Date()) // Force update hack to repaint React GUI. 5/31/21
+    }
   }
 
-  // Bug with GitHub? Comment count seems buggy. 6/1/21
   function runUpdateIssueCommentFlow (payload:any) {
-    console.log('>> TODO: runUpdateIssueCommentFlow:', payload.action, payload.kind)
-    // Currently broken - need to reach out to GitHub for guidance. 6/2/21
-    // const dateStr = (new Date(payload.issue.created_at)).toLocaleDateString()
-    // if (payload.action === 'created') {
-    //   upDb.getUser(payload.issue.user.login)!.getCard(dateStr)!.comments++
-    // } else if (payload.action === 'deleted') {
-    //   upDb.getUser(payload.issue.user.login)!.getCard(dateStr)!.comments--
-    // }
+    // For now, until GitHub fixes the `comments number payload` bug, just
+    // query the GitHub REST API to refresh the entire GUI to get all up-to-date comment counts. 7/8/21
+    console.log('\t>> Run: UpdateIssueCommentFlow:', payload.action, payload.kind, payload.issue.number, payload.issue.user.login)
+    if (payload.action === 'created') {
+      globalUpDb.getUser(payload.issue.user.login)?.incrementComments(payload.issue.number)
+    } else if (payload.action === 'deleted') {
+      globalUpDb.getUser(payload.issue.user.login)?.decrementComments(payload.issue.number)
+    }
+
+    // Experimental; remove this later. Keeping here for future reference. 7/8/21
+    // // getNumberOfCommentsPerCard(payload.issue.number)
+    // // This is a total hack; we wait 61 seconds for the GitHub-side to propogate the change before fetching from them again. 7/8/21
+    // const d = new Date()
+    // console.log('>>>>>> Begin timer to query GitHub:', d)
+    // setTimeout(() => {
+    //   console.log('>>>>>> Now querying GitHub - 61 secs later...', d)
+    //   Promise.resolve(getUpDb(curDate)).then(rs => setUpDb(rs))
+    // }, 61000)
   }
 
   function runUpdateIssueFlow (payload:any) {
@@ -434,54 +346,98 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
     upDb.getUser(cardInput.userHandle)!.setCard(cardInput)
   }
 
-  // Listen for latest updates from Firestore
+  // Listen for latest member stats updates from Firestore
+  useEffect(() => {
+    const unsubscribe = firebase.firestore().collection('studyMembers')
+      .onSnapshot((querySnapshot) => {
+        const members = [] as Array<StudyMember>
+        querySnapshot.forEach((doc) => {
+          const m = doc.data()
+          members.push({
+            userFullname: m.Fullname,
+            userHandle: m.Handle,
+            startDateStr: m.StartDate,
+            uid: m.Uid,
+            repo: m.Repo,
+            active: m.Active,
+            streakCurrent: {
+              days: m.StreakCurrent.Days,
+              startDate: m.StreakCurrent.StartDate,
+              endDate: m.StreakCurrent.EndDate
+            },
+            streakMax: {
+              days: m.StreakMax.Days,
+              startDate: m.StreakMax.StartDate,
+              endDate: m.StreakMax.EndDate
+            },
+            recordCount: m.RecordCount,
+            daysJoined: m.DaysJoined,
+            lastCard: {
+              date: m.LastCard.Date,
+              number: m.LastCard.Number
+            },
+            record: new Map(Object.entries(m.Record))
+          })
+        })
+        // console.log('\t>> member[0].record', members[0].record)
+        setMembers(members.sort((a, b) => Date.parse(a.startDateStr) - Date.parse(b.startDateStr)))
+        console.log('>> member stats update received:', (new Date()).toISOString())
+      })
+    return () => unsubscribe()
+  }, [])
+
+  // Listen for latest card updates from Firestore
   useEffect(() => {
     const unsubscribe = firebase.firestore().collection('ghUpdates').doc('latestUpdate')
       .onSnapshot((doc) => {
-        // console.log('Data update received: ', doc.data())
+        // console.log('>> doc.data():', doc.data())
         updateDashboard(doc.data())
       })
     return () => unsubscribe()
   }, [])
 
+  function navPrevMonth () {
+    setCurDate(util.getPrevMonth(curDate))
+  }
+
+  function navNextMonth () {
+    setCurDate(util.getNextMonth(curDate))
+  }
+
+  const startDate = new Date('2021-05-03T04:00:00Z')
+  const dateRange = util.getDateRange(curDate)
+
   return (
     <FStudyGroup>
       <FTopbarLinks>
-        <a href='https://github.com/studydash/cards/issues/75'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
-        <a href={uriAllCards}>Raw Data</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/issues'>Repo</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/issues/4'>Members</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/studydash/cards/discussions/30?sort=new'>History</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://github.com/r002/captains-log/blob/main/src/data/changelog.json'>Changelog</a>&nbsp;&nbsp;&nbsp;
-        <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj'>CodeNewbie</a>
+        <a href='https://github.com/studydash/cards/issues/75' target='_top'>Roadmap/Specs</a>&nbsp;&nbsp;&nbsp;
+        <a href={uriAllCards} target='_top'>Raw Data</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues' target='_top'>Repo</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues/4' target='_top'>Members</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/30?sort=new' target='_top'>Screenshots</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/r002/captains-log/blob/sprint-imbe/src/data/changelog.json' target='_top'>Changelog</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://community.codenewbie.org/r002/5-codenewbie-study-group-cohort-looking-for-study-mates-4lpj' target='_top'>CodeNewbie</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/discussions/178?sort=new' target='_top'>Tasks</a>&nbsp;&nbsp;&nbsp;
+        <a href='https://github.com/studydash/cards/issues/new/choose' target='_top'>New Card</a>
       </FTopbarLinks>
       <div style={{ textAlign: 'center' }}>
         <CountdownClock color='white' />
       </div>
-      <h2>Study Group 00:</h2>
-      {
-        studyMembers.map((member: StudyMember, i: number) => {
-          const handle = member.userHandle
-          const streak = upDb.getUser(handle)?.CurrentStreak
-          const missedDays = upDb.getUser(handle)?.MissedDays
-          const rs = []
-          const content =
-            <div key={'member' + i}>
-              Member #{i}: <a href={'https://github.com/' + handle}>{handle}</a> |
-              Streak: {streak} consecutive days |
-              Start: {(new Date(member.startDateStr)).toDateString()} |
-              Missed Days: {missedDays}<br />
-            </div>
-          if (member.active) {
-            rs.push(content)
-          } else {
-            rs.push(<s key={'member' + i}>{content}</s>)
-          }
-          return (rs)
-        })
-      }
+      <h2>Study Group 00 | {value.toISOString()}</h2>
+      <MembersPane members={members} />
       <br />
-      <h2>Progress:</h2>
+
+      <div style={{ textAlign: 'center' }}>
+        <button onClick={navPrevMonth} disabled={startDate.getTime() > curDate.getTime() }>
+          ◀ {util.printMonthYear(util.getPrevMonth(curDate))}
+        </button>
+        <FMonthTitle>&nbsp;&nbsp;{util.printMonthYear(curDate)}&nbsp;&nbsp;</FMonthTitle>
+        <button onClick={navNextMonth} disabled={util.getNextMonth(curDate).getTime() > Date.now() }>
+          {util.printMonthYear(util.getNextMonth(curDate))} ▶
+        </button>
+      </div>
+      <br />
+
       <FHorizontal>
         <FVertical>
           <FCard empty={true}>
@@ -489,29 +445,26 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
             .
           </FCard>
           {
-            dateRange.map((day: TDay, i: number) => {
-              dateCursor.setDate(dateCursor.getDate() - 1)
-              return (
-                <div key={'dayDiv' + i}>
-                  <FCard key={'dayCard' + i}>
-                    {days[day.dayNo]}<br />
-                    {day.dateStr.replace('/2021', '/21')}
-                  </FCard>
-                  {day.dayNo === 0 &&
-                    <FLine key={'dayHr' + i} />
-                  }
-                </div>
-              )
-            })
+            dateRange.map((day: util.TDay, i: number) =>
+              <div key={'dayDiv' + i}>
+                <FCard key={'dayCard' + i}>
+                  {days[day.dayNo]}<br />
+                  {day.dateStr.replace('/2021', '/21')}
+                </FCard>
+                {day.dayNo === 0 &&
+                  <FLine key={'dayHr' + i} />
+                }
+              </div>
+            )
           }
         </FVertical>
         {
-          studyMembers.map((m: StudyMember, i: number) =>
-            m.active
+          members.map((m: StudyMember, i: number) =>
+            m.active && Date.parse(m.startDateStr) <= util.getMonthLastDay(curDate).getTime()
               ? <FVertical key={'vertical' + i}>
                   <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
                   {
-                    dateRange.map((day: TDay, i: number) => renderCard(upDb, m, day, i))
+                    dateRange.map((day: util.TDay, i: number) => renderCard(upDb, m, day, i))
                   }
                 </FVertical>
               : <span key={'vertical' + i}></span>
@@ -526,9 +479,9 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   )
 }
 
-function renderCard (upDb:UserProgressDb, m:StudyMember, day: TDay, i: number) {
+function renderCard (upDb:UserProgressDb, m:StudyMember, day: util.TDay, i: number) {
   const rs = []
-  const card = upDb.getUser(m.userHandle)!.getCard(day.dateStr)
+  const card = upDb.getUser(m.userHandle)!.getCardByDate(day.dateStr)
   if (card) {
     rs.push(<CardComp key={m.userHandle + i} title={card.title} userHandle={card.userHandle} repo={m.repo}
       number={card.number} created={card.created} updated={card.updated} tags={card.tags} comments={card.comments} />)
@@ -538,7 +491,7 @@ function renderCard (upDb:UserProgressDb, m:StudyMember, day: TDay, i: number) {
     rs.push(<EmptyCard key={m.userHandle + i} />)
   }
 
-  if (day.dayNo === 0 && Date.parse(day.dateStr) > Date.parse(m.startDateStr)) {
+  if (day.dayNo === 0 && Date.parse(day.dateStr) >= Date.parse(m.startDateStr)) {
     rs.push(
       <FLine key={'hr' + m.userHandle + i} />
     )
