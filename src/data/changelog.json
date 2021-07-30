@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.0",
+    "message": "🍑 Begin `sprint-jambul` (Thu - 7/29/21)",
+    "built": "Thu, 29 Jul 2021 20:46:42 EDT"
+  },
+  {
     "version": "1.8.19",
     "message": "♻ Refactor models + `LastCard` fields in `StudyMember`",
     "built": "Tue, 20 Jul 2021 22:44:32 EDT"
