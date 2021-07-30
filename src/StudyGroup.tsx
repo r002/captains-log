@@ -1,3 +1,5 @@
+import './assets/css/design01.css'
+import './assets/css/links+glyphs.css'
 import ReactDOM from 'react-dom'
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
@@ -10,6 +12,7 @@ import changelogUri from './data/changelog.json'
 import './providers/AuthContext'
 import firebase from 'firebase/app'
 import { getUpDb, tagMap, uriAllCards } from './services/GithubApi'
+import * as l from './widgets/Layout'
 
 // Display cards for a specific date if passed in; else, display the current month's cards
 const m = window.location.href.match(/^.*d=(\d{4}-\d{2})$/) // d is expected to be YYYY-MM; eg. "2021-06"
@@ -39,16 +42,6 @@ Promise.all([fetchVersion, getUpDb(initialDate)]).then(responses => {
     )
   })
 })
-
-const FHorizontal = styled.div`
-  display: flex;
-  flex-direction: row;
-`
-
-const FVertical = styled.div`
-  display: flex;
-  flex-direction: column;
-`
 
 type TFCard = {
   readonly empty? : boolean
@@ -438,8 +431,8 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       </div>
       <br />
 
-      <FHorizontal>
-        <FVertical>
+      <l.FHorizontal>
+        <l.FVertical>
           <FCard empty={true}>
             .<br />
             .
@@ -457,20 +450,20 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
               </div>
             )
           }
-        </FVertical>
+        </l.FVertical>
         {
           members.map((m: StudyMember, i: number) =>
             m.active && Date.parse(m.startDateStr) <= util.getMonthLastDay(curDate).getTime()
-              ? <FVertical key={'vertical' + i}>
+              ? <l.FVertical key={'vertical' + i}>
                   <MemberCard key={m.uid} name={m.userFullname} userHandle={m.userHandle} uid={m.uid} />
                   {
                     dateRange.map((day: util.TDay, i: number) => renderCard(upDb, m, day, i))
                   }
-                </FVertical>
+                </l.FVertical>
               : <span key={'vertical' + i}></span>
           )
         }
-      </FHorizontal>
+      </l.FHorizontal>
       <FFooter>
         🔖 {props.commit.version} | {props.commit.message}<br />
         👷‍♂️ {props.commit.built.toString()}
