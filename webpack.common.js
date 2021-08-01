@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     app: './src/index.tsx',
     wattpad: './src/wattpad.tsx',
+    StudyGroup: './src/StudyGroup.tsx',
     StudyDash: './src/StudyDash.tsx'
   },
   plugins: [
@@ -21,6 +22,13 @@ module.exports = {
       template: './public/wattpad.html',
       favicon: './public/favicon.ico',
       chunks: ['wattpad']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'StudyGroup',
+      filename: './studygroup/index.html',
+      template: './public/study-group.html',
+      favicon: './public/favicon.ico',
+      chunks: ['StudyGroup']
     }),
     new HtmlWebpackPlugin({
       title: 'StudyDash',

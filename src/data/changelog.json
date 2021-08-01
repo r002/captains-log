@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.2",
+    "message": "✨ Display past seven days worth of cards in GUI v2",
+    "built": "Sat, 31 Jul 2021 22:56:13 EDT"
+  },
+  {
     "version": "1.9.1",
     "message": "✨ Start `dashboard` GUI redesign that is beautified with CSS art",
     "built": "Fri, 30 Jul 2021 02:12:08 EDT"

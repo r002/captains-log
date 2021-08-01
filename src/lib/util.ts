@@ -50,6 +50,7 @@ export class AutoId {
   }
 }
 
+// Eg. "August 2021"
 export function printMonthYear (d: Date): string {
   const options = {
     year: 'numeric',
@@ -84,7 +85,31 @@ export type TDay = {
   dateStr: string
 }
 
-export function getDateRange (endDate: Date): TDay[] {
+// Return past seven days, ending on endDate
+export function getDateRangeOneWeek (endDate: Date): TDay[] {
+  const dateRange = [] as TDay[]
+  const startDate = new Date()
+  startDate.setTime(endDate.getTime() - 86400 * 1000 * 7) // Seven days
+
+  const today = new Date()
+  let dateCursor: Date
+  if (today.getMonth() === endDate.getMonth()) {
+    dateCursor = new Date(endDate.getFullYear(), endDate.getMonth(), today.getDate()) // Start on today
+  } else {
+    dateCursor = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0) // Start on the last day of the month
+  }
+
+  while (dateCursor.getTime() >= startDate.getTime()) {
+    dateRange.push({
+      dayNo: dateCursor.getDay(),
+      dateStr: dateCursor.toLocaleDateString()
+    })
+    dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // Step one day backwards until we get to the start date
+  }
+  return dateRange
+}
+
+export function getDateRangeOneMonth (endDate: Date): TDay[] {
   const today = new Date()
   let dateCursor: Date
   if (today.getMonth() === endDate.getMonth()) {
@@ -109,4 +134,9 @@ export function getDateRange (endDate: Date): TDay[] {
 // Returns "YYYY-MM-DD" => Eg. "2021-07-15"
 export function getYearMonthDay (d: Date): string {
   return `${d.getFullYear()}-` + `${d.getMonth() + 1}`.padStart(2, '0') + '-' + `${d.getDate()}`.padStart(2, '0')
+}
+
+// Returns "YYYY-MM" => Eg. "2021-07"
+export function getYearMonth (d: Date): string {
+  return `${d.getFullYear()}-` + `${d.getMonth() + 1}`.padStart(2, '0')
 }

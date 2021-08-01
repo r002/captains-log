@@ -268,7 +268,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
       console.log('>> Changing date periods', curDate)
       Promise.resolve(getUpDb(curDate)).then(rs => setUpDb(rs))
     }
-    history.pushState({}, '', '/studydash/?d=' + curDate.toISOString().slice(0, 7))
+    history.pushState({}, '', '/studygroup/?d=' + util.getYearMonth(curDate))
     window.parent.postMessage(window.location.href, '*')
   }, [curDate])
 
@@ -398,7 +398,7 @@ const StudyGroup: React.FC<TStudyGroup> = (props) => {
   }
 
   const startDate = new Date('2021-05-03T04:00:00Z')
-  const dateRange = util.getDateRange(curDate)
+  const dateRange = util.getDateRangeOneMonth(curDate)
 
   return (
     <FStudyGroup>
