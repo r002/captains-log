@@ -20,69 +20,92 @@ const Board = styled.div`
   top: 29px;
 `
 
+// const FLine = styled.div`
+//   width: 100%;
+//   border: 0;
+//   background-color: #30363d;
+//   height: 3px;
+//   margin-top: 8px;
+//   margin-bottom: 4px;
+// `
+
 const FCard = styled.div`
   width: 205px;
   height: 28px;
 
+  display: flex;
+  align-items: center;
+
   font-family: 'Chakra Petch', sans-serif;
   font-style: normal;
   font-weight: 400;
-  line-height: 29px;
+  /* line-height: 29px; */
   color: #FFFFFF;
   margin-right: 11px;
   margin-bottom: 11px;
   box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `
 
-const FMemberCard = styled.div`
+const FEmpty = styled(FCard)`
+  width: 34px;
+  height: 28px;
+  background: none;
+  box-shadow: none;
+`
+
+const FDay = styled(FCard)`
+  width: 34px;
+  height: 28px;
+  justify-content: center;
+
+  font-family: 'Chakra Petch', sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 11.7px;
+  color: #FFFFFF;
+  
+  font-size: 9px;
+  background: #632242;
+`
+
+const FMemberCard = styled(FCard)`
   background: #632242;
   font-size: 15px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding-top: 2px;
   padding-left: 7px;
 `
 
-const FEntryCard = styled.div`
+const FEntryCard = styled(FCard)`
   background: #274867;
   font-size: 12px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding: 1px;
   padding-left: 7px;
 `
 
-const FMissedCard = styled.div`
+const FMissedCard = styled(FCard)`
   background: #632242;
   font-size: 12px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding: 1px;
   padding-left: 7px;
 `
 
-const FPendingCard = styled.div`
+const FPendingCard = styled(FCard)`
   background: #597252;
   font-size: 12px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  padding: 1px;
   padding-left: 7px;
 `
 
 const MissedCard: React.VFC = () => {
   return (
-    <FCard>
-      <FMissedCard>
-        No card today! 😢😦🙁
-      </FMissedCard>
-    </FCard>
+    <FMissedCard>
+      No card today! 😢😦🙁
+  </FMissedCard>
   )
 }
 
 const PendingCard: React.VFC = () => {
   return (
-    <FCard>
-      <FPendingCard>
-        Today's card pending! 😀😁😄
-      </FPendingCard>
-    </FCard>
+    <FPendingCard>
+      Today's card pending! 😀😁😄
+  </FPendingCard>
   )
 }
 
@@ -93,11 +116,9 @@ type TMemberCard = {
 }
 const MemberCard: React.FC<TMemberCard> = (props) => {
   return (
-    <FCard>
-      <FMemberCard>
-        {props.userHandle}
-      </FMemberCard>
-    </FCard>
+    <FMemberCard>
+      {props.userHandle}
+    </FMemberCard>
   )
 }
 
@@ -115,13 +136,13 @@ type TEntryCard = {
 const EntryCard: React.FC<TEntryCard> = (props) => {
   const title = props.title.length > 33 ? props.title.substr(0, 30) + '...' : props.title
   return (
-    <FCard>
-      <FEntryCard>
-        {title}
-      </FEntryCard>
-    </FCard>
+    <FEntryCard>
+      {title}
+  </FEntryCard>
   )
 }
+
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 const MemberBoard: React.VFC = () => {
   const [members, setMembers] = useState<Array<StudyMember>>([])
@@ -180,6 +201,20 @@ const MemberBoard: React.VFC = () => {
   // console.log('>> dateRange', dateRange)
   return (
     <l.FHorizontal>
+      <l.FVertical>
+        <FEmpty>
+          <br />
+        </FEmpty>
+        {
+          dateRange.map((day: util.TDay, i: number) =>
+            <FDay key={'dayCard' + i}>
+              {days[day.dayNo].substring(0, 3)}<br />
+              {day.dateStr.replace('/2021', '')}
+            </FDay>
+          )
+        }
+      </l.FVertical>
+
       {
         members.map((m: StudyMember, i: number) =>
           m.active && Date.parse(m.startDateStr) <= util.getMonthLastDay(curDate).getTime()
@@ -197,16 +232,6 @@ const MemberBoard: React.VFC = () => {
 }
 
 function renderCard (upDb:UserProgressDb, m:StudyMember, day: util.TDay, i: number) {
-  // TODO: Move this mock data into a unit test
-  // const card = {
-  //   title: 'test card',
-  //   userHandle: 'r002',
-  //   number: 123,
-  //   created: new Date(),
-  //   updated: new Date(),
-  //   comments: 0,
-  //   repo: 'https://github.com'
-  // } as TEntryCard
   const today = new Date()
   const rs = []
   const card = upDb.getUser(m.userHandle)?.getCardByDate(day.dateStr) ?? null

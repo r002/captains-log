@@ -77,6 +77,7 @@ tagMap.set('podcast notes', {
 //   console.log('>>rs', rs)
 // }
 
+// eslint-disable-next-line
 export async function getUpDb (d: Date): Promise<UserProgressDb> {
   const upDb = new UserProgressDb()
   const members = await getStudyMembers()
@@ -85,8 +86,15 @@ export async function getUpDb (d: Date): Promise<UserProgressDb> {
     upDb.addUser(member)
   }
 
-  const fetchCards = await fetch(uriAllCards + '&labels=' + util.getPeriod(d))
+  // // If we are within the first week of a new month, also fetch cards from last month as well.
+  // const fetchCards0 = await fetch(uriAllCards + '&labels=' + util.getPeriod(util.getPrevMonth(d)))
+  // const fetchCards = await fetch(uriAllCards + '&labels=' + util.getPeriod(d))
+  // const allCards0 = await fetchCards0.json()
+  // const allCards = await fetchCards.json()
+
+  const fetchCards = await fetch(uriAllCards)
   const allCards = await fetchCards.json()
+
   for (const item of allCards) {
     const tags = [] as Tag[]
     for (const label of item.labels) {
