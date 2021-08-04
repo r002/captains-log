@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.4",
+    "message": "♻ Refactor `MemberBoard` into separate component",
+    "built": "Tue, 03 Aug 2021 23:42:11 EDT"
+  },
+  {
     "version": "1.9.3",
     "message": "♻ Refactor `card` styled components to inherit from base class",
     "built": "Tue, 03 Aug 2021 23:26:39 EDT"
