@@ -1,9 +1,9 @@
 import './assets/css/landscape.css'
-import './assets/css/board.css'
-import './assets/css/links+glyphs.css'
+import './assets/css/design02.css'
 import * as l from './widgets/Layout'
 import { MemberBoard } from './widgets/MemberBoard'
 import { Footer } from './widgets/Footer'
+import { Attribution } from './widgets/Attribution'
 
 import ReactDOM from 'react-dom'
 
@@ -12,6 +12,11 @@ ReactDOM.render(
     <MemberBoard />
   </l.Board>,
   document.getElementById('root')
+)
+
+ReactDOM.render(
+  <Attribution />,
+  document.getElementById('attribution')
 )
 
 ReactDOM.render(

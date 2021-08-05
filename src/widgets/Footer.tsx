@@ -8,8 +8,8 @@ const FFooter = styled.div`
   color: black;
   bottom: 0;
   right: 0;
-  margin-bottom: 10px;
-  margin-right: 15px;
+  margin-bottom: 12px;
+  margin-right: 20px;
   z-index: 99;
   font-size: 14px;
   line-height: 150%;

@@ -52,6 +52,7 @@ const FMemberCard = styled(FCard)`
   background: #632242;
   font-size: 15px;
   padding-left: 7px;
+  padding-top: 3px;
 `
 
 const FEntryCard = styled(FCard)`
@@ -88,6 +89,10 @@ const PendingCard: React.VFC = () => {
   )
 }
 
+const F15Link = styled.span`
+  font-size: 15px;
+`
+
 type TMemberCard = {
   name: string
   userHandle: string
@@ -96,7 +101,7 @@ type TMemberCard = {
 const MemberCard: React.FC<TMemberCard> = (props) => {
   return (
     <FMemberCard>
-      {props.userHandle}
+      <a href={'https://github.com/' + props.userHandle} target='_top'><F15Link>{props.userHandle}</F15Link></a>
     </FMemberCard>
   )
 }
@@ -116,7 +121,7 @@ const EntryCard: React.FC<TEntryCard> = (props) => {
   const title = props.title.length > 33 ? props.title.substr(0, 30) + '...' : props.title
   return (
     <FEntryCard>
-      {title}
+      <a href={props.repo + '/issues/' + props.number} target='_top'>{title}</a>
   </FEntryCard>
   )
 }

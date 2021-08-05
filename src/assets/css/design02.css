@@ -1,16 +1,26 @@
+.board {
+  position: absolute;
+  display: flex;
+  left: 43px;
+  top: 29px;
+}
+
 a:link {
-  color: #2f87f8;
+  color: white;
+  font-weight: 300;
   text-decoration: none;
 }
 
 a:visited {
-  color: #2f87f8;
+  color: white;
   text-decoration: none;
 }
 
 a:hover {
-  color: #2f87f8;
-  text-decoration: underline;
+  color: yellow;
+  font-weight: 400;
+  /* text-decoration: underline; */
+  /* background-color: yellow; */
 }
 
 a:active {

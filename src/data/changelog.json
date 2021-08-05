@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.6",
+    "message": "✨ Add attribution for CSS background art",
+    "built": "Thu, 05 Aug 2021 15:58:05 EDT"
+  },
+  {
     "version": "1.9.5",
     "message": "✨ Add footer",
     "built": "Thu, 05 Aug 2021 14:03:05 EDT"

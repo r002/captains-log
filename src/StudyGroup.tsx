@@ -1,5 +1,4 @@
 import './assets/css/design01.css'
-import './assets/css/links+glyphs.css'
 import ReactDOM from 'react-dom'
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'

@@ -13,9 +13,9 @@
   font-family: 'Chakra Petch', sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 12px;
   line-height: 29px;
-  color: #FFFFFF;
+  /* color: blue; */
 }
 
 @media (max-width: 960px) {
