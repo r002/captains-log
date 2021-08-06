@@ -1,23 +1,40 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 type TSceneViz = {
-  densityIndex: number
+  densityIndices: Array<Number>
 }
 
 export const SceneViz: React.FC<TSceneViz> = (props) => {
-  const trees = []
-  for (let i = 1; i < props.densityIndex; i++) {
-    const x = getRandomInt(-415, 740)
-    const y = getRandomInt(-50, -15)
-    // const x = getRandomInt(-215, 540)
-    // const y = getRandomInt(-30, -15)
-    trees.push(<use key={'tree' + i} x={x} y={y} xlinkHref="#tree" style={{ zIndex: 99 }} />)
+  const [index, setIndex] = useState(0)
+
+  function tick () {
+    if (props.densityIndices.length > 0) {
+      setIndex(oldIndex => {
+        const newIndex = (oldIndex + 1) % props.densityIndices.length
+        console.log('\t>> densities/newIndex set:', props.densityIndices, newIndex)
+        return newIndex
+      })
+    }
   }
-  console.log('>> densityIndex:', props.densityIndex, trees.length)
+
+  useEffect(() => {
+    const interval = setInterval(() => tick(), 1000 * 10) // Update every 10 seconds. Hack: Sync with `.trees` animation in `landscape.css` 🤦‍♂️
+    return () => {
+      clearInterval(interval)
+    }
+  }, [])
+
+  const trees = []
+  for (let i = 1; i < props.densityIndices[index]; i++) {
+    const x = getRandomInt(-315, 640)
+    const y = getRandomInt(-30, -15)
+    const scale = getRandomFloat(0.5, 1.5)
+    trees.push(<use key={'tree' + i} x={x} y={y} xlinkHref="#tree" transform={`scale(${scale})`} style={{ zIndex: 5 + i }} />)
+  }
 
   return (
-    <>
-      {props.densityIndex > 0
+    <div key={(new Date()).toISOString()}>
+      {props.densityIndices[index] > 0
         ? <svg className="trees" id='trees'>
           <g className="tree" id="tree" transform="translate(400,30)">
             <polygon points="25,75 27,44 21,34 25,33 30,41 38,33 40,34 31,46 29,75" fill="#3f2145" />
@@ -47,7 +64,7 @@ export const SceneViz: React.FC<TSceneViz> = (props) => {
           </svg>
         : <></> // No trees are painted!
       }
-    </>
+    </div>
   )
 }
 
@@ -55,4 +72,8 @@ function getRandomInt (min: number, max: number) {
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+function getRandomFloat (min: number, max: number) {
+  return Math.random() * (max - min) + min
 }

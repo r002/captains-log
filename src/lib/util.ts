@@ -85,11 +85,11 @@ export type TDay = {
   dateStr: string
 }
 
-// Return past seven days, ending on endDate
+// Return past eight days, ending on endDate
 export function getDateRangeOneWeek (endDate: Date): TDay[] {
   const dateRange = [] as TDay[]
   const startDate = new Date()
-  startDate.setTime(endDate.getTime() - 86400 * 1000 * 7) // Seven days
+  startDate.setTime(endDate.getTime() - 86400 * 1000 * 8) // Eight days
 
   const today = new Date()
   let dateCursor: Date

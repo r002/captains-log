@@ -28,7 +28,7 @@ const F14Link = styled.span`
 export const Attribution: React.VFC = () => {
   return (
     <FAttribution>
-      CSS Background Art Credit: <a href='https://codepen.io/lukeandrewreid'><F14Link>Luke Reid</F14Link></a>
+      CSS Background Art by <a href='https://codepen.io/lukeandrewreid'><F14Link>Luke Reid</F14Link></a>
     </FAttribution>
   )
 }

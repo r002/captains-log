@@ -7,7 +7,7 @@ import { UserProgressDb, Tag } from '../models/UserProgress'
 import { getUpDb } from '../services/GithubApi'
 import * as util from '../lib/util'
 import * as l from '../widgets/Layout'
-// import { SceneViz } from './SceneViz'
+import { SceneViz } from './SceneViz'
 
 const FCard = styled.div`
   width: 205px;
@@ -185,7 +185,7 @@ export const MemberBoard: React.VFC = () => {
   const dateRange = util.getDateRangeOneWeek(curDate)
   // console.log('>> dateRange', dateRange)
   return (
-    <l.FHorizontal>
+    <l.FHorizontal2>
       <l.FVertical>
         <FEmpty>
           <br />
@@ -212,12 +212,34 @@ export const MemberBoard: React.VFC = () => {
             : <span key={'vertical' + i}></span>
         )
       }
-      {/* <SceneViz densityIndex={7} /> */}
-    </l.FHorizontal>
+      <SceneViz key={(new Date()).toISOString()} densityIndices={extractDensities(upDb, members, dateRange)} />
+    </l.FHorizontal2>
   )
 }
 
-function renderCard (upDb:UserProgressDb, m:StudyMember, day: util.TDay, i: number) {
+/**
+ * Extract number of submitted cards in the past eight day per each member
+ */
+function extractDensities (upDb:UserProgressDb, members: Array<StudyMember>, dateRange: Array<util.TDay>): Array<Number> {
+  const rs = [] as Array<Number>
+
+  members.forEach((m: StudyMember) => {
+    if (m.active) {
+      let cardCount = 0
+      dateRange.forEach((day: util.TDay) => {
+        const card = upDb.getUser(m.userHandle)?.getCardByDate(day.dateStr) ?? null
+        if (card) {
+          cardCount++
+        }
+      })
+      rs.push(cardCount)
+    }
+  })
+  // console.log('>> rs', rs)
+  return rs
+}
+
+function renderCard (upDb:UserProgressDb, m:StudyMember, day: util.TDay, i: number): JSX.Element {
   const today = new Date()
   const rs = []
   const card = upDb.getUser(m.userHandle)?.getCardByDate(day.dateStr) ?? null

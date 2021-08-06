@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.8",
+    "message": "✨ Finish integration of dynamic `CSS tree art` generation",
+    "built": "Fri, 06 Aug 2021 03:31:04 EDT"
+  },
+  {
     "version": "1.9.7",
     "message": "✨ Begin integration of CSS trees to be dynamic",
     "built": "Thu, 05 Aug 2021 20:33:03 EDT"

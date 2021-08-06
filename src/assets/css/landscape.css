@@ -73,12 +73,21 @@ body {
 }
 
 .trees {
-  width: 100%;
-  height: 130px;
-  z-index: 4;
   position: absolute;
+  width: 100%;
+  height: 160px;
+  z-index: 4;
+  left: -43px;  /* Hack-- fix later. 8/6/21 */
   bottom: 20%;
   margin-bottom: -100px;
+  animation: fader 10s linear forwards;
+}
+
+@keyframes fader {
+  0% { opacity: 0; } 
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 #ground {
