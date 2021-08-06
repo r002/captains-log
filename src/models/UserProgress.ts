@@ -50,7 +50,8 @@ class UserProgress {
   userFullname: string
   userHandle: string
   startDate: Date
-  _cards = new Map<string, Card>()
+  _cardsByDate = new Map<string, Card>() // Index key: Eg. '7/8/2021'
+  _cardsByNo = new Map<number, Card>() // Index key: Eg. 185
   _streakCurrent = 0
   _missedDays = 0
 
@@ -62,46 +63,30 @@ class UserProgress {
 
   setCard (cardInput: TCardInput) {
     const card = new Card(cardInput)
-    this._cards.set(card.createdStr, card)
+    this._cardsByDate.set(card.createdStr, card)
+    this._cardsByNo.set(card.number, card)
   }
 
-  getCard (dateStr: string) {
-    return this._cards.get(dateStr)
+  getCardByDate (dateStr: string) {
+    return this._cardsByDate.get(dateStr)
   }
 
-  calculateStreak () {
-    // console.log('>> Calculate streak for:', this.userHandle)
-    const dateCursor = new Date() // Start on today
-    // Generate the date range we're interested in
-    const dateRange = [] as string[]
-    while (dateCursor.getTime() >= this.startDate.getTime()) {
-      dateRange.push(dateCursor.toLocaleDateString())
-      dateCursor.setTime(dateCursor.getTime() - 86400 * 1000) // Step one day backwards until we get to the start date
-    }
-    // console.log('>> dateRange:', this.startDate.getDate(), dateRange)
-    for (const dateStr of dateRange) {
-      // console.log('>> dateStr:', dateStr)
-      if (this._cards.has(dateStr)) {
-        this._streakCurrent++
-      } else {
-        const today = new Date()
-        if (today.toLocaleDateString() !== dateStr) { // Don't do anything if user hasn't yet contributed today
-          // console.log('>> Resetting streak!')
-          this._streakCurrent = 0 // Reset the streak
-          this._missedDays++
-        }
-      }
+  getCardByNo (cardNo: number) {
+    return this._cardsByNo.get(cardNo)
+  }
+
+  incrementComments (cardNo: number) {
+    if (this._cardsByNo.has(cardNo)) {
+      this._cardsByNo.get(cardNo)!.comments++
+      // console.log('\t\t>> Comments count++:', this._cardsByNo.get(cardNo)!.comments)
     }
   }
 
-  get CurrentStreak () {
-    this._streakCurrent = this._missedDays = 0
-    this.calculateStreak()
-    return this._streakCurrent
-  }
-
-  get MissedDays () {
-    return this._missedDays
+  decrementComments (cardNo: number) {
+    if (this._cardsByNo.has(cardNo)) {
+      this._cardsByNo.get(cardNo)!.comments--
+      // console.log('\t\t>> Comments count--:', this._cardsByNo.get(cardNo)!.comments)
+    }
   }
 }
 

@@ -1,5 +1,155 @@
 [
   {
+    "version": "1.9.9",
+    "message": "♻ Update `Previewer` to `v1`/`v2` \u0026 disable console logging",
+    "built": "Fri, 06 Aug 2021 05:08:54 EDT"
+  },
+  {
+    "version": "1.9.8",
+    "message": "✨ Finish integration of dynamic `CSS tree art` generation",
+    "built": "Fri, 06 Aug 2021 03:31:04 EDT"
+  },
+  {
+    "version": "1.9.7",
+    "message": "✨ Begin integration of CSS trees to be dynamic",
+    "built": "Thu, 05 Aug 2021 20:33:03 EDT"
+  },
+  {
+    "version": "1.9.6",
+    "message": "✨ Add attribution for CSS background art",
+    "built": "Thu, 05 Aug 2021 15:58:05 EDT"
+  },
+  {
+    "version": "1.9.5",
+    "message": "✨ Add footer",
+    "built": "Thu, 05 Aug 2021 14:03:05 EDT"
+  },
+  {
+    "version": "1.9.4",
+    "message": "♻ Refactor `MemberBoard` into separate component",
+    "built": "Tue, 03 Aug 2021 23:42:11 EDT"
+  },
+  {
+    "version": "1.9.3",
+    "message": "♻ Refactor `card` styled components to inherit from base class",
+    "built": "Tue, 03 Aug 2021 23:26:39 EDT"
+  },
+  {
+    "version": "1.9.2",
+    "message": "✨ Display past seven days worth of cards in GUI v2",
+    "built": "Sat, 31 Jul 2021 22:56:13 EDT"
+  },
+  {
+    "version": "1.9.1",
+    "message": "✨ Start `dashboard` GUI redesign that is beautified with CSS art",
+    "built": "Fri, 30 Jul 2021 02:12:08 EDT"
+  },
+  {
+    "version": "1.9.0",
+    "message": "🍑 Begin `sprint-jambul` (Thu - 7/29/21)",
+    "built": "Thu, 29 Jul 2021 20:46:42 EDT"
+  },
+  {
+    "version": "1.8.19",
+    "message": "♻ Refactor models + `LastCard` fields in `StudyMember`",
+    "built": "Tue, 20 Jul 2021 22:44:32 EDT"
+  },
+  {
+    "version": "1.8.18",
+    "message": "♻ Refactor `dashboard` to fetch `studyMembers` from Firestore",
+    "built": "Tue, 20 Jul 2021 01:16:00 EDT"
+  },
+  {
+    "version": "1.8.17",
+    "message": "🧙‍♂️ Add Jassa to the study group!",
+    "built": "Sun, 18 Jul 2021 18:03:54 EDT"
+  },
+  {
+    "version": "1.8.16",
+    "message": "💄🐞 Tweak `week demarcation` logic in `MembersPane` \u0026 fix `target='_top'` bug in links",
+    "built": "Sun, 18 Jul 2021 14:39:16 EDT"
+  },
+  {
+    "version": "1.8.15",
+    "message": "✨ Revamp `MembersPane` to better visually show `Missed Days` and `streaks` metrics",
+    "built": "Thu, 15 Jul 2021 22:15:45 EDT"
+  },
+  {
+    "version": "1.8.14",
+    "message": "🐞 Fix error that was being thrown if comment was +/- to a card not currently in-view",
+    "built": "Thu, 08 Jul 2021 22:27:09 EDT"
+  },
+  {
+    "version": "1.8.13",
+    "message": "🔊 Add more debug logging to the `+/- comment count` logic",
+    "built": "Thu, 08 Jul 2021 21:23:26 EDT"
+  },
+  {
+    "version": "1.8.12",
+    "message": "✨ Add `octicon comments` icon \u0026 update the GUI in real-time on every new comment +/-",
+    "built": "Thu, 08 Jul 2021 16:50:49 EDT"
+  },
+  {
+    "version": "1.8.11",
+    "message": "✨ Support `pass-thru` `GET {params}` in `Previewer` top-level url",
+    "built": "Wed, 07 Jul 2021 17:24:35 EDT"
+  },
+  {
+    "version": "1.8.10",
+    "message": "🐞 Fix bug: Clicking on top navbar links now opens them in `target='_top'`",
+    "built": "Wed, 07 Jul 2021 07:40:30 EDT"
+  },
+  {
+    "version": "1.8.9",
+    "message": "🐞 Fix bug: Clicking on cards now opens them in `target='_top'`",
+    "built": "Wed, 07 Jul 2021 02:26:35 EDT"
+  },
+  {
+    "version": "1.8.8",
+    "message": "✨ Change url to `/studydash` \u0026 add support for `Previewer Frame`",
+    "built": "Tue, 06 Jul 2021 22:37:58 EDT"
+  },
+  {
+    "version": "1.8.7",
+    "message": "✨ Support `?d=YYYY-MM` GET {param} in url",
+    "built": "Tue, 06 Jul 2021 17:05:54 EDT"
+  },
+  {
+    "version": "1.8.6",
+    "message": "✨ Update `MembersPane` to show latest submitted card number",
+    "built": "Mon, 05 Jul 2021 21:52:54 EDT"
+  },
+  {
+    "version": "1.8.5",
+    "message": "💄 Beautify `MembersPane` to display `Current Streak` details on newline",
+    "built": "Sat, 03 Jul 2021 22:54:32 EDT"
+  },
+  {
+    "version": "1.8.4",
+    "message": "✨ Add `{StartDate} to {EndDate}` title when hovering over `Streak Numbers`",
+    "built": "Thu, 01 Jul 2021 20:41:52 EDT"
+  },
+  {
+    "version": "1.8.3",
+    "message": "✨ Impl live `Current/Max Streak` on `dashboard GUI`",
+    "built": "Thu, 01 Jul 2021 16:07:17 EDT"
+  },
+  {
+    "version": "1.8.2",
+    "message": "💄 Beautify `pagination controls` on `dashboard GUI`",
+    "built": "Thu, 24 Jun 2021 21:41:24 EDT"
+  },
+  {
+    "version": "1.8.1",
+    "message": "✨ Add `pagination-by-month` to `dashboard GUI`",
+    "built": "Thu, 24 Jun 2021 18:05:57 EDT"
+  },
+  {
+    "version": "1.8.0",
+    "message": "🥭 Begin `sprint-imbe` (Sun - 6/20/21)",
+    "built": "Sun, 20 Jun 2021 16:17:17 EDT"
+  },
+  {
     "version": "1.7.4",
     "message": "📦 Release `sprint-hala` 🍍 ➡ PROD: `v1.7.4-hala`",
     "built": "Sun, 20 Jun 2021 15:56:01 EDT"

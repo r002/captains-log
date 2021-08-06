@@ -5,7 +5,8 @@ module.exports = {
   entry: {
     app: './src/index.tsx',
     wattpad: './src/wattpad.tsx',
-    StudyGroup: './src/StudyGroup.tsx'
+    StudyGroup: './src/StudyGroup.tsx',
+    StudyDash: './src/StudyDash.tsx'
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -17,17 +18,38 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: 'Wattpad POC',
-      filename: 'wattpad.html',
+      filename: './wattpad/index.html',
       template: './public/wattpad.html',
       favicon: './public/favicon.ico',
       chunks: ['wattpad']
     }),
     new HtmlWebpackPlugin({
-      title: 'Study Group 00',
-      filename: 'study-group.html',
+      title: 'StudyGroup',
+      filename: './studygroup/index.html',
       template: './public/study-group.html',
       favicon: './public/favicon.ico',
       chunks: ['StudyGroup']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'StudyDash',
+      filename: './studydash/index.html',
+      template: './public/studydash.html',
+      favicon: './public/favicon.ico',
+      chunks: ['StudyDash']
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Preview v1',
+      filename: './v1/index.html',
+      template: './public/v1/index.html',
+      favicon: './public/favicon.ico',
+      chunks: []
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Preview v2',
+      filename: './v2/index.html',
+      template: './public/v2/index.html',
+      favicon: './public/favicon.ico',
+      chunks: []
     })
   ],
   module: {

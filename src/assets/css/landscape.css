@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400&display=swap');
+
+:root {
+  --darkblue: #152c3e;
+  --lightblue: #37618a;
+  --greenprimary: #879759;
+  --greenshadow: #648459;
+}
+
+* { 
+  margin: 0;
+  padding: 0;
+  font-family: 'Chakra Petch', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 29px;
+  /* color: blue; */
+}
+
+@media (max-width: 960px) {
+  body { zoom: 0.7; }
+}
+
+html, body { height: 100%; }
+
+@keyframes bounce {
+  from {
+    transform: translateY(0px);
+  } to {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes sway {
+  from {
+    transform: translateX(0px);
+  } to {
+    transform: translateX(-12px);
+  }
+}
+
+body {
+  min-height: 100%;
+  background: -webkit-linear-gradient(top, var(--darkblue), var(--lightblue));
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#mountains {
+  z-index: 2;
+  position: absolute;
+  bottom: 20%;
+  margin-bottom: -16px;
+  left: 10%;
+}
+
+#cloud1 {
+  z-index: 2;
+  position: absolute;
+  top: 20%;
+  right: 4%;
+  animation: bounce 2s ease-in-out 0s infinite alternate;
+}
+
+#cloud2 {
+  z-index: 1;
+  position: absolute;
+  top: 22%;
+  right: 16%;
+  animation: bounce 3.5s ease-in-out 2s infinite alternate;
+}
+
+.trees {
+  position: absolute;
+  width: 100%;
+  height: 160px;
+  z-index: 4;
+  left: -43px;  /* Hack-- fix later. 8/6/21 */
+  bottom: 20%;
+  margin-bottom: -100px;
+  animation: fader 10s linear forwards;
+}
+
+@keyframes fader {
+  0% { opacity: 0; } 
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#ground {
+  z-index: 1;
+  width: 100%;
+  height: 20%;
+  position: absolute;
+  bottom: 0;
+  background: var(--greenprimary);
+}
+
+#hills {
+  /* background: rgba(255,0,0,0.3); */
+  position: absolute;
+  left: 10%;
+  margin-left: -120px;
+  margin-bottom: -86px;
+  bottom: 20%;
+  z-index: 3;
+}
+
+#stars {
+  width: 100%;
+  height: 100%;
+}
