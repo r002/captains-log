@@ -38,9 +38,16 @@ module.exports = {
       chunks: ['StudyDash']
     }),
     new HtmlWebpackPlugin({
-      title: 'Preview',
-      filename: './preview/index.html',
-      template: './public/preview/index.html',
+      title: 'Preview v1',
+      filename: './v1/index.html',
+      template: './public/v1/index.html',
+      favicon: './public/favicon.ico',
+      chunks: []
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Preview v2',
+      filename: './v2/index.html',
+      template: './public/v2/index.html',
       favicon: './public/favicon.ico',
       chunks: []
     })

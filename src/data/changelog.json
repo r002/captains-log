@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.9",
+    "message": "♻ Update `Previewer` to `v1`/`v2` \u0026 disable console logging",
+    "built": "Fri, 06 Aug 2021 05:08:54 EDT"
+  },
+  {
     "version": "1.9.8",
     "message": "✨ Finish integration of dynamic `CSS tree art` generation",
     "built": "Fri, 06 Aug 2021 03:31:04 EDT"

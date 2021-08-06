@@ -11,7 +11,7 @@ export const SceneViz: React.FC<TSceneViz> = (props) => {
     if (props.densityIndices.length > 0) {
       setIndex(oldIndex => {
         const newIndex = (oldIndex + 1) % props.densityIndices.length
-        console.log('\t>> densities/newIndex set:', props.densityIndices, newIndex)
+        // console.log('\t>> densities/newIndex set:', props.densityIndices, newIndex)
         return newIndex
       })
     }

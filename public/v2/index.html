@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>StudyDash QA | v2 "Jambul"</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+      }
+      
+      #wrapper {
+        display: grid;
+        grid-template-rows: 50px 1fr;
+        grid-gap: 10px;
+        background: red;
+        height: 100%;
+        width: 100%;
+      }
+
+      #urlFrame {
+        display: flex;
+        padding: 12px;
+        background: yellow;
+        color: black;
+      }
+
+      .urlLabel {
+        font-weight: bold;
+        /* width: 135px; */
+        padding-top: 0px;
+        padding-right: 10px;
+        white-space: nowrap;
+      }
+
+      #urlBox {
+        width: 50%;
+        font-size: 18px;
+      }
+
+      #buildVersions {
+        font-size: 18px;
+      }
+
+      #bodyFrame {
+        height: 100%;
+        width: 100%;
+        background: black;
+      }
+    </style>
+    <script>
+      function setTopUrl (url) {
+        const m = url.match(/^.*d=(\d{4}-\d{2})$/)
+        if (m?.[1]) { // Eg. m[1] = 2021-06
+          const root = "/v2"
+          history.pushState({}, '', `${root}/?d=${m[1]}`)
+        }
+      }
+
+      window.addEventListener("message", (event) => {
+        // console.log(">> Message received!", event)
+        document.getElementById("urlBox").value = event.data
+        setTopUrl(event.data)
+      }, false);
+
+      window.onload = () => {
+        // If topUrl has `d?=` set, honor it
+        const m = window.location.href.match(/^.*d=(\d{4}-\d{2})$/)
+        const d = m?.[1] ? `/?d=${m[1]}` : ""
+
+        const s = window.location.href.includes("localhost")
+          ? "http://localhost:3000/studydash" + d 
+          : "https://captains-log--pr49-sprint-jambul-dbuvx4za.web.app/studydash" + d
+        document.getElementById('bodyFrame').setAttribute("src", s)
+      }
+
+      function navigate() {
+        console.log('>> navigate:', document.getElementById('buildVersions').value)
+        window.location = document.getElementById('buildVersions').value
+      }
+    </script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="urlFrame">
+        <div class="urlLabel">
+          <select name="buildVersions" id="buildVersions" onchange="navigate()">
+            <option value="/v1">Latest QA Build v1 ("Imbe")</option>
+            <option value="/v2" selected>Latest QA Build v2 ("Jambul")</option>
+          </select>
+        </div> <input type="text" id="urlBox" readonly />
+      </div>
+      <iframe id="bodyFrame" frameborder="0"></iframe>
+    </div>
+  </body>
+</html>
