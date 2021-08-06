@@ -7,6 +7,7 @@ import { UserProgressDb, Tag } from '../models/UserProgress'
 import { getUpDb } from '../services/GithubApi'
 import * as util from '../lib/util'
 import * as l from '../widgets/Layout'
+// import { SceneViz } from './SceneViz'
 
 const FCard = styled.div`
   width: 205px;
@@ -211,6 +212,7 @@ export const MemberBoard: React.VFC = () => {
             : <span key={'vertical' + i}></span>
         )
       }
+      {/* <SceneViz densityIndex={7} /> */}
     </l.FHorizontal>
   )
 }

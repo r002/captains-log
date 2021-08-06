@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.7",
+    "message": "✨ Begin integration of CSS trees to be dynamic",
+    "built": "Thu, 05 Aug 2021 20:33:03 EDT"
+  },
+  {
     "version": "1.9.6",
     "message": "✨ Add attribution for CSS background art",
     "built": "Thu, 05 Aug 2021 15:58:05 EDT"

@@ -4,6 +4,7 @@ import * as l from './widgets/Layout'
 import { MemberBoard } from './widgets/MemberBoard'
 import { Footer } from './widgets/Footer'
 import { Attribution } from './widgets/Attribution'
+// import { SceneViz } from './widgets/SceneViz'
 
 import ReactDOM from 'react-dom'
 
@@ -13,6 +14,11 @@ ReactDOM.render(
   </l.Board>,
   document.getElementById('root')
 )
+
+// ReactDOM.render(
+//   <SceneViz />,
+//   document.getElementById('sceneViz')
+// )
 
 ReactDOM.render(
   <Attribution />,
